@@ -20,10 +20,6 @@
     		
     		<a class="brand" href="#">Solomidem</a>
     		
-    		<div class="pull-right">
-    			<button class="btn btn-small" onclick="history.go(-1)">back</button>
-    		</div>
-    		
     	</div>
     </div>
 </div>

@@ -12,12 +12,12 @@ class oauth2 extends CI_Controller {
     	 * - token for this user?
     	 * - ...
     	 */
-        $this->load->database();
         
         // required
         $client_id = $this->input->get('client_id');
         $client_secret = $this->input->get('client_secret');
         $response_type = $this->input->get('response_type');
+        
         // optional
         $callback = $this->input->get('redirect_uri');
         $state = $this->input->get('state');
@@ -26,69 +26,55 @@ class oauth2 extends CI_Controller {
         $data = new stdClass();
         
         // invalid_request
-        if( !( $client_id && $client_secret && $response_type ) ){
-            $data->error = "1" ;
-            $data->error_msg = 'invalid_request';
-            $this->load->view('authenticate', $data);
-            return ;
+        if (!($client_id && $response_type)) {
+            show_error('invalid_request');
         }
         
         // unsupported_response_type
-        if( $response_type != 'code' ){
-            $data->error = "4" ;
-            $data->error_msg = "unsupported_response_type" ;
-            $this->load->view('authenticate', $data);
-            return ;
+        if ($response_type != 'code') {
+            show_error('unsupported_response_type');
         }
         
-        // unauthorized_client
-        $where = array('client_id' => $client_id, 'client_secret' => $client_secret );
-        $query = $this->db->get_where('clients', $where );
+        $this->load->model('client_model');
+        $client = $this->client_model->get($client_id);
         
-        if( $query->num_rows() != 1 ){
-            $data->error = "2" ;
-            $data->error_msg = "unauthorized_client" ;
-            $this->load->view('authenticate', $data);
-            return ;
+        // client does not exist
+        if (!$client) {
+            show_error('unauthorized_client');
         }
-        $row = $query->row();
-        $name = $row->name ;
+        
         // optional callback
-        $callback = $callback? $callback : $row->redirect_uri ;
+        $callback = $callback ? $callback : $client->redirect_uri;
         
         // allow button clicked
-        if ($this->input->post('allows')) {
+        if ($this->input->post('allow')) {
             // generate code
             $code = md5(time() . uniqid());
             
-            // save code to database
-            $row = array(
-                'client_id' => $client_id,
-                'user_id' => 'temp', // CHANGE TH!S
-                'code' => $code,
-                'expires' => time() + 60 * 10 // ten minutes
-            );
-            $this->db->insert('auth_codes', $row);
+            $this->load->model('code_model');
+            $this->code_model->insert($client_id, 'temp', $code, 600);
             
             // generate callback url
             $callback = $callback . '?' . http_build_query(array('code' => $code, 'state' => $state));
             
             // redirect back to user website
             redirect($callback);
+        
         } else {
-        	// show access screen
-            $data->client = $name ;
+            
+            // show access screen
+            $data->client = $client->name;
             $this->load->view('authenticate', $data);
         }
     }
     
     function access_token() {
-    	/* pre-checks:
+        /* pre-checks:
     	 * - 
     	 * - ...
     	 */
-    	
-    	$grant_type = $this->input->get('grant_type');
+        
+        $grant_type = $this->input->get('grant_type');
         $code = $this->input->get('code');
     }
 
