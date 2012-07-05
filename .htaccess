@@ -159,15 +159,11 @@ AddType text/vtt                            vtt
 # Turning on the rewrite engine is necessary for the following rules and features.
 # FollowSymLinks must be enabled for this to work.
 
-<IfModule mod_rewrite.c>
-  Options +FollowSymlinks
-  RewriteEngine On
-# RewriteBase /
-</IfModule>
 
 <IfModule mod_rewrite.c>
+    Options +FollowSymlinks
     RewriteEngine On
-    RewriteBase /
+    #RewriteBase /
 
     #Removes access to the system folder by users.
     #Additionally this will allow you to create a System.php controller,
