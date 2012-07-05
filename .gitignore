@@ -46,3 +46,6 @@ local.properties
 
 #FreeFileSync
 sync.ffs_db
+
+#CodeIgnitor
+application/config/development/
