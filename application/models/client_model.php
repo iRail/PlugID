@@ -6,5 +6,8 @@ class Client_model extends CI_Model {
         $where = array('client_id' => $client_id);
         return $this->db->get_where('clients', $where)->row();
     }
-
+    
+    function create( $name, $callback, $user_id ){
+        
+    }
 }
