@@ -15,7 +15,6 @@ class oauth2 extends CI_Controller {
         
         // required
         $client_id = $this->input->get('client_id');
-        $client_secret = $this->input->get('client_secret');
         $response_type = $this->input->get('response_type');
         
         // optional
@@ -55,6 +54,7 @@ class oauth2 extends CI_Controller {
             $this->code_model->insert($client_id, 'temp', $code, 600);
             
             // generate callback url
+            // issue: The endpoint URI MAY include an "application/x-www-form-urlencoded" formatte ([W3C.REC-html401-19991224]) query component ([RFC3986] section 3.4) which MUST be retained when adding additional query parameters.
             $callback = $callback . '?' . http_build_query(array('code' => $code, 'state' => $state));
             
             // redirect back to user website
@@ -69,13 +69,20 @@ class oauth2 extends CI_Controller {
     }
     
     function access_token() {
-        /* pre-checks:
-    	 * - 
-    	 * - ...
-    	 */
+        $this->load->library('OAuth2_server');
         
-        $grant_type = $this->input->get('grant_type');
-        $code = $this->input->get('code');
+        // required
+        $grant_type = $this->input->post('grant_type');
+        $code = $this->input->post('code');
+        $callback = $this->input->post('redirect_uri');
+        
+        // hard-coded: 'grant-type' must be 'authorization_code'
+        if( $grant_type != 'authorization_code' ){
+            $data = $
+        }
+        
+        $this->output->set_content_type('application/json')
+        $this->output->set_output(json_encode( $data ));
     }
 
 }
