@@ -34,7 +34,7 @@ class CI_Session{
         return false ;
     }
     
-    function __isset(){
+    function __isset($name){
         return isset($_SESSION[$name]);
     }
     

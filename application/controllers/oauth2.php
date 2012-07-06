@@ -1,4 +1,10 @@
 <?php
+/**
+ * @copyright (C) 2012 by iRail vzw/asbl
+ * @license AGPLv3
+ * @author Jens Segers <jens at iRail.be>
+ * @author Hannes Van De Vreken <hannes at iRail.be>
+ */
 
 class oauth2 extends CI_Controller {
     
@@ -12,8 +18,14 @@ class oauth2 extends CI_Controller {
     	 * - token for this user?
     	 * - ...
     	 */
-    	 
-    	// check user is logged in
+    	// check if signed in
+        $user = $this->session->user;
+        
+        // it's a no go
+        if( $user === FALSE ){
+            $this->load->view('login');
+            return ;
+        }
         
         // required
         $client_id = $this->input->get('client_id');

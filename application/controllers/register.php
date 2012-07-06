@@ -1,4 +1,12 @@
 <?php
+/**
+ * @copyright (C) 2012 by iRail vzw/asbl
+ * @license AGPLv3
+ * @author Jens Segers <jens at iRail.be>
+ * @author Hannes Van De Vreken <hannes at iRail.be>
+ * 
+ * Register a new client for this application's Oauth2.0 server
+ */
 
 class register extends CI_Controller {
 
@@ -7,6 +15,13 @@ class register extends CI_Controller {
         $this->load->library('OAuth2_server');
         
         // check if signed in
+        $user = $this->session['user'];
+        
+        // it's a no go
+        if( $user === FALSE ){
+            $this->load->view('login');
+            return ;
+        }
         
         // logged in
         
@@ -26,8 +41,6 @@ class register extends CI_Controller {
             // show registration page
             $this->load->view('register');
         }
-        
-        // redirect to login page
         
     }
 
