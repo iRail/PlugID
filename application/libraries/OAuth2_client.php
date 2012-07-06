@@ -44,7 +44,7 @@ class OAuth2_client extends client {
         $ci = &get_instance();
         $ci->load->library('curl');
         
-        $data = $ci->curl->get($path, $params);
+        $data = $ci->curl->post($path, $params);
         $json = json_decode($data);
         
         // response
