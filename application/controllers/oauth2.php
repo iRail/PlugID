@@ -12,6 +12,8 @@ class oauth2 extends CI_Controller {
     	 * - token for this user?
     	 * - ...
     	 */
+    	 
+    	// check user is logged in
         
         // required
         $client_id = $this->input->get('client_id');
@@ -74,10 +76,10 @@ class oauth2 extends CI_Controller {
         
         // hard-coded: 'grant-type' must be 'authorization_code'
         if( $grant_type != 'authorization_code' ){
-            $data = $
+            $data = array();
         }
         
-        $this->output->set_content_type('application/json')
+        $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode( $data ));
     }
 
