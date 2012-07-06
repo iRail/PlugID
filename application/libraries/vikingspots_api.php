@@ -68,18 +68,102 @@
             $this->set_token($json->access_token);
             return $json->access_token;
         }
+
+        /**
+         * Vikingspots API checkin info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_checkin($id) {
+            $uri = 'checkins';
+            $data = array();
+            $data['checkin_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
+
+        /**
+         * Vikingspots API coupon info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_coupon($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['coupon_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
+
+        /**
+         * Vikingspots API deal info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_deal($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['deal_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
         
         /**
-         * Vikingspots API request method
+         * Vikingspots API news info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_news($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['news_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
+        
+        /**
+         * Vikingspots API notification info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_notification($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['notification_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
+        
+        /**
+         * Vikingspots API spot info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_spot($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['spot_id'] = $id;
+
+            $json = $this->api($uri, $data);
+            return $json;
+        }
+
+        /**
+         * Vikingspots API user info request method
          * @param string $id
          * @return String $json
          */
         function get_user($id) {
             $uri = 'users';
             $data = array();
-            $data['user_id'] = '123';//TODO: change example
-            
-            $json = $this->api($uri,$data);
+            $data['user_id'] = $id;
+
+            $json = $this->api($uri, $data);
             return $json;
         }
 
