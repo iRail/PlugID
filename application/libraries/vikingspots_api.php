@@ -48,6 +48,7 @@
             }
 
             return 'http://beta.vikingspots.com/oauth2/authenticate?client_id=' . $this->settings['client_id'] . '&response_type=code&redirect_uri=' . urlencode($callback);
+            //Sample return in $_GET: Array ( [code] => dd4c7b96e3ebdaaa613c430be49126 ) 
         }
 
         /**
@@ -67,9 +68,23 @@
             $this->set_token($json->access_token);
             return $json->access_token;
         }
+        
+        /**
+         * Vikingspots API request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_user($id) {
+            $uri = 'users';
+            $data = array();
+            $data['user_id'] = '123';//TODO: change example
+            
+            $json = $this->api($uri,$data);
+            return $json;
+        }
 
         /**
-         * Foursquare API request method
+         * Vikingspots API request method
          * @param string $uri
          * @param array $data
          * @return Object
@@ -84,7 +99,7 @@
                 $params['client_id'] = $this->settings['client_id'];
                 $params['client_secret'] = $this->settings['client_secret'];
             } else {
-                $params['oauth_token'] = $token;
+                $params['bearer_token'] = $token;
             }
 
             if (strtoupper($method) == 'POST') {
