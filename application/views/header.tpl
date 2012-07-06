@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8">
     
-    <title></title>
+    <title>Solomidem</title>
     
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     
+    <!-- <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">  -->
     <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.css'); ?>">
     <link rel="stylesheet" href="<?php echo base_url('css/style.css'); ?>">
     

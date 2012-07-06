@@ -22,9 +22,6 @@ class oauth2 extends CI_Controller {
         $callback = $this->input->get('redirect_uri');
         $state = $this->input->get('state');
         
-        // prepare
-        $data = new stdClass();
-        
         // invalid_request
         if (!($client_id && $response_type)) {
             show_error('invalid_request');
@@ -63,8 +60,7 @@ class oauth2 extends CI_Controller {
         } else {
             
             // show access screen
-            $data->client = $client->name;
-            $this->load->view('authenticate', $data);
+            $this->load->view('authenticate', array('client' => $client->name));
         }
     }
     
