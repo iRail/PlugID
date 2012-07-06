@@ -17,25 +17,30 @@ class CI_Session{
     
     function __construct(){
         $this->ci = &get_instance();
-        
+        $this->ci->load->library('encrypt');
         // start up session
         session_start();
     }
     
-    function set($name, $value){
-        $_SESSION[$name] = $value ;
+    function __set($name, $val){
+        $_SESSION[$name] = $val ;
+        return $this ;
     }
     
-    function get($name){
+    function __get($name){
         if( isset($_SESSION[$name]) ){
             return $_SESSION[$name];
-        }else{
-            
         }
+        return false ;
     }
     
-    function remove($name){
-        
+    function __isset(){
+        return isset($_SESSION[$name]);
+    }
+    
+    function __unset($name){
+        unset($_SESSION[$name]);
+        return $this;
     }
 }
     
