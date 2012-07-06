@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `user_tokens` (
   `user_id` varchar(32) NOT NULL,
   `service_type` enum('facebook','twitter','google','viking') NOT NULL,
+  `ext_user_id` varchar(32) NOT NULL,
   `access_token` varchar(40) NOT NULL,
   `refresh_token` varchar(40) DEFAULT NULL,
   UNIQUE KEY `unique` (`service_type`,`user_id`),

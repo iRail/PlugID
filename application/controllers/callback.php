@@ -11,6 +11,8 @@
 class callback extends CI_Controller {
 
     function index( $service ){
+        $this->load->model('user_model');
+        
         // collect callback data
         
         // load plugin
@@ -18,6 +20,7 @@ class callback extends CI_Controller {
         // get user id from service
         
         // check if service is linked to existing user
+        $this->user_model->
         
         // if yes: log-in as that user (and merge if needed)
         

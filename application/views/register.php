@@ -7,7 +7,7 @@
 	<div class="hero-unit">
 		    <h1>requests access</h1>
             <p>
-                <form method="post">
+                <form method="post" action="/register">
 		        <label>Application name</label>
                 <?php echo form_input('name', isset($name)?$name:''); ?>
                 <label>Callback url</label>

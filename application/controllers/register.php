@@ -15,7 +15,7 @@ class register extends CI_Controller {
         $this->load->library('OAuth2_server');
         
         // check if signed in
-        $user = $this->session['user'];
+        $user = $this->session->user;
         
         // it's a no go
         if( $user === FALSE ){
