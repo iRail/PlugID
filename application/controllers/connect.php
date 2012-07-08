@@ -14,7 +14,7 @@ class connect extends CI_Controller {
         // load plugin
         
         // get authorize url from plugin
-        $authorize_url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        $authorize_url = 'http://youtu.be/dQw4w9WgXcQ';
         
         // redirect to plugin
         redirect( $authorize_url );

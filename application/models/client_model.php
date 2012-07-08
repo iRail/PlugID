@@ -9,6 +9,14 @@ class Client_model extends CI_Model {
     }
     
     /*
+     * Get all user's clients
+     */
+    function get_clients( $user_id ){
+        $where = array('user_id' => $user_id);
+        return $this->db->get_where('clients', $where)->results ;
+    }
+    
+    /*
      * Generate new client_id & client_secret
      */
     function create( $name, $redirect_uri, $user_id ){

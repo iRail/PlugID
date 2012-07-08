@@ -19,8 +19,7 @@ class register extends CI_Controller {
         
         // it's a no go
         if( $user === FALSE ){
-            $this->load->view('login');
-            return ;
+            redirect('login');
         }
         
         // logged in
@@ -28,14 +27,15 @@ class register extends CI_Controller {
         // trying to register
         if( $this->input->post('register') !== false ){
             $data->name = $this->input->post('name');
-            $data->callback = $this->input->post('callback');
-            $is_url = preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $callback);
+            $data->redirect_uri = $this->input->post('redirect_uri');
+            $is_url = preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $data->redirect_uri);
             
-            if( !($data->name && $data->callback) || !$is_url ){
+            if( !($data->name && $data->redirect_uri) || !$is_url ){
                 $this->load->view('register',$data);
             }else{
-                $this->OAuth2_server->new_client( $data );
-                $this->load->view('consumers');
+                $this->load->model('client_model');
+                $client = $this->client_model->create( $data->name, $data->redirect_uri, $this->session->user );
+                redirect('consumer/' . $client->client_id );
             }
         }else{
             // show registration page

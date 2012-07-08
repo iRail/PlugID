@@ -9,7 +9,7 @@
 class oauth2 extends CI_Controller {
     
     function index() {
-        $this->load->view('register');
+        redirect('register');
     }
     
     function authorize() {
@@ -19,20 +19,13 @@ class oauth2 extends CI_Controller {
     	 * - ...
     	 */
     	// check if signed in
-        $user = $this->session->user;
-        
-        // it's a no go
-        if( $user === FALSE ){
-            $this->load->view('login');
-            return ;
-        }
         
         // required
         $client_id = $this->input->get('client_id');
         $response_type = $this->input->get('response_type');
         
         // optional
-        $callback = $this->input->get('redirect_uri');
+        $redirect_uri = $this->input->get('redirect_uri');
         $state = $this->input->get('state');
         
         // invalid_request
@@ -45,6 +38,7 @@ class oauth2 extends CI_Controller {
             show_error('unsupported_response_type');
         }
         
+        // check on client
         $this->load->model('client_model');
         $client = $this->client_model->get($client_id);
         
@@ -54,7 +48,25 @@ class oauth2 extends CI_Controller {
         }
         
         // optional callback
-        $callback = $callback ? $callback : $client->redirect_uri;
+        $redirect_uri = $redirect_uri ? $redirect_uri : $client->redirect_uri;
+        
+        // check if user is actually signed in
+        $user = $this->session->user;
+        
+        // it's a no go
+        if( $user === FALSE ){
+            // save request data to return later on
+            $this->session->auth_request = new stdClass();
+            $auth_request = &$this->session->auth_request ;
+            
+            $auth_request->client_id = $this->input->get('client_id');
+            $auth_request->response_type = $this->input->get('response_type');
+            
+            $auth_request->redirect_uri = $redirect_uri;
+            $auth_request->state = $this->input->get('state');
+            // get the user to log in
+            redirect('login');
+        }
         
         // allow button clicked
         if ($this->input->post('allow')) {
@@ -62,14 +74,14 @@ class oauth2 extends CI_Controller {
             $code = md5(time() . uniqid());
             
             $this->load->model('code_model');
-            $this->code_model->insert($client_id, 'temp', $code, 600);
+            $this->code_model->insert($client_id, $user, $redirect_uri, $code, 600); // 10 minutes
             
             // generate callback url
-            $callback = $callback . '?' . http_build_query(array('code' => $code, 'state' => $state));
+            $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
             
             // redirect back to user website
-            redirect($callback);
-        
+            redirect($redirect_uri);
+            
         } else {
             
             // show access screen
@@ -84,7 +96,7 @@ class oauth2 extends CI_Controller {
         // required
         $grant_type = $this->input->post('grant_type');
         $code = $this->input->post('code');
-        $callback = $this->input->post('redirect_uri');
+        $redirect_uri = $this->input->post('redirect_uri');
         
         // hard-coded: 'grant-type' must be 'authorization_code'
         if( $grant_type != 'authorization_code' ){
