@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @copyright (C) 2012 by iRail vzw/asbl
+ * @license AGPLv3
+ * @author Jens Segers <jens at iRail.be>
+ * @author Hannes Van De Vreken <hannes at iRail.be>
+ */
 class Client_model extends CI_Model {
     
     function get($client_id) {
@@ -14,6 +19,12 @@ class Client_model extends CI_Model {
     function get_clients( $user_id ){
         $where = array('user_id' => $user_id);
         return $this->db->get_where('clients', $where)->results ;
+    }
+    
+    function validate( $client_id, $client_secret ){
+        $where = array( 'client_id'     => $client_id,
+                        'client_secret' => $client_secret );
+        return $this->db->get_where('clients', $where)->num_rows() == 1 ;
     }
     
     /*

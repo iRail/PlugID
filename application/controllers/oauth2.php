@@ -87,18 +87,44 @@ class oauth2 extends CI_Controller {
     }
     
     function access_token() {
-        $this->load->library('OAuth2_server');
         $data = array();
         
-        // required
+        // Required
         $grant_type = $this->input->post('grant_type');
         $code = $this->input->post('code');
         $redirect_uri = $this->input->post('redirect_uri');
         
-        // hard-coded: 'grant-type' must be 'authorization_code'
-        if( $grant_type != 'authorization_code' ){
-            $data['error'] = 'invalid_request' ;
+        // Client secret from basic auth header OR post param
+        $client_secret = $this->input->get_request_header('Authorization');
+        if( $client_secret !== FALSE && preg_match( '/^Basic\ (\w{32})$/', $client_secret, $matches ) ){
+            $client_secret = $matches[1] ;
         }else{
+            $client_secret = $this->input->post('client_secret');
+        }
+        
+        $this->load->model('code_model'  );
+        $this->load->model('client_model');
+        
+        // Client_secret must be given either way
+        if( !$client_secret ){
+            $data['error'] = 'invalid_request' ;
+            
+        // Hard-coded: 'grant-type' must be 'authorization_code'
+        }else if( $grant_type != 'authorization_code' ){
+            $data['error'] = 'unsupported_grant_type';//'invalid_grant' ;
+            
+        // Authenticate client
+        }else if( !$this->client_model->validate( $client_id, $client_secret ) ){
+            $data['error'] = 'invalid_client' ;
+            
+        // Validate code
+        }else if( !$this->code_model->is_valid( $code, $client_id, $redirect_uri ) ){
+            $data['error'] = 'unauthorized_client';
+            
+        // Hooray! Give the lad a token!
+        }else{
+            // unfinished
+            // add: access_token generation
             $data['access_token'] = '' ;
         }
         
