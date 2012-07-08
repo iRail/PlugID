@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `auth_codes` (
   `client_id` varchar(32) NOT NULL,
-  `user_id` varchar(32) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `code` varchar(40) NOT NULL,
   `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY `unique` (`client_id`,`user_id`),
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
 
 CREATE TABLE IF NOT EXISTS `auth_tokens` (
   `client_id` varchar(32) NOT NULL,
-  `user_id` varchar(40) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `auth_token` varchar(40) NOT NULL,
   `expires` int(11) NOT NULL,
   UNIQUE KEY `unique` (`client_id`,`user_id`),
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `auth_tokens` (
 
 CREATE TABLE IF NOT EXISTS `clients` (
   `client_id` varchar(32) NOT NULL,
-  `user_id` varchar(32) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
   `client_secret` varchar(32) NOT NULL,
   `redirect_uri` varchar(250) NOT NULL,
@@ -33,18 +33,19 @@ CREATE TABLE IF NOT EXISTS `clients` (
 
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` varchar(32) NOT NULL,
+  `user_id` int(11) NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `user_id` varchar(32) NOT NULL,
-  `service_type` enum('facebook','twitter','google','viking') NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `service_type` enum('foursquare','facebook','twitter','google','viking') NOT NULL,
   `ext_user_id` varchar(32) NOT NULL,
   `access_token` varchar(40) NOT NULL,
   `refresh_token` varchar(40) DEFAULT NULL,
-  UNIQUE KEY `unique` (`service_type`,`user_id`),
+  UNIQUE KEY `unique1` (`service_type`,`user_id`),
+  UNIQUE KEY `unique2` (`service_type`,`user_id`,`ext_user_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

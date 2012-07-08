@@ -17,11 +17,11 @@ class User_model extends CI_Model {
     function create(){
         // generate data
         $data = new stdClass();
-        $data->user_id = md5(time() . uniqid());
+        $data->user_id = rand(1000000000, getrandmax());
         
         // check if client_exists
         while( $this->db->get_where('users', array('user_id' => $data->user_id ) )->num_rows() == 1 ){
-            $data->user_id = md5(time() . uniqid());
+            $data->user_id = rand(1000000000, getrandmax());
         }
         
         // insert row
@@ -72,15 +72,15 @@ class User_model extends CI_Model {
      * Merge user_id_2 to user_id_1
      */
     function merge( $user_id_1, $user_id_2 ){
-        // set user2 items to owner user1
+        // user2 attributes user1
         $data  = array( 'user_id' => $user_id_1 );
         $where = array( 'user_id' => $user_id_2 );
         
-        // start updating tables
-        $this->db->update( 'user_tokens', $data, $where );
-        $this->db->update( 'clients', $data, $where );
-        $this->db->update( 'auth_tokens', $data, $where );
-        $this->db->update( 'auth_codes', $data, $where );
+        // these tables should get updated
+        $tables = array('user_tokens', 'clients', 'auth_tokens', 'auth_codes' );
+        
+        // updating tables
+        $this->db->update( $tables, $data, $where );
         
         //delete user from users table
         $this->db->delete('users', $where); 

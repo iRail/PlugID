@@ -8,22 +8,65 @@ class Client_model extends CI_Model {
         return $this->db->get_where('clients', $where)->row();
     }
     
-    function create( $name, $callback, $user_id ){
+    /*
+     * Generate new client_id & client_secret
+     */
+    function create( $name, $redirect_uri, $user_id ){
         // generate data
         $data = new stdClass();
         $data->client_id     = md5(time() . uniqid());
         $data->client_secret = md5(time() . uniqid());
         $data->name     = $name ;
-        $data->callback = $callback;
+        $data->redirect_uri = $redirect_uri;
         $data->user_id  = $user_id;
         
         // check if client_exists
-        while( $this->db->get_where('clients', array('client_id' => $data->client_id ) )->row() !== FALSE ){
+        while( $this->db->get_where('clients', array('client_id' => $data->client_id ) )->num_rows() == 1 ){
             $data->client_id     = md5(time() . uniqid());
         }
         
         // insert row
         $this->db->insert('clients',(array)$data);
         return $data ;
+    }
+    
+    /*
+     * Reset client's secret
+     */
+    function reset_secret( $client_id ){
+        // create new secret
+        $data = new stdClass();
+        $data->client_secret = md5(time() . uniqid());
+        
+        // update db
+        $this->db->update( 'clients', (array)$data, array('client_id' => $client_id ) );
+        
+        // return result
+        $data->client_id = $client_id ;
+        return $data ;
+    }
+    
+    /*
+     * set some data
+     */
+    function update( $client_id, $name = NULL , $redirect_uri = NULL ){
+        if( is_null($name) && is_null($redirect_uri) ){
+            return FALSE ;
+        }
+        
+        $data = new stdClass();
+        if( ! is_null( $name         ) ) $data->name = $name ;
+        if( ! is_null( $redirect_uri ) ) $data->redirect_uri = $redirect_uri ;
+        
+        return $this->db->update( 'clients', (array)$data, array('client_id' => $client_id ));
+    }
+    
+    /*
+     * remove completely
+     */
+    function delete( $client_id ){
+        $where  = array('client_id' => $client_id);
+        $tables = array('clients','auth_codes','auth_tokens');
+        return $this->db->delete($tables, $where);
     }
 }
