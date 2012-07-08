@@ -51,10 +51,10 @@ class oauth2 extends CI_Controller {
         $redirect_uri = $redirect_uri ? $redirect_uri : $client->redirect_uri;
         
         // check if user is actually signed in
-        $user = $this->session->user;
+        $user_id = $this->session->user;
         
         // it's a no go
-        if( $user === FALSE ){
+        if( $user_id === FALSE ){
             // save request data to return later on
             $this->session->auth_request = new stdClass();
             $auth_request = &$this->session->auth_request ;
@@ -70,18 +70,15 @@ class oauth2 extends CI_Controller {
         
         // allow button clicked
         if ($this->input->post('allow')) {
-            // generate code
-            $code = md5(time() . uniqid());
-            
+            // 
             $this->load->model('code_model');
-            $this->code_model->insert($client_id, $user, $redirect_uri, $code, 600); // 10 minutes
+            $code = $this->code_model->create( $client_id, $user_id, $redirect_uri );
             
             // generate callback url
             $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
             
             // redirect back to user website
             redirect($redirect_uri);
-            
         } else {
             
             // show access screen
