@@ -9,13 +9,14 @@ class OAuth2_client extends client {
     public $url_authorize = '';
     public $url_access_token = '';
     public $url_api_base = '';
-    public $callback;
+    public $callback_url;
     public $client_id = '';
     public $client_secret = '';
+    public $scope = '';
     
     private $settings, $ci, $service, $token = FALSE;
     
-    function __construct($service, $scope = NULL) {
+    function __construct($service) {
     	$this->ci = &get_instance();
     
     	// get config
@@ -39,7 +40,21 @@ class OAuth2_client extends client {
     function set_token($token) {
     	return $this->token = $token;
     }
-        
+
+    /**
+     * Set the refresh token to use for following request
+     */
+    function refresh_token() {
+    	return $this->refresh_token;
+    }
+    
+    /**
+     * Get the current refresh token
+     * @param string $refreshtoken
+     */
+    function set_refresh_token($refresh_token) {
+    	return $this->refresh_token = refresh_token;
+    }        
         
     /**
      * Redirect to authorize url
@@ -49,14 +64,16 @@ class OAuth2_client extends client {
         // build params
         $params = array();
         $params['client_id'] = $this->settings['client_id'];
-        $params['redirect_uri'] = isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->settings['callback_url'];
+        $params['redirect_uri'] = $this->settings['callback_url'];
         $params['state'] = md5(uniqid(rand(), TRUE));
         $params['response_type'] = 'code';
         
-        if ($options['scope']) {
-            $params['scope'] = $options['scope'];
+        if ($this->settings['scope']) {
+            $params['scope'] = $this->settings['scope'];
         }
         
+        //Merge params with options
+        array_merge($options, $params);
         $url = $this->settings['url_authorize'];
         return $url . (strpos($url, '?') !== false ? '&' : '?') . http_build_query($params);
     }
@@ -66,31 +83,35 @@ class OAuth2_client extends client {
      * @param string $code
      * @param array $options
      */
-    public function get_access_token($code, $options = array()) {
+    public function get_access_token($code) {
         $params = array();
         $params['code'] = $code;
-        $params['redirect_uri'] = isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->settings['callback_url'];
+        $params['redirect_uri'] = $this->settings['callback_url'];
         $params['grant_type'] = 'authorization_code';
         $params['client_id'] = $this->settings['client_id'];
         $params['client_secret'] = $this->settings['client_secret'];
         
+        if ($this->settings['scope']) {
+        	$params['scope'] = $this->settings['scope'];
+        }        
         $ci = &get_instance();
         $ci->load->library('curl');
         
         //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
         $data = $ci->curl->post($this->settings["url_access_token"], $params);
         $json = json_decode($data);
-        
+
+
         if (isset($json->error) || ! isset($json->access_token)) {
         	return FALSE;
-        }        
+        } 
+              
         // response
         $token = $json->access_token;
         $token_type = $json->token_type ? $json->token_type : FALSE;
         $refresh_token = $json->refresh_token ? $json->refresh_token : FALSE;
-        $scope = $json->scope ? $json->scope : FALSE;
         
-        return array($token, $refresh_token, $token_type, $scope);
+        return array($token, $refresh_token, $token_type);
     }
     
     /**
@@ -99,12 +120,34 @@ class OAuth2_client extends client {
      * @param string $method
      * @param array $params
      */
-    public function api($uri, $method = 'GET', $data = array()) {
+    public function api($uri, $method = 'GET', $postBody = null, $data = array(), $uriParameters = array()) {
 		$params = array();
         $ci = &get_instance();
         $ci->load->library('curl');
-        $params['oauth_token'] = $token;
-                     
+        
+        if (strtoupper($method) !== 'GET') {
+        	if (is_array($postBody)) {
+        		$postBody['oauth_token'] = $token;
+        	} 
+        	else {
+        		$postBody .= '&oauth_token=' . urlencode($token);
+        	}
+        } 
+        else {
+        	$uriParameters['oauth_token'] = $token;
+        }
+        
+        if ($method !== 'GET') {
+        	if (is_array($postBody)) {
+        		$parameters = http_build_query($postBody);
+        	} else {
+        		$parameters = $postBody;
+        	}
+        }
+        if (! empty($uriParameters)) {
+        	$endpoint .= (strpos($endpoint, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
+        }
+                
         if (strtoupper($method) == 'POST') {
         	$json = $ci->curl->post($this->settings['url_api_base'] . $uri . '?' . http_build_query($params), $data);
         } 
@@ -112,27 +155,10 @@ class OAuth2_client extends client {
         	$json = $ci->curl->get($this->settings['url_api_base'] . $uri . '?' . http_build_query(array_merge($params, $data)));
         }
         $data = json_decode($json);
-        if (!$json) {
+        if (!$json || isset($data->error)) {
         	$this->error = 'No response from ' . $service . ' API';
         	return FALSE;
         } 
-        //What to do when an error was returned?
-        // 1) Try to refresh the token
-        // 2) If it fails again, return FALSE - token isn't usable anymore
-        // Not finished yet
-        elseif (isset($data->error)){
-		    //Try to get a new token
-			$this->refresh_access_token($refresh_token);
-			
-			//Readd new token
-            if (strtoupper($method) == 'POST') {
-        	    $json = $ci->curl->post($this->settings['url_api_base'] . $uri . '?' . http_build_query($params), $data);
-            } 
-            else {
-        	    $json = $ci->curl->get($this->settings['url_api_base'] . $uri . '?' . http_build_query(array_merge($params, $data)));
-            }			
-			return json_decode($data);
-		}
 		return $json;
     }
     
