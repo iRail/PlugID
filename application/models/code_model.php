@@ -34,7 +34,7 @@ class Code_model extends CI_Model {
                         'client_id' => $client_id,
                         'redirect_uri' => $redirect_uri,
                         'expires >' => time() );
-        return $this->db->get_where('codes', $where )->num_rows() < 1 ;
+        return $this->db->get_where('auth_codes', $where )->num_rows() > 0 ;
     }
 	
 }

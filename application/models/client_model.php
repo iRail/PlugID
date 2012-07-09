@@ -18,7 +18,7 @@ class Client_model extends CI_Model {
      */
     function get_clients( $user_id ){
         $where = array('user_id' => $user_id);
-        return $this->db->get_where('clients', $where)->results ;
+        return $this->db->get_where('clients', $where)->result() ;
     }
     
     function validate( $client_id, $client_secret ){
@@ -86,6 +86,7 @@ class Client_model extends CI_Model {
     function delete( $client_id ){
         $where  = array('client_id' => $client_id);
         $tables = array('clients','auth_codes','auth_tokens');
-        return $this->db->delete($tables, $where);
+        $this->db->delete($tables, $where);
+        return true ;
     }
 }

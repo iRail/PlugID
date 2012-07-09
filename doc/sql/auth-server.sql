@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
   `user_id` int(11) NOT NULL,
   `code` varchar(40) NOT NULL,
   `redirect_uri` varchar(250) NOT NULL,
-  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `unique` (`client_id`,`user_id`),
+  `expires` int(11) NOT NULL,
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
