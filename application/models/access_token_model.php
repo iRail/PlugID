@@ -8,12 +8,13 @@
 class Access_token_model extends CI_Model {
     
     private $expires = 86400 ; // 1 day
+    private $hash_algo = 'sha1' ;
     
     function create( $client_id, $user_id ){
         
         $data->client_id = $client_id ;
         $data->user_id = $user_id ;
-        $data->access_token = md5(time() . uniqid());
+        $data->access_token = hash( $this->hash_algo, time() . uniqid()) ;
         $data->expires = $this->expires + time();
         
         $this->db->insert( 'auth_tokens', (array)$data );

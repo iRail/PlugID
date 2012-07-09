@@ -1,16 +1,16 @@
 <?php
 
-    class OAuth2_client extends client {
+    class OAuth2_client {
 
         private $settings, $ci, $service, $token = FALSE;
 
-        function __construct($service) {
+        function __construct( $config = array() ) {
             $this->ci = &get_instance();
-
+            $this->service = $config['service'];
+            
             // get config
-            $this->ci->config->load('oauth2/' . strtolower($service), TRUE);
-            $this->service = $service;
-            $this->settings = $this->ci->config->item(strtolower($service));
+            $this->ci->config->load('oauth2/' . $this->service, TRUE);
+            $this->settings = $this->ci->config->item('oauth2/' . $this->service );
         }
 
         /**

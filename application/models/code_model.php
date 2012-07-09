@@ -9,13 +9,14 @@
 class Code_model extends CI_Model {
     
     private $expires = 600 ; // 10 minutes
+    private $hash_algo = 'sha1' ;
     
     /*
      * Create new code
      */
 	function create($client_id, $user_id) {
 	    
-        $code = md5(time() . uniqid());
+        $code = hash($this->hash_algo, time() . uniqid());
 		$data =  array(   'client_id' => $client_id, 
 		                  'user_id' => $user_id, 
 		                  'code' => $code, 
