@@ -17,7 +17,7 @@
 
         function __construct() {
             //Delegate get config to O
-            $this->oa2c->oa2c = new OAuth2_client('vikingspots');
+            $this->oa2c = new OAuth2_client('vikingspots');
         }
 
         /**
@@ -77,7 +77,7 @@
             $data = array();
             $data['checkin_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -91,7 +91,7 @@
             $data = array();
             $data['coupon_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -105,7 +105,7 @@
             $data = array();
             $data['deal_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -119,7 +119,7 @@
             $data = array();
             $data['news_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -133,7 +133,7 @@
             $data = array();
             $data['notification_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -147,7 +147,7 @@
             $data = array();
             $data['spot_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
@@ -161,7 +161,7 @@
             $data = array();
             $data['user_id'] = $id;
 
-            $json = $this->oa2c->api($uri, $data);
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
             return $json;
         }
 
