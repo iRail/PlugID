@@ -11,13 +11,17 @@
 class callback extends CI_Controller {
 
     function index( $service ){
+        // 
         $this->load->model('user_model');
         
         // collect callback data
+        $this->input->get('code');
         
         // load plugin
+        $this->load->library('OAuth2_client', array('service' => $service) );
         
         // get user id from service
+        
         
         // check if service is linked to existing user
         //$this->user_model->
@@ -26,6 +30,7 @@ class callback extends CI_Controller {
         
         // if no: create user and link service
         
+        // if $this->session->auth_request is set, handle auth_request (redirect)
     }
 
 }

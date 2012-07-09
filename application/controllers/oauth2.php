@@ -117,11 +117,15 @@ class oauth2 extends CI_Controller {
         
 
         // Authenticate client
-        } else if (!$this->client_model->validate($client_id, $client_secret)) {
+        } else if (!$this->client_model->validate_secret($client_id, $client_secret)) {
             $data['error'] = 'invalid_client';
         
-     	// Validate code
-        } else if (!$this->code_model->is_valid($code, $client_id, $redirect_uri)) {
+        // Validate code
+        } else if (!$this->client_model->validate_redirect_uri($client_id, $redirect_uri)) {
+            $data['error'] = '';
+        
+        // Validate code
+        } else if (!$this->code_model->is_valid($code, $client_id)) {
             $data['error'] = 'unauthorized_client';
             
         // Hooray! Give the lad a token!

@@ -2,7 +2,6 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
   `code` varchar(40) NOT NULL,
-  `redirect_uri` varchar(250) NOT NULL,
   `expires` int(11) NOT NULL,
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)

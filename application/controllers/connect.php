@@ -12,9 +12,10 @@ class connect extends CI_Controller {
     
     function index( $service ){
         // load plugin
+        $this->load->library('OAuth2_client', array('service' => $service) );
         
         // get authorize url from plugin
-        $authorize_url = 'http://youtu.be/dQw4w9WgXcQ';
+        $authorize_url = $this->oauth2_client->authorize();
         
         // redirect to plugin
         redirect( $authorize_url );

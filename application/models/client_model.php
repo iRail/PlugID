@@ -21,9 +21,21 @@ class Client_model extends CI_Model {
         return $this->db->get_where('clients', $where)->result() ;
     }
     
-    function validate( $client_id, $client_secret ){
+    /*
+     * 
+     */
+    function validate_secret( $client_id, $client_secret ){
         $where = array( 'client_id'     => $client_id,
-                        'client_secret' => $client_secret );
+                        'client_secret' => $client_secret);
+        return $this->db->get_where('clients', $where)->num_rows() == 1 ;
+    }
+    
+    /*
+     * 
+     */
+    function validate_redirect_uri( $client_id, $redirect_uri ){
+        $where = array( 'client_id'     => $client_id,
+                        'redirect_uri'  => $redirect_uri );
         return $this->db->get_where('clients', $where)->num_rows() == 1 ;
     }
     
