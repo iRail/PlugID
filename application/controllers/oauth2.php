@@ -18,8 +18,9 @@ class oauth2 extends CI_Controller {
     	 * - token for this user?
     	 * - ...
     	 */
-    	// check if signed in
+        // check if signed in
         
+
         // required
         $client_id = $this->input->get('client_id');
         $response_type = $this->input->get('response_type');
@@ -54,10 +55,10 @@ class oauth2 extends CI_Controller {
         $user_id = $this->session->user;
         
         // it's a no go
-        if( $user_id === FALSE ){
+        if ($user_id === FALSE) {
             // save request data to return later on
             $this->session->auth_request = new stdClass();
-            $auth_request = &$this->session->auth_request ;
+            $auth_request = &$this->session->auth_request;
             
             $auth_request->client_id = $this->input->get('client_id');
             $auth_request->response_type = $this->input->get('response_type');
@@ -72,7 +73,7 @@ class oauth2 extends CI_Controller {
         if ($this->input->post('allow')) {
             // 
             $this->load->model('code_model');
-            $code = $this->code_model->create( $client_id, $user_id, $redirect_uri );
+            $code = $this->code_model->create($client_id, $user_id, $redirect_uri);
             
             // generate callback url
             $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
@@ -96,40 +97,41 @@ class oauth2 extends CI_Controller {
         
         // Client secret from basic auth header OR post param
         $client_secret = $this->input->get_request_header('Authorization');
-        if( $client_secret !== FALSE && preg_match( '/^Basic\ (\w{32})$/', $client_secret, $matches ) ){
-            $client_secret = $matches[1] ;
-        }else{
+        if ($client_secret !== FALSE && preg_match('/^Basic\ (\w{32})$/', $client_secret, $matches)) {
+            $client_secret = $matches[1];
+        } else {
             $client_secret = $this->input->post('client_secret');
         }
         
-        $this->load->model('code_model'  );
+        $this->load->model('code_model');
         $this->load->model('client_model');
         
         // Client_secret must be given either way
-        if( !$client_secret ){
-            $data['error'] = 'invalid_request' ;
-            
-        // Hard-coded: 'grant-type' must be 'authorization_code'
-        }else if( $grant_type != 'authorization_code' ){
-            $data['error'] = 'unsupported_grant_type';//'invalid_grant' ;
-            
+        if (!$client_secret) {
+            $data['error'] = 'invalid_request';
+        
+     	// Hard-coded: 'grant-type' must be 'authorization_code'
+        } else if ($grant_type != 'authorization_code') {
+            $data['error'] = 'unsupported_grant_type'; //'invalid_grant' ;
+        
+
         // Authenticate client
-        }else if( !$this->client_model->validate( $client_id, $client_secret ) ){
-            $data['error'] = 'invalid_client' ;
-            
-        // Validate code
-        }else if( !$this->code_model->is_valid( $code, $client_id, $redirect_uri ) ){
+        } else if (!$this->client_model->validate($client_id, $client_secret)) {
+            $data['error'] = 'invalid_client';
+        
+     	// Validate code
+        } else if (!$this->code_model->is_valid($code, $client_id, $redirect_uri)) {
             $data['error'] = 'unauthorized_client';
-            
-        // Hooray! Give the lad a token!
-        }else{
+        
+     	// Hooray! Give the lad a token!
+        } else {
             // unfinished
             // add: access_token generation
-            $data['access_token'] = '' ;
+            $data['access_token'] = '';
         }
         
         $this->output->set_content_type('application/json');
-        $this->output->set_output(json_encode( $data ));
+        $this->output->set_output(json_encode($data));
     }
 
 }
