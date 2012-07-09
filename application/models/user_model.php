@@ -85,4 +85,11 @@ class User_model extends CI_Model {
         //delete user from users table
         $this->db->delete('users', $where); 
     }
+    
+    function revoke( $user_id, $client_id ){
+        $where = array( 'user_id' => $user_id,
+                        'client_id' => $client_id );
+        $tables = array('auth_codes','auth_tokens');
+        $this->db->delete($tables, $where);
+    }
 }

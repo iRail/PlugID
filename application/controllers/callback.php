@@ -20,7 +20,7 @@ class callback extends CI_Controller {
         // get user id from service
         
         // check if service is linked to existing user
-        $this->user_model->
+        //$this->user_model->
         
         // if yes: log-in as that user (and merge if needed)
         

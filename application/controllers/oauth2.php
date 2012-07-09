@@ -94,6 +94,7 @@ class oauth2 extends CI_Controller {
         $grant_type = $this->input->post('grant_type');
         $code = $this->input->post('code');
         $redirect_uri = $this->input->post('redirect_uri');
+        $client_id = $this->input->post('client_id');
         
         // Client secret from basic auth header OR post param
         $client_secret = $this->input->get_request_header('Authorization');
@@ -107,7 +108,7 @@ class oauth2 extends CI_Controller {
         $this->load->model('client_model');
         
         // Client_secret must be given either way
-        if (!$client_secret) {
+        if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri ) {
             $data['error'] = 'invalid_request';
         
      	// Hard-coded: 'grant-type' must be 'authorization_code'
@@ -122,12 +123,12 @@ class oauth2 extends CI_Controller {
      	// Validate code
         } else if (!$this->code_model->is_valid($code, $client_id, $redirect_uri)) {
             $data['error'] = 'unauthorized_client';
-        
-     	// Hooray! Give the lad a token!
-        } else {
-            // unfinished
-            // add: access_token generation
-            $data['access_token'] = '';
+            
+        // Hooray! Give the lad a token!
+        }else{
+            $this->load->model('access_token_model');
+            $result = $this->access_token_model->create( $client_id, $this->session->user );
+            $data['access_token'] = $result->access_token ;
         }
         
         $this->output->set_content_type('application/json');
