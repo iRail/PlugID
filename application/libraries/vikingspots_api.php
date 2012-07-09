@@ -19,51 +19,24 @@
             //Delegate get config to O
             $this->oa2c = new OAuth2_client('vikingspots');
         }
-
-        /**
-         * Set the token to use for following request
-         */
-        function token() {
-            return $this->oa2c->token;
-        }
-
-        /**
-         * Get the current token
-         * @param string $token
-         */
-        function set_token($token) {
-            return $this->oa2c->token = $token;
-        }
-
+        
         /**
          * Authorization url
          * @param string $callback
-         * @return string
+         * @return string The url we need to use to get an auth_token
          */
         function auth_url($callback = FALSE) {
-            if (!$callback) {
-                $callback = $this->oa2c->settings['callback_url'];
-            }
-
-            return 'http://beta.vikingspots.com/oauth2/authenticate?client_id=' . $this->oa2c->settings['client_id'] . '&response_type=code&redirect_uri=' . urlencode($callback);
+            return $this->oa2c->authorize();
             //Sample return in $_GET: Array ( [code] => dd4c7b96e3ebdaaa613c430be49126 ) 
         }
 
         /**
          * Get OAuth token
          * @param string $code
-         * @return string
+         * @return string 
          */
         function request_token($code) {
-            $url = 'http://beta.vikingspots.com/oauth2/access_token?client_id=' . $this->oa2c->settings['client_id'] . '&client_secret=' . $this->oa2c->settings['client_secret'] . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->oa2c->settings['callback_url']) . '&code=' . $code;
-            $json = $this->oa2c->_get($url);
-
-            if (!isset($json->access_token)) {
-                $this->oa2c->error = 'Did not receive authentication token';
-                return FALSE;
-            }
-
-            $this->oa2c->set_token($json->access_token);
+            $json = $this->oa2c->get_access_token($code);
             return $json->access_token;
         }
 
