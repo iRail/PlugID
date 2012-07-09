@@ -42,7 +42,7 @@ class OAuth2_client extends client {
      * @param string $refreshtoken
      */
     function set_refresh_token($refresh_token) {
-    	return $this->refresh_token = refresh_token;
+        return $this->refresh_token = $refresh_token;
     }        
         
     /**
@@ -85,10 +85,10 @@ class OAuth2_client extends client {
         if ($this->settings['scope']) {
         	$params['scope'] = $this->settings['scope'];
         }        
-        $ci->load->library('curl');
+        $this->ci->load->library('curl');
         
         //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
-        $data = $ci->curl->post($this->settings["url_access_token"], $params);
+        $data = $this->ci->curl->post($this->settings["url_access_token"], $params);
         $json = json_decode($data);
 
 
@@ -111,14 +111,14 @@ class OAuth2_client extends client {
      * @param array $params
      */
     public function api($uri, $method = 'GET', $postBody = null, $uriParameters = array()) {
-        $ci->load->library('curl');
+        $this->ci->load->library('curl');
         $parameters = null;
         
         if (strtoupper($method) !== 'GET') {
         	if (is_array($postBody)) {
         		$postBody['oauth_token'] = $token;
         		$parameters = http_build_query($postBody);
-        	} 
+        	}
         	else {
         		$postBody .= '&oauth_token=' . urlencode($token);
         		$parameters = $postBody;
@@ -134,7 +134,7 @@ class OAuth2_client extends client {
         }
 
         $method = strtolower($method);
-        $json = $ci->curl->$method($url, $parameters);
+        $json = $this->ci->curl->$method($url, $parameters);
         
         $data = json_decode($json);
         if (!$json || isset($data->error)) {
@@ -152,10 +152,10 @@ class OAuth2_client extends client {
     			'client_secret' => $this->settings['client_secret'],
     			'refresh_token' => $refresh_token,
     	);
-    	$ci = &get_instance();
-    	$ci->load->library('curl');
+    	$this->ci = &get_instance();
+    	$this->ci->load->library('curl');
     	
-    	$data = $ci->curl->post($url_access_token, $params);
+    	$data = $this->ci->curl->post($url_access_token, $params);
     	$json =  json_decode($data);
     	
     	if(isset($json->error))

@@ -7,26 +7,24 @@
      */
     if (!defined('BASEPATH'))
         exit('No direct script access allowed');
+    require 'OAuth2_client';
 
     class Vikingspots_API {
 
-        private $settings, $ci, $token = FALSE;
+        private $settings, $oa2c, $token = FALSE;
         // contains the last error
         public $error = FALSE;
 
         function __construct() {
-            $this->ci = &get_instance();
-
-            // get config
-            $this->ci->config->load('vikingspots', TRUE);
-            $this->settings = $this->ci->config->item('vikingspots');
+            //Delegate get config to O
+            $this->oa2c->oa2c = new OAuth2_client('vikingspots');
         }
 
         /**
          * Set the token to use for following request
          */
         function token() {
-            return $this->token;
+            return $this->oa2c->token;
         }
 
         /**
@@ -34,7 +32,7 @@
          * @param string $token
          */
         function set_token($token) {
-            return $this->token = $token;
+            return $this->oa2c->token = $token;
         }
 
         /**
@@ -44,10 +42,10 @@
          */
         function auth_url($callback = FALSE) {
             if (!$callback) {
-                $callback = $this->settings['callback_url'];
+                $callback = $this->oa2c->settings['callback_url'];
             }
 
-            return 'http://beta.vikingspots.com/oauth2/authenticate?client_id=' . $this->settings['client_id'] . '&response_type=code&redirect_uri=' . urlencode($callback);
+            return 'http://beta.vikingspots.com/oauth2/authenticate?client_id=' . $this->oa2c->settings['client_id'] . '&response_type=code&redirect_uri=' . urlencode($callback);
             //Sample return in $_GET: Array ( [code] => dd4c7b96e3ebdaaa613c430be49126 ) 
         }
 
@@ -57,15 +55,15 @@
          * @return string
          */
         function request_token($code) {
-            $url = 'http://beta.vikingspots.com/oauth2/access_token?client_id=' . $this->settings['client_id'] . '&client_secret=' . $this->settings['client_secret'] . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->settings['callback_url']) . '&code=' . $code;
-            $json = $this->_get($url);
+            $url = 'http://beta.vikingspots.com/oauth2/access_token?client_id=' . $this->oa2c->settings['client_id'] . '&client_secret=' . $this->oa2c->settings['client_secret'] . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->oa2c->settings['callback_url']) . '&code=' . $code;
+            $json = $this->oa2c->_get($url);
 
             if (!isset($json->access_token)) {
-                $this->error = 'Did not receive authentication token';
+                $this->oa2c->error = 'Did not receive authentication token';
                 return FALSE;
             }
 
-            $this->set_token($json->access_token);
+            $this->oa2c->set_token($json->access_token);
             return $json->access_token;
         }
 
@@ -79,7 +77,7 @@
             $data = array();
             $data['checkin_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
 
@@ -93,7 +91,7 @@
             $data = array();
             $data['coupon_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
 
@@ -107,10 +105,10 @@
             $data = array();
             $data['deal_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
-        
+
         /**
          * Vikingspots API news info request method
          * @param string $id
@@ -121,10 +119,10 @@
             $data = array();
             $data['news_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
-        
+
         /**
          * Vikingspots API notification info request method
          * @param string $id
@@ -135,10 +133,10 @@
             $data = array();
             $data['notification_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
-        
+
         /**
          * Vikingspots API spot info request method
          * @param string $id
@@ -149,7 +147,7 @@
             $data = array();
             $data['spot_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
 
@@ -163,7 +161,7 @@
             $data = array();
             $data['user_id'] = $id;
 
-            $json = $this->api($uri, $data);
+            $json = $this->oa2c->api($uri, $data);
             return $json;
         }
 
@@ -178,25 +176,25 @@
             $params = array();
 
             // active token set?
-            if (!$token = $this->token()) {
+            if (!$token = $this->oa2c->token()) {
                 // Userless acces on vikingspots API not yet explained.(07/Jul/2012)
-                $params['client_id'] = $this->settings['client_id'];
-                $params['client_secret'] = $this->settings['client_secret'];
+                $params['client_id'] = $this->oa2c->settings['client_id'];
+                $params['client_secret'] = $this->oa2c->settings['client_secret'];
             } else {
                 $params['bearer_token'] = $token;
             }
 
             if (strtoupper($method) == 'POST') {
-                $json = $this->_post('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query($params), $data);
+                $json = $this->oa2c->_post('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query($params), $data);
             } else {
-                $json = $this->_get('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query(array_merge($params, $data)));
+                $json = $this->oa2c->_get('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query(array_merge($params, $data)));
             }
 
             if (!$json) {
-                $this->error = 'No response from Vikingspots API';
+                $this->oa2c->error = 'No response from Vikingspots API';
                 return FALSE;
             } elseif ($json->meta->code != 200) {
-                $this->error = $json->meta->errorDetail;
+                $this->oa2c->error = $json->meta->errorDetail;
                 return FALSE;
             }
 
