@@ -133,7 +133,8 @@
             }
 
             $method = strtolower($method);
-            $json = $this->ci->curl->$method($url, $parameters);
+            //Variable Variables: http://php.net/manual/en/language.variables.variable.php
+            $json = $this->ci->curl->{$method}($url, $parameters);
 
             $data = json_decode($json);
             if (!$json || isset($data->error)) {
