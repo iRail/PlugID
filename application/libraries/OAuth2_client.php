@@ -2,9 +2,10 @@
 
     class OAuth2_client {
 
-        private $settings, $ci, $service, $token = FALSE;
+        private $settings, $ci, $service, $token = FALSE ;
+        private $hash_algo = 'md5';
 
-        function __construct( $config = array() ) {
+        function __construct( $config = array() ){
             $this->ci = &get_instance();
             $this->service = $config['service'];
             
@@ -27,14 +28,12 @@
         function set_token($token) {
             return $this->token = $token;
         }
-
         /**
          * Set the refresh token to use for following request
          */
         function refresh_token() {
             return $this->refresh_token;
         }
-
         /**
          * Get the current refresh token
          * @param string $refreshtoken
@@ -42,7 +41,6 @@
         function set_refresh_token($refresh_token) {
             return $this->refresh_token = $refresh_token;
         }
-
         /**
          * Redirect to authorize url
          * @param array $options
@@ -53,9 +51,10 @@
                 'client_id' => $this->settings['client_id'],
                 'redirect_uri' => $this->settings['callback_url']
             );
-
+            
             //Prevents CSRF
-            $params['state'] = md5(uniqid(rand(), TRUE));
+            $this->session->state = hash($this->hash_algo, time() . uniqid()) ;
+            $params['state'] = $this->session->state ;
             $params['response_type'] = 'code';
 
             if ($this->settings['scope']) {
@@ -67,7 +66,6 @@
             $url = $this->settings['url_authorize'];
             return $url . (strpos($url, '?') !== false ? '&' : '?') . http_build_query($params);
         }
-
         /**
          * Request access token from code
          * @param string $code
@@ -107,7 +105,6 @@
 
             return array($token, $refresh_token, $token_type);
         }
-
         /**
          * Make API calls
          * @param string $path
@@ -167,7 +164,6 @@
             }
             //To Do : save new token and refresh_token in DB and set it in this class.
         }
-
     }
 
     

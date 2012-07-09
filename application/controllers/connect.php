@@ -10,9 +10,9 @@
 
 class connect extends CI_Controller {
     
-    function index( $service ){
+    function index( $service_name ){
         // load plugin
-        $this->load->library('OAuth2_client', array('service' => $service) );
+        $this->load->library('OAuth2_client', array('service' => $service_name) );
         
         // get authorize url from plugin
         $authorize_url = $this->oauth2_client->authorize();

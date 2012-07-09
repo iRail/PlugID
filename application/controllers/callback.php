@@ -10,21 +10,24 @@
  
 class callback extends CI_Controller {
 
-    function index( $service ){
+    function index( $service_name ){
         // 
         $this->load->model('user_model');
         
         // collect callback data
-        $this->input->get('code');
+        $code = $this->input->get('code');
+        $state = $this->input->get('state');
+        
+        // check state
+        // if( $state == $this->session->state ){}
         
         // load plugin
-        $this->load->library('OAuth2_client', array('service' => $service) );
+        $this->load->driver('service', array('adapter' => $service_name ));
+        echo $this->service->$service_name->user_id(); exit ;
         
         // get user id from service
         
-        
         // check if service is linked to existing user
-        //$this->user_model->
         
         // if yes: log-in as that user (and merge if needed)
         

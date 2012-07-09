@@ -71,9 +71,8 @@ class oauth2 extends CI_Controller {
         
         // allow button clicked
         if ($this->input->post('allow')) {
-            // 
             $this->load->model('code_model');
-            $code = $this->code_model->create($client_id, $user_id, $redirect_uri);
+            $code = $this->code_model->create($client_id, $user_id);
             
             // generate callback url
             $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
