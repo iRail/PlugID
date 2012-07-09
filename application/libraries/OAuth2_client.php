@@ -110,39 +110,32 @@ class OAuth2_client extends client {
      * @param string $method
      * @param array $params
      */
-    public function api($uri, $method = 'GET', $postBody = null, $data = array(), $uriParameters = array()) {
-		$params = array();
+    public function api($uri, $method = 'GET', $postBody = null, $uriParameters = array()) {
         $ci->load->library('curl');
+        $parameters = null;
         
         if (strtoupper($method) !== 'GET') {
         	if (is_array($postBody)) {
         		$postBody['oauth_token'] = $token;
+        		$parameters = http_build_query($postBody);
         	} 
         	else {
         		$postBody .= '&oauth_token=' . urlencode($token);
+        		$parameters = $postBody;
         	}
         } 
         else {
         	$uriParameters['oauth_token'] = $token;
         }
+
+        $url = $this->settings['url_api_base'];
+        if (!empty($uriParameters)) {
+        	$url .= (strpos($url, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
+        }
+
+        $method = strtolower($method);
+        $json = $ci->curl->$method($url, $parameters);
         
-        if ($method !== 'GET') {
-        	if (is_array($postBody)) {
-        		$parameters = http_build_query($postBody);
-        	} else {
-        		$parameters = $postBody;
-        	}
-        }
-        if (! empty($uriParameters)) {
-        	$endpoint .= (strpos($endpoint, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
-        }
-                
-        if (strtoupper($method) == 'POST') {
-        	$json = $ci->curl->post($this->settings['url_api_base'] . $uri . '?' . http_build_query($params), $data);
-        } 
-        else {
-        	$json = $ci->curl->get($this->settings['url_api_base'] . $uri . '?' . http_build_query(array_merge($params, $data)));
-        }
         $data = json_decode($json);
         if (!$json || isset($data->error)) {
         	$this->error = 'No response from ' . $service . ' API';
