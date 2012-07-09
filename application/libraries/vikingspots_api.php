@@ -16,7 +16,7 @@
         public $error = FALSE;
 
         function __construct() {
-            //Delegate get config to O
+            //Delegate get config to OAuth2_Client
             $this->oa2c = new OAuth2_client('vikingspots');
         }
         
@@ -158,9 +158,9 @@
             }
 
             if (strtoupper($method) == 'POST') {
-                $json = $this->oa2c->_post('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query($params), $data);
+                $json = $this->oa2c->_post($this->oa2c->settings['url_api_base'] . $uri . '?' . http_build_query($params), $data);
             } else {
-                $json = $this->oa2c->_get('http://beta.vikingspots.com/api/v3/' . $uri . '?' . http_build_query(array_merge($params, $data)));
+                $json = $this->oa2c->_get($this->oa2c->settings['url_api_base'] . $uri . '?' . http_build_query(array_merge($params, $data)));
             }
 
             if (!$json) {
