@@ -86,13 +86,16 @@
             $this->ci->load->library('curl');
 
             //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
-            $data = $this->ci->curl->post($this->settings["url_access_token"], $params);
+            $data = $this->ci->curl->post($this->settings['url_access_token'], $params);
             $json = json_decode($data);
 
 
             if (isset($json->error) || !isset($json->access_token)) {
+                $this->error = 'Did not receive authentication token';
                 return FALSE;
             }
+
+            $this->set_token($json->access_token);
 
             // response
             $token = $json->access_token;
@@ -114,17 +117,17 @@
 
             if (strtoupper($method) !== 'GET') {
                 if (is_array($postBody)) {
-                    $postBody['oauth_token'] = $token;
+                    $postBody['oauth_token'] = $this->token;
                     $parameters = http_build_query($postBody);
                 } else {
-                    $postBody .= '&oauth_token=' . urlencode($token);
+                    $postBody .= '&oauth_token=' . urlencode($this->token);
                     $parameters = $postBody;
                 }
             } else {
-                $uriParameters['oauth_token'] = $token;
+                $uriParameters['oauth_token'] = $this->token;
             }
 
-            $url = $this->settings['url_api_base'];
+            $url = $this->settings['url_api_base'] . $uri;
             if (!empty($uriParameters)) {
                 $url .= (strpos($url, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
             }
