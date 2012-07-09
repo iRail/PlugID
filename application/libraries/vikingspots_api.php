@@ -17,7 +17,7 @@
 
         function __construct() {
             //Delegate get config to O
-            $this->oa2c->oa2c = new OAuth2_client('vikingspots');
+            $this->oa2c = new OAuth2_client('vikingspots');
         }
 
         /**
