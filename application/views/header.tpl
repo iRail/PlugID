@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width">
     
     <!-- <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">  -->
-    <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('css/bootstrap-responsive.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo base_url('css/style.css'); ?>">
     
 </head>
