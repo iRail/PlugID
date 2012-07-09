@@ -9,7 +9,7 @@ class OAuth2_client extends client {
     	$this->ci = &get_instance();
     
     	// get config
-    	$this->ci->config->load(strtolower($service), TRUE);
+    	$this->ci->config->load('oauth2/'.strtolower($service), TRUE);
     	$this->service = $service;
     	$this->settings = $this->ci->config->item(strtolower($service));
     }
@@ -54,6 +54,8 @@ class OAuth2_client extends client {
         $params = array();
         $params['client_id'] = $this->settings['client_id'];
         $params['redirect_uri'] = $this->settings['callback_url'];
+        
+        //Prevents CSRF
         $params['state'] = md5(uniqid(rand(), TRUE));
         $params['response_type'] = 'code';
         
@@ -83,7 +85,6 @@ class OAuth2_client extends client {
         if ($this->settings['scope']) {
         	$params['scope'] = $this->settings['scope'];
         }        
-        $ci = &get_instance();
         $ci->load->library('curl');
         
         //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
@@ -111,7 +112,6 @@ class OAuth2_client extends client {
      */
     public function api($uri, $method = 'GET', $postBody = null, $data = array(), $uriParameters = array()) {
 		$params = array();
-        $ci = &get_instance();
         $ci->load->library('curl');
         
         if (strtoupper($method) !== 'GET') {
