@@ -49,9 +49,10 @@
          */
         public function authorize($options = array()) {
             // build params
-            $params = array();
-            $params['client_id'] = $this->settings['client_id'];
-            $params['redirect_uri'] = $this->settings['callback_url'];
+            $params = array(
+                'client_id' => $this->settings['client_id'],
+                'redirect_uri' => $this->settings['callback_url']
+            );
 
             //Prevents CSRF
             $params['state'] = md5(uniqid(rand(), TRUE));
@@ -73,12 +74,14 @@
          * @param array $options
          */
         public function get_access_token($code) {
-            $params = array();
-            $params['code'] = $code;
-            $params['redirect_uri'] = $this->settings['callback_url'];
-            $params['grant_type'] = 'authorization_code';
-            $params['client_id'] = $this->settings['client_id'];
-            $params['client_secret'] = $this->settings['client_secret'];
+            $params = array(
+                'code' => $code,
+                'client_id' => $this->settings['client_id'],
+                'client_secret' => $this->settings['client_secret'],
+                'redirect_uri' => $this->settings['callback_url'],
+                'refresh_token' => $refresh_token,
+                'grant_type' => 'authorization_code'
+            );
 
             if ($this->settings['scope']) {
                 $params['scope'] = $this->settings['scope'];
