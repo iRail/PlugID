@@ -11,7 +11,7 @@
 class callback extends CI_Controller {
 
     function index( $service_name ){
-        // 
+        // for checking & merging users
         $this->load->model('user_model');
         
         // collect callback data
@@ -19,15 +19,18 @@ class callback extends CI_Controller {
         $state = $this->input->get('state');
         
         // check state
-        // if( $state == $this->session->state ){}
+        if( $state != $this->session->state ){
+            show_error('invalid_state');
+        }
         
         // load plugin
         $this->load->driver('service', array('adapter' => $service_name ));
-        echo $this->service->$service_name->user_id(); exit ;
         
         // get user id from service
+        $ext_user_id = $this->service->$service_name->user_id();
         
         // check if service is linked to existing user
+        $this->user_model->get_user_from_service( $service_name, $ext_user_id );
         
         // if yes: log-in as that user (and merge if needed)
         

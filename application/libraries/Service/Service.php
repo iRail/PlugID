@@ -25,3 +25,7 @@ class Service extends CI_Driver_Library {
     }
 
 }
+
+class Abstract_service extends CI_Driver {
+    
+}

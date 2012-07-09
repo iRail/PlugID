@@ -9,16 +9,21 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_foursquare extends CI_Driver {
+class Service_foursquare extends Abstract_service {
     
     private $ci ;
+    private $service_name = 'foursquare' ;
     
     function __construct(){
         $this->ci = &get_instance();
-        $this->ci->load->library('OAuth2_client', array('service' => 'foursquare'), 'foursquare');
+        $this->ci->load->library('OAuth2_client', array('service' => $service_name ), $service_name);
     }
     
-    function user_id() {
-        
+    function get_authorization_url(){
+        return $this->ci->foursquare->authorize();
+    }
+    
+    function user_id( $token ){
+        $this->ci->foursquare->api();
     }
 }

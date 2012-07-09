@@ -12,10 +12,10 @@ class connect extends CI_Controller {
     
     function index( $service_name ){
         // load plugin
-        $this->load->library('OAuth2_client', array('service' => $service_name) );
+        $this->load->driver('service', array('adapter' => $service_name ));
         
         // get authorize url from plugin
-        $authorize_url = $this->oauth2_client->authorize();
+        $authorize_url = $this->service->foursquare->get_authorization_ur();
         
         // redirect to plugin
         redirect( $authorize_url );
