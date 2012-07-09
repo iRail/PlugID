@@ -10,10 +10,10 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_foursquare extends CI_Driver {
+class Service_viking extends CI_Driver {
     
     private $ci ;
-    private $service_name = 'foursquare';
+    private $service_name = 'vikingspots';
     
     function __construct(){
         $this->ci = &get_instance();
@@ -21,7 +21,6 @@ class Service_foursquare extends CI_Driver {
     }
     
     function user_id() {
-        $results = $this->ci->{$service_name}->api('users',array('user_id' => '123'));
-        print_r($results);
+        $results = $this->ci->vikingspots->api('users',array('user_id' => '123'));
     }
 }
