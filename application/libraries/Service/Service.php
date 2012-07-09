@@ -26,6 +26,26 @@ class Service extends CI_Driver_Library {
 
 }
 
+/*
+ * 
+ */
 class Abstract_service extends CI_Driver {
+    protected $ci ;
+    protected $service_name ;
     
+    /*
+     * 
+     */
+    function __construct( $service_name ){
+        $this->service_name = $service_name ;
+        $this->ci = &get_instance();
+        $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
+    }
+    
+    /*
+     * Generic function
+     */
+    function get_authorization_url(){
+        return $this->ci->{$this->service_name}->authorize();
+    }
 }

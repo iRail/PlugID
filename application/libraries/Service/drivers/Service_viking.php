@@ -10,14 +10,13 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_foursquare extends Abstract_service {
+class Service_viking extends Abstract_service {
     
     function __construct(){
-        parent::__construct('foursquare');
+        parent::__construct('viking');
     }
     
     function user_id() {
-        $results = $this->ci->{$service_name}->api('users',array('user_id' => '123'));
-        var_dump($results);
+        $results = $this->ci->vikingspots->api('users',array('user_id' => '123'));
     }
 }

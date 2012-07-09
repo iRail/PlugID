@@ -33,12 +33,14 @@ class OAuth2_client {
     function set_token($token) {
         return $this->token = $token;
     }
+    
     /**
      * Set the refresh token to use for following request
      */
     function refresh_token() {
         return $this->refresh_token;
     }
+    
     /**
      * Get the current refresh token
      * @param string $refreshtoken
@@ -46,6 +48,7 @@ class OAuth2_client {
     function set_refresh_token($refresh_token) {
         return $this->refresh_token = $refresh_token;
     }
+    
     /**
      * Redirect to authorize url
      * @param array $options
@@ -71,6 +74,7 @@ class OAuth2_client {
         $url = $this->settings['url_authorize'];
         return $url . (strpos($url, '?') !== false ? '&' : '?') . http_build_query($params);
     }
+    
     /**
      * Request access token from code
      * @param string $code
@@ -110,6 +114,7 @@ class OAuth2_client {
 
         return array($token, $refresh_token, $token_type);
     }
+    
     /**
      * Make API calls
      * @param string $path
@@ -151,6 +156,9 @@ class OAuth2_client {
         return $json;
     }
 
+    /*
+     * 
+     */
     public function refresh_access_token($refresh_token) {
         $params = array(
             'grant_type' => 'refresh_token',
