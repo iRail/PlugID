@@ -2,18 +2,7 @@
 
 class OAuth2_client extends client {
     
-	/**
-	 * Necessary vars
-	 * Store it in configfile?
-	 */
-    public $url_authorize = '';
-    public $url_access_token = '';
-    public $url_api_base = '';
-    public $callback_url;
-    public $client_id = '';
-    public $client_secret = '';
-    public $scope = '';
-    
+
     private $settings, $ci, $service, $token = FALSE;
     
     function __construct($service) {
