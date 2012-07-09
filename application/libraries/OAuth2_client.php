@@ -109,9 +109,11 @@
          * Make API calls
          * @param string $path
          * @param string $method
-         * @param array $params
+         * @param string $method
+         * @param null $postBody
+         * @param array $uriParameters
          */
-        public function api($uri, $method = 'GET', $postBody = null, $uriParameters = array()) {
+        function api($uri, $uriParameters = array(), $postBody = null, $method = 'GET') {
             $this->ci->load->library('curl');
             $parameters = null;
 
@@ -151,13 +153,13 @@
                 'client_secret' => $this->settings['client_secret'],
                 'refresh_token' => $refresh_token,
             );
-            $this->ci = &get_instance();
             $this->ci->load->library('curl');
 
             $data = $this->ci->curl->post($url_access_token, $params);
             $json = json_decode($data);
 
             if (isset($json->error)) {
+                $this->error = 'Did not receive refresh token';
                 return FALSE;
             }
             //To Do : save new token and refresh_token in DB and set it in this class.
