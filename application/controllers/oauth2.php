@@ -8,12 +8,15 @@
 
 class oauth2 extends CI_Controller {
     
+    private $ci ;
+    
     function index() {
         redirect('register');
     }
     
     function authorize() {
-        $error = FALSE;
+        $this->ci = &get_instance();
+        $this->ci->load->library('Session');
         
         // required
         $client_id = $this->input->get('client_id');
@@ -28,56 +31,61 @@ class oauth2 extends CI_Controller {
             show_error('invalid_request');
         }
         
-        // unsupported_response_type
-        if ($response_type != 'code') {
-            show_error('unsupported_response_type');
-        }
-        
         // check on client
-        $this->load->model('client_model');
-        $client = $this->client_model->get($client_id);
+        $this->ci->load->model('client_model');
+        $client = $this->ci->client_model->get($client_id);
         
         // client does not exist
-        if (!$client) {
+        if ( !isset($client->client_id)) {
             show_error('unauthorized_client');
         }
         
         // optional callback
         if( $redirect_uri !== FALSE ){
             if( $redirect_uri != $client->redirect_uri ){
-                //
-            }else{
-                
+                // Wrong redirect_uri
+                show_error('invalid_redirect_uri');
             }
+        }else{
+            $redirect_uri = $client->redirect_uri;
         }
         
-        $redirect_uri = $redirect_uri ? $redirect_uri : $client->redirect_uri;
+        // unsupported_response_type
+        if ($response_type != 'code') {
+            show_error('unsupported_response_type');
+        }
         
         // check if user is actually signed in
-        $user_id = $this->session->user;
+        $user_id = $this->ci->session->user;
+        
+        // so, by now, all invalid request should be caught
         
         // it's a no go
         if ($user_id === FALSE) {
-            // save request data to return later on
-            $this->session->auth_request = new stdClass();
-            $auth_request = &$this->session->auth_request;
+            // collect request data
+            $auth_request = new stdClass();
             
-            $auth_request->client_id = $this->input->get('client_id');
-            $auth_request->response_type = $this->input->get('response_type');
+            $auth_request->client_id = $client_id;
+            $auth_request->response_type = $response_type;
             
             $auth_request->redirect_uri = $redirect_uri;
-            $auth_request->state = $this->input->get('state');
+            $auth_request->state = $state;
+            
+            // save request data to return later on
+            unset( $this->ci->session->auth_request );
+            $this->ci->session->auth_request = $auth_request ;
+            
             // get the user to log in
             redirect('login');
         }
         
         // allow button clicked
         if ($this->input->post('allow')) {
-            $this->load->model('code_model');
-            $code = $this->code_model->create($client_id, $user_id);
+            $this->ci->load->model('code_model');
+            $code = $this->ci->code_model->create($client_id, $user_id);
             
             // generate callback url
-            $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
+            $redirect_uri = $redirect_uri . strpos($redirect_uri,'?')?'?':'&' . http_build_query(array('code' => $code, 'state' => $state));
             
             // redirect back to user website
             redirect($redirect_uri);

@@ -43,7 +43,7 @@ abstract class Abstract_service extends CI_Driver {
     /**
      * Function to process code and setup further authentication
      */
-    function complete_authorization( $data = array() ){
+    function complete_authorization( $data ){
         $data = $this->ci->{$this->service_name}->get_access_token( $data['code'] );
         $data['ext_user_id'] = $this->user_id();
         return $data ;
@@ -66,5 +66,9 @@ abstract class Abstract_service extends CI_Driver {
      */
     function set_token( $token ){
         $this->ci->{$this->service_name}->set_token($token);
+    }
+    
+    function api(){
+        
     }
 }

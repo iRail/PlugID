@@ -12,7 +12,6 @@ class register extends CI_Controller {
 
     function index(){
         $this->load->helper('url');
-        $this->load->library('OAuth2_server');
         
         // check if signed in
         $user = $this->session->user;
@@ -35,7 +34,7 @@ class register extends CI_Controller {
             }else{
                 $this->load->model('client_model');
                 $client = $this->client_model->create( $data->name, $data->redirect_uri, $this->session->user );
-                redirect('consumer/' . $client->client_id );
+                redirect('/consumer/' . $client->client_id );
             }
         }else{
             // show registration page

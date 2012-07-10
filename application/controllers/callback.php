@@ -71,15 +71,21 @@ class callback extends CI_Controller {
         $this->ci->user_model->set_token( $data );
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
-        if( $this->ci->session->auth_request ){
-            // build url for access_token request by external client
-            
-            // TODO
-            // redirect();
+        $auth_request = $this->ci->session->auth_request ;
+        if( $auth_request ){
+            $url  = '/oauth2/authorize?' ;
+            $params = array();
+            $params['client_id']     = $auth_request->client_id;
+            $params['response_type'] = $auth_request->response_type ;
+            $params['redirect_uri']  = $auth_request->redirect_uri ;
+            if( $auth_request->state ){
+                $params['state']     = $auth_request->state ;
+            }
+            $url .= http_build_query($params);
+            redirect( $url );
         }
         
-        //redirect('');
-        echo 'done!' ;
+        redirect('');
     }
 
 }
