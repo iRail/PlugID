@@ -14,9 +14,14 @@ class Service_viking extends Abstract_service {
     
     function __construct(){
         parent::__construct('viking');
+        $this->service_name = 'viking';
+        $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
     }
     
     function user_id() {
-        $results = $this->ci->vikingspots->api('users',array('user_id' => '123'));
+        $bearer_token = $this->ci->{$this->service_name}->token();
+        $json = $this->ci->{$this->service_name}->api('users/', array('user_id' => '123','bearer_token' => $bearer_token));
+        $result = json_decode($json);
+        return $result->response->id;
     }
 }

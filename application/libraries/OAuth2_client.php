@@ -94,14 +94,14 @@ class OAuth2_client {
             $params['refresh_token'] = $this->refresh_token;
         }
 
-        if ($this->settings['scope']) {
+        if (isset($this->settings['scope'])) {
             $params['scope'] = $this->settings['scope'];
         }
         
         $this->ci->load->library('curl');
         
-        //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
-        $data = $this->ci->curl->post($this->settings['url_access_token'], $params);
+        //Should be post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
+        $data = $this->ci->curl->get($this->settings['url_access_token'], $params);
         $json = json_decode($data);
         
         if (isset($json->error) || !isset($json->access_token)) {
@@ -135,6 +135,8 @@ class OAuth2_client {
         $this->ci->load->library('curl');
         $parameters = null;
 
+        //Bearer token header notation:http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-21#section-2.1
+        
         if (strtoupper($method) !== 'GET') {
             if (is_array($postBody)) {
                 $postBody['oauth_token'] = $this->token;
@@ -151,14 +153,14 @@ class OAuth2_client {
         $trimmed_uri = trim($uri, '/');
         $trimmed_url = rtrim($this->settings['url_api_base'], '/');
         
-        $url = $trimmed_url . '/' . $trimmed_uri;
+        $url = $trimmed_url . '/' . $trimmed_uri . '/';
+        
         if (!empty($uriParameters)) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
+            $json = $this->ci->curl->get($url, $uriParameters);
+        } else {
+            $json = $this->ci->curl->post($url, $parameters);
         }
-
-        $method = strtolower($method);
-        //Variable Variables: http://php.net/manual/en/language.variables.variable.php
-        $json = $this->ci->curl->{$method}($url, $parameters);
+        //http://beta.vikingspots.com/api/v3/users?user_id=123&bearer_token=dbd18ec52e51a642f9f8218fa10d888377d46156        
 
         return $json;
     }
