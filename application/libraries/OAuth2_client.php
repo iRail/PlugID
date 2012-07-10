@@ -113,12 +113,12 @@ class OAuth2_client {
         $this->refresh_token = isset( $json->refresh_token ) ? $json->refresh_token : FALSE ;
         
         // response
-        $token = $json->access_token;
-        $token_type = isset($json->token_type) ? $json->token_type : FALSE;
-        $refresh_token = isset($json->refresh_token) ? $json->refresh_token : FALSE;
+        $access_token = $json->access_token;
+        $token_type = isset($json->token_type) ? $json->token_type : NULL;
+        $refresh_token = isset($json->refresh_token) ? $json->refresh_token : NULL;
         
         return array(
-        		'token' => $token, 
+        		'access_token' => $access_token,
         		'refresh_token' => $refresh_token, 
         		'token_type' => $token_type);
     }

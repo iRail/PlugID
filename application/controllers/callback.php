@@ -44,7 +44,6 @@ class callback extends CI_Controller {
         
         // check if service is linked to existing user
         $user = $this->ci->user_model->get_user_from_service( $service_name, $data['ext_user_id']);
-        
         if( !isset($user->user_id) ){
             // create user
             $user_id = $this->ci->user_model->create()->user_id;
@@ -52,34 +51,35 @@ class callback extends CI_Controller {
             // connect to logged in user
             if( $this->session->user && $user->user_id != $this->ci->session->user ){
                 // merge 2 users
-                $this->user_model->merge( $user->user_id, $this->ci->session->user );
+                $this->ci->user_model->merge( $user->user_id, $this->ci->session->user );
             }
             $user_id = $user->user_id;
         }
-        var_dump( $user_id );
-        var_dump( $data ); exit ;
         
-        // log in
-        $this->session->user = (int)$user_id ;
+        // log in user
+        $this->ci->session->user = (int)$user_id ;
         
-        var_dump( $this->session->user );
-        /*
-        // fill er up anyway
+        // be sure to add token to db
+        // prep data
         $data['refresh_token'] = isset( $data['refresh_token'])? $data['refresh_token'] : NULL ;
         $data['ext_user_id'  ] = isset( $data['ext_user_id'  ])? $data['ext_user_id'  ] : NULL ;
+        $data['user_id'] = (int)$user_id ;
+        $data['service_type'] = $service_name;
+        unset( $data['token_type'] );
         
         // set token
-        $this->user_model->set_token( $user_id, $service_name, $data['access_token'], $data['refresh_token'], $data['ext_user_id'] )
+        $this->ci->user_model->set_token( $data );
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
-        if( $this->session->auth_request ){
+        if( $this->ci->session->auth_request ){
             // build url for access_token request by external client
             
             // TODO
             // redirect();
         }
         
-        redirect('');*/
+        //redirect('');
+        echo 'done!' ;
     }
 
 }

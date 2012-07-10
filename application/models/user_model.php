@@ -43,20 +43,9 @@ class User_model extends CI_Model {
      * Add or update an access_token of a certain type to a user
      * Leave refresh_token and or external user id null if they did not change
      */
-    function set_token( $user_id, $service_type, $access_token, $refresh_token = NULL, $ext_user_id = NULL ){
-        $data = new stdClass();
+    function set_token( $data ){
         
-        $data->user_id = $user_id;
-        $data->service_type = $service_type ;
-        $data->access_token = $access_token ;
-        if( !is_null($ext_user_id) ){
-            $data->ext_user_id = $ext_user_id   ;
-        }
-        if( !is_null($refresh_token) ){
-            $data->refresh_token = $refresh_token ;
-        }
-        
-        $where = array( 'user_id' => $user_id, 'service_type' => $service_type );
+        $where = array( 'user_id' => $data['user_id'], 'service_type' => $data['service_type'] );
         if( $this->db->get_where('user_tokens', $where )->num_rows() == 0 ){
             // insert
             $this->db->insert( 'user_tokens',$data );
@@ -64,7 +53,6 @@ class User_model extends CI_Model {
             // update
             $this->db->update( 'user_tokens',$data, $where );
         }
-        
         return $data ;
     }
     

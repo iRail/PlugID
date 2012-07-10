@@ -19,7 +19,7 @@ class Service_foursquare extends Abstract_service {
     }
     
     function user_id() {
-        $json = $this->ci->{$this->service_name}->api('users/self', array( 'v' => '20120710' ));
+        $json = $this->ci->{$this->service_name}->api('users/self');
         $result = json_decode($json);
         return $result->response->user->id ;
     }
