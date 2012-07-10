@@ -10,8 +10,8 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-//me
-class Service_facebook extends CI_Driver {
+
+class Service_facebook extends Abstract_service {
     
     private $ci ;
     
@@ -23,7 +23,11 @@ class Service_facebook extends CI_Driver {
     
     function user_id() {
         $json = $this->ci->{$this->service_name}->api('me');
+        
         $result = json_decode($json);
+        if($result == NULL || isset($result->error)){
+        	return FALSE;
+        }
         return $result->id;		
     }
 }

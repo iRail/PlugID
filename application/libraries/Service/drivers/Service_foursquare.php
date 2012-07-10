@@ -4,7 +4,7 @@
  * @license AGPLv3
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
- * @author Koen De Groote <koen at iRail.be>s
+ * @author Lennart Martens <lennart at iRail.be>s
  */
 
 if (!defined('BASEPATH'))
@@ -21,6 +21,9 @@ class Service_foursquare extends Abstract_service {
     function user_id() {
         $json = $this->ci->{$this->service_name}->api('users/self');
         $result = json_decode($json);
-        return $result->response->user->id ;
+        if($result == NULL || $result->meta->code != 200){
+        	return FALSE;
+        }        
+        return $result->response->user->id;
     }
 }
