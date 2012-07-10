@@ -19,7 +19,8 @@ class Service_foursquare extends Abstract_service {
     }
     
     function user_id() {
-        $results = $this->ci->{$service_name}->api('users',array('user_id' => '123'));
-        var_dump($results);
+        $json = $this->ci->{$this->service_name}->api('users/self', array( 'v' => '20120710' ));
+        $result = json_decode($json);
+        return $result->response->user->id ;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class cURL {
+class curl{
     
     public $error_code;
     public $error;
@@ -57,3 +57,5 @@ class cURL {
         return $data;
     }
 }
+
+?>
