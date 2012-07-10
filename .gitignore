@@ -49,3 +49,4 @@ sync.ffs_db
 
 #CodeIgnitor
 application/config/development/
+application/config/database.php

@@ -160,11 +160,6 @@ class OAuth2_client {
         //Variable Variables: http://php.net/manual/en/language.variables.variable.php
         $json = $this->ci->curl->{$method}($url, $parameters);
 
-        $data = json_decode($json);
-        if (!$json || isset($data->error)) {
-            $this->error = 'No response from ' . $service . ' API';
-            return FALSE;
-        }
         return $json;
     }
 
@@ -181,15 +176,18 @@ class OAuth2_client {
         );
         $this->ci->load->library('curl');
         
-        $data = $this->ci->curl->post($url_access_token, $params);
-        $json = json_decode($data);
+        $json = $this->ci->curl->post($url_access_token, $params);
+        $data = json_decode($json);
 
-        if (isset($json->error)) {
+        if (isset($data->error)) {
             $this->error = 'Did not receive refresh token';
             return FALSE;
         }
         //To Do : save new token and refresh_token in DB and set it in this class.
-        return array();
+        return array(
+        		'token' => $data->token,
+        		'token_type' => $data->token_type
+        		);
     }
 }
 

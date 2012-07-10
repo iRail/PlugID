@@ -14,7 +14,7 @@ class Service extends CI_Driver_Library {
     protected $adapter = 'foursquare';
     
     public function __construct($config = array()) {
-        $this->valid_drivers = array('Service_foursquare','Service_facebook','Service_google');
+        $this->valid_drivers = array('Service_foursquare','Service_facebook','Service_google','Service_viking');
         if (isset($config['adapter']) && in_array($config['adapter'], array_map('strtolower', $this->valid_drivers))) {
             $this->adapter = $config['adapter'];
         }

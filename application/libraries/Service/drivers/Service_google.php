@@ -11,7 +11,7 @@ if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
 //me
-class Service_facebook extends CI_Driver {
+class Service_google extends Abstract_service {
 
 	private $ci ;
 
@@ -26,6 +26,9 @@ class Service_facebook extends CI_Driver {
 		//https://developers.google.com/accounts/docs/OAuth2UserAgent#validatetoken
 		$json = $this->ci->{$this->service_name}->api('oauth2/v1/tokeninfo');
 		$result = json_decode($json);
+		if($result == NULL || isset($result->error)){
+			return FALSE;
+		}
 		return $result->user_id;
 	}
 }
