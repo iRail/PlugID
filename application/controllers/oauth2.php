@@ -13,14 +13,8 @@ class oauth2 extends CI_Controller {
     }
     
     function authorize() {
-        /* pre-checks:
-    	 * - user logged in yet?
-    	 * - token for this user?
-    	 * - ...
-    	 */
-        // check if signed in
+        $error = FALSE;
         
-
         // required
         $client_id = $this->input->get('client_id');
         $response_type = $this->input->get('response_type');
@@ -49,6 +43,14 @@ class oauth2 extends CI_Controller {
         }
         
         // optional callback
+        if( $redirect_uri !== FALSE ){
+            if( $redirect_uri != $client->redirect_uri ){
+                //
+            }else{
+                
+            }
+        }
+        
         $redirect_uri = $redirect_uri ? $redirect_uri : $client->redirect_uri;
         
         // check if user is actually signed in
@@ -71,9 +73,8 @@ class oauth2 extends CI_Controller {
         
         // allow button clicked
         if ($this->input->post('allow')) {
-            // 
             $this->load->model('code_model');
-            $code = $this->code_model->create($client_id, $user_id, $redirect_uri);
+            $code = $this->code_model->create($client_id, $user_id);
             
             // generate callback url
             $redirect_uri = $redirect_uri . '?' . http_build_query(array('code' => $code, 'state' => $state));
@@ -94,6 +95,7 @@ class oauth2 extends CI_Controller {
         $grant_type = $this->input->post('grant_type');
         $code = $this->input->post('code');
         $redirect_uri = $this->input->post('redirect_uri');
+        $client_id = $this->input->post('client_id');
         
         // Client secret from basic auth header OR post param
         $client_secret = $this->input->get_request_header('Authorization');
@@ -107,7 +109,7 @@ class oauth2 extends CI_Controller {
         $this->load->model('client_model');
         
         // Client_secret must be given either way
-        if (!$client_secret) {
+        if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri ) {
             $data['error'] = 'invalid_request';
         
      	// Hard-coded: 'grant-type' must be 'authorization_code'
@@ -116,18 +118,22 @@ class oauth2 extends CI_Controller {
         
 
         // Authenticate client
-        } else if (!$this->client_model->validate($client_id, $client_secret)) {
+        } else if (!$this->client_model->validate_secret($client_id, $client_secret)) {
             $data['error'] = 'invalid_client';
         
-     	// Validate code
-        } else if (!$this->code_model->is_valid($code, $client_id, $redirect_uri)) {
-            $data['error'] = 'unauthorized_client';
+        // Validate code
+        } else if (!$this->client_model->validate_redirect_uri($client_id, $redirect_uri)) {
+            $data['error'] = '';
         
-     	// Hooray! Give the lad a token!
-        } else {
-            // unfinished
-            // add: access_token generation
-            $data['access_token'] = '';
+        // Validate code
+        } else if (!$this->code_model->is_valid($code, $client_id)) {
+            $data['error'] = 'unauthorized_client';
+            
+        // Hooray! Give the lad a token!
+        }else{
+            $this->load->model('access_token_model');
+            $result = $this->access_token_model->create( $client_id, $this->session->user );
+            $data['access_token'] = $result->access_token ;
         }
         
         $this->output->set_content_type('application/json');

@@ -76,13 +76,20 @@ class User_model extends CI_Model {
         $data  = array( 'user_id' => $user_id_1 );
         $where = array( 'user_id' => $user_id_2 );
         
-        // these tables should get updated
-        $tables = array('user_tokens', 'clients', 'auth_tokens', 'auth_codes' );
-        
         // updating tables
-        $this->db->update( $tables, $data, $where );
+        $this->db->update( 'user_tokens', $data, $where );
+        $this->db->update( 'clients',     $data, $where );
+        $this->db->update( 'auth_tokens', $data, $where );
+        $this->db->update( 'auth_codes',  $data, $where );
         
         //delete user from users table
         $this->db->delete('users', $where); 
+    }
+    
+    function revoke( $user_id, $client_id ){
+        $where = array( 'user_id' => $user_id,
+                        'client_id' => $client_id );
+        $tables = array('auth_codes','auth_tokens');
+        $this->db->delete($tables, $where);
     }
 }

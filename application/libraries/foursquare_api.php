@@ -6,148 +6,217 @@
  * @author Hannes Van De Vreken <hannes at iRail.be>
  */
 
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+    if (!defined('BASEPATH')) exit('No direct script access allowed');
+    require 'OAuth2_client';
 
-class Foursquare_API {
-    
-    private $settings, $ci, $token = FALSE;
-    
-    // contains the last error
-    public $error = FALSE;
-    
-    function __construct() {
-        $this->ci = &get_instance();
-        
-        // get config
-        $this->ci->config->load('foursquare', TRUE);
-        $this->settings = $this->ci->config->item('foursquare');
-    }
-    
-    /**
-     * Set the token to use for following request
-     */
-    function token() {
-        return $this->token;
-    }
-    
-    /**
-     * Get the current token
-     * @param string $token
-     */
-    function set_token($token) {
-        return $this->token = $token;
-    }
-    
-    /**
-     * Authorization url
-     * @param string $callback
-     * @return string
-     */
-    function auth_url($callback = FALSE) {
-        if (!$callback) {
-            $callback = $this->settings['callback_url'];
+    class Foursquare_API {
+
+        private $settings, $oa2c, $token = FALSE;
+        // contains the last error
+        public $error = FALSE;
+
+        function __construct() {
+            //Delegate get config to OAuth2_Client
+            $this->oa2c = new OAuth2_client('foursquare');
         }
         
-        return 'https://foursquare.com/oauth2/authenticate?client_id=' . $this->settings['client_id'] . '&response_type=code&redirect_uri=' . urlencode($callback);
-    }
-    
-    /**
-     * Get OAuth token
-     * @param string $code
-     * @return string
-     */
-    function request_token($code) {
-        $url = 'https://foursquare.com/oauth2/access_token?client_id=' . $this->settings['client_id'] . '&client_secret=' . $this->settings['client_secret'] . '&grant_type=authorization_code&redirect_uri=' . urlencode($this->settings['callback_url']) . '&code=' . $code;
-        $json = $this->_get($url);
-        
-        if (!isset($json->access_token)) {
-            $this->error = 'Did not receive authentication token';
-            return FALSE;
+        /**
+         * Authorization url
+         * @param string $callback
+         * @return string The url we need to use to get an auth_token
+         */
+        function auth_url($callback = FALSE) {
+            return $this->oa2c->authorize();
         }
-        
-        $this->set_token($json->access_token);
-        return $json->access_token;
-    }
-    
-    /**
-     * Foursquare API request method
-     * @param string $uri
-     * @param array $data
-     * @return Object
-     */
-    function api($uri, $data = array(), $method = 'GET') {
-        // url parameters
-        $params = array();
-        
-        // active token set?
-        if (!$token = $this->token()) {
-            // asume userless access (https://developer.foursquare.com/overview/auth#userless)
-            $params['client_id'] = $this->settings['client_id'];
-            $params['client_secret'] = $this->settings['client_secret'];
-        } else {
-            $params['oauth_token'] = $token;
+
+        /**
+         * Get OAuth token
+         * @param string $code
+         * @return string 
+         */
+        function request_token($code) {
+            $json = $this->oa2c->get_access_token($code);
+            return $json->access_token;
         }
-        
-        if (strtoupper($method) == 'POST') {
-            $json = $this->_post('https://api.foursquare.com/v2/' . $uri . '?' . http_build_query($params), $data);
-        } else {
-            $json = $this->_get('https://api.foursquare.com/v2/' . $uri . '?' . http_build_query(array_merge($params, $data)));
+
+        /**
+         * Foursquare API checkin info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_checkin($id) {
+            $uri = 'checkins';
+            $data = array();
+            $data['checkin_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
         }
-        
-        if (!$json) {
-            $this->error = 'No response from Foursquare API';
-            return FALSE;
-        } elseif ($json->meta->code != 200) {
-            $this->error = $json->meta->errorDetail;
-            return FALSE;
+
+        /**
+         * Foursquare API coupon info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_coupon($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['coupon_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
         }
-        
-        return $json;
-    }
-    
-    /**
-     * Raw CURL get method
-     * @param string $url
-     * @return Object
-     */
-    private function _get($url) {
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_HTTPGET, TRUE);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        
-        $data = curl_exec($curl);
-        curl_close($curl);
-        
-        if (!$data) {
-            return FALSE;
+
+        /**
+         * Foursquare API deal info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_deal($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['deal_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
         }
-        
-        return json_decode($data);
-    }
-    
-    /**
-     * Raw CURL post method
-     * @param string $url
-     * @param array $data 
-     * @return Object
-     */
-    private function _post($url, $data) {
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, TRUE);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        
-        $data = curl_exec($curl);
-        curl_close($curl);
-        
-        if (!$data) {
-            return FALSE;
+
+        /**
+         * Foursquare API news info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_news($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['news_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
         }
-        
-        return json_decode($data);
+
+        /**
+         * Foursquare API notification info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_notification($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['notification_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
+        }
+
+        /**
+         * Foursquare API spot info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_spot($id) {
+            $uri = 'coupons';
+            $data = array();
+            $data['spot_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
+        }
+
+        /**
+         * Foursquare API user info request method
+         * @param string $id
+         * @return String $json
+         */
+        function get_user($id) {
+            $uri = 'users';
+            $data = array();
+            $data['user_id'] = $id;
+
+            $json = $this->oa2c->api($uri, 'GET', null, $data);
+            return $json;
+        }
+
+        /**
+         * Foursquare API request method
+         * @param string $uri
+         * @param array $data
+         * @return Object
+         */
+        function api($uri, $data = array(), $method = 'GET') {
+            // url parameters
+            $params = array();
+
+            // active token set?
+            if (!$token = $this->oa2c->token()) {
+                // Userless acces
+                $params['client_id'] = $this->oa2c->settings['client_id'];
+                $params['client_secret'] = $this->oa2c->settings['client_secret'];
+            } else {
+                $params['bearer_token'] = $token;
+            }
+
+            if (strtoupper($method) == 'POST') {
+                $json = $this->oa2c->_post($this->oa2c->settings['url_api_base'] . $uri . '?' . http_build_query($params), $data);
+            } else {
+                $json = $this->oa2c->_get($this->oa2c->settings['url_api_base'] . $uri . '?' . http_build_query(array_merge($params, $data)));
+            }
+
+            if (!$json) {
+                $this->oa2c->error = 'No response from Foursquare API';
+                return FALSE;
+            } elseif ($json->meta->code != 200) {
+                $this->oa2c->error = $json->meta->errorDetail;
+                return FALSE;
+            }
+
+            return $json;
+        }
+
+        /**
+         * Raw CURL get method
+         * @param string $url
+         * @return Object
+         */
+        private function _get($url) {
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_HTTPGET, TRUE);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+            $data = curl_exec($curl);
+            curl_close($curl);
+
+            if (!$data) {
+                return FALSE;
+            }
+
+            return json_decode($data);
+        }
+
+        /**
+         * Raw CURL post method
+         * @param string $url
+         * @param array $data 
+         * @return Object
+         */
+        private function _post($url, $data) {
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_POST, TRUE);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+            $data = curl_exec($curl);
+            curl_close($curl);
+
+            if (!$data) {
+                return FALSE;
+            }
+
+            return json_decode($data);
+        }
+
     }
 
-}
+?>

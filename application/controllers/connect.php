@@ -10,11 +10,12 @@
 
 class connect extends CI_Controller {
     
-    function index( $service ){
+    function index( $service_name ){
         // load plugin
+        $this->load->driver('service', array('adapter' => $service_name ));
         
         // get authorize url from plugin
-        $authorize_url = 'http://youtu.be/dQw4w9WgXcQ';
+        $authorize_url = $this->service->foursquare->get_authorization_url();
         
         // redirect to plugin
         redirect( $authorize_url );

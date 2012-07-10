@@ -9,18 +9,18 @@
 class Code_model extends CI_Model {
     
     private $expires = 600 ; // 10 minutes
+    private $hash_algo = 'sha1' ;
     
     /*
      * Create new code
      */
-	function create($client_id, $user_id, $redirect_uri) {
+	function create($client_id, $user_id) {
 	    
-        $code = md5(time() . uniqid());
+        $code = hash($this->hash_algo, time() . uniqid());
 		$data =  array(   'client_id' => $client_id, 
 		                  'user_id' => $user_id, 
 		                  'code' => $code, 
-		                  'expires' => time() + $this->expires,
-                          'redirect_uri' => $redirect_uri );
+		                  'expires' => time() + $this->expires );
         $this->db->insert('auth_codes', $data);
         return $code ;
 	}
@@ -28,11 +28,10 @@ class Code_model extends CI_Model {
     /*
      * Check a code (used before giving access token)
      */
-    function is_valid( $code, $client_id, $redirect_uri ){
+    function is_valid( $code, $client_id ){
         // check if code is (still) valid
         $where = array( 'code' => $code, 
                         'client_id' => $client_id,
-                        'redirect_uri' => $redirect_uri,
                         'expires >' => time() );
         return $this->db->get_where('auth_codes', $where )->num_rows() > 0 ;
     }

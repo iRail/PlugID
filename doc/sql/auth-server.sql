@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS `auth_codes` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `code` varchar(40) NOT NULL,
-  `redirect_uri` varchar(250) NOT NULL,
+  `code` varchar(64) NOT NULL,
   `expires` int(11) NOT NULL,
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)
@@ -12,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
 CREATE TABLE IF NOT EXISTS `auth_tokens` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `auth_token` varchar(40) NOT NULL,
+  `access_token` varchar(40) NOT NULL,
   `expires` int(11) NOT NULL,
   UNIQUE KEY `unique` (`client_id`,`user_id`),
   KEY `user_id` (`user_id`),
@@ -42,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   `user_id` int(11) NOT NULL,
   `service_type` enum('foursquare','facebook','twitter','google','viking') NOT NULL,
   `ext_user_id` varchar(32) NOT NULL,
-  `access_token` varchar(40) NOT NULL,
-  `refresh_token` varchar(40) DEFAULT NULL,
+  `access_token` varchar(128) NOT NULL,
+  `refresh_token` varchar(128) DEFAULT NULL,
   UNIQUE KEY `unique1` (`service_type`,`user_id`),
   UNIQUE KEY `unique2` (`service_type`,`user_id`,`ext_user_id`),
   KEY `user_id` (`user_id`)
