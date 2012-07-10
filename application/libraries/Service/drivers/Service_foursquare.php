@@ -4,7 +4,7 @@
  * @license AGPLv3
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
- * @author Koen De Groote <koen at iRail.be>s
+ * @author Koen De Groote <koen at iRail.be>
  */
 
 if (!defined('BASEPATH'))
@@ -14,13 +14,13 @@ class Service_foursquare extends Abstract_service {
     
     function __construct(){
         parent::__construct('foursquare');
-        $this->service_name = 'foursquare' ;
+        $this->service_name = 'foursquare';
         $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
     }
     
     function user_id() {
         $json = $this->ci->{$this->service_name}->api('users/self');
         $result = json_decode($json);
-        return $result->response->user->id ;
+        return $result->response->user->id;
     }
 }
