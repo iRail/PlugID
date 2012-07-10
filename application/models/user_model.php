@@ -29,7 +29,7 @@ class User_model extends CI_Model {
         return $data ;
     }
     
-    /*
+    /**
      * Get user who's access_token and service are known
      */
     function get_user_from_service( $service_type, $ext_user_id ){
@@ -56,6 +56,35 @@ class User_model extends CI_Model {
         return $data ;
     }
     
+    /**
+     * 
+     */
+    function authorize_client( $user_id, $client_id ){
+        if( !$this->is_client_authorized($user_id, $client_id) ){
+            $data = array( 'user_id' => $user_id,
+                           'client_id' => $client_id );
+            return $this->db->insert('auth_clients', $data);
+        }
+        return TRUE;    
+    }
+    
+    /**
+     * 
+     */
+    function is_client_authorized( $user_id, $client_id ){
+        $where = array( 'user_id' => $user_id,
+                        'client_id' => $client_id );
+        return $this->db->get_where('auth_clients', $where)->num_rows() != 0 ;
+    }
+    
+    /*
+     * Get all user's clients
+     */
+    function get_clients( $user_id ){
+        $where = array('user_id' => $user_id);
+        return $this->db->get_where('clients', $where)->result() ;
+    }
+    
     /*
      * Merge user_id_2 to user_id_1
      */
@@ -74,10 +103,13 @@ class User_model extends CI_Model {
         $this->db->delete('users', $where); 
     }
     
+    /**
+     * Delete user-client combo from all authentication tables
+     */
     function revoke( $user_id, $client_id ){
         $where = array( 'user_id' => $user_id,
                         'client_id' => $client_id );
-        $tables = array('auth_codes','auth_tokens');
+        $tables = array('auth_codes','auth_tokens','auth_clients');
         $this->db->delete($tables, $where);
     }
 }

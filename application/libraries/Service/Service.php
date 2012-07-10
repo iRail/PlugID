@@ -57,9 +57,7 @@ abstract class Abstract_service extends CI_Driver {
     /**
      * Generic function
      */
-    function get_authorization_url(){
-        return $this->ci->{$this->service_name}->authorize();
-    }
+    function authorize();
     
     /**
      * Pass on the token to the library

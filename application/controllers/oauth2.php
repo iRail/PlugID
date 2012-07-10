@@ -17,6 +17,8 @@ class oauth2 extends CI_Controller {
     function authorize() {
         $this->ci = &get_instance();
         $this->ci->load->library('Session');
+        $this->ci->load->model('user_model');
+        $this->ci->load->model('code_model');
         
         // required
         $client_id = $this->input->get('client_id');
@@ -79,20 +81,24 @@ class oauth2 extends CI_Controller {
             redirect('login');
         }
         
-        // allow button clicked
-        if ($this->input->post('allow')) {
-            $this->ci->load->model('code_model');
+        // Allow button clicked
+        if( $this->input->post('allow') ){
+            // Save allowance
+            $this->ci->user_model->authorize_client( $user_id, $client_id );
+            
+            // Generate code
             $code = $this->ci->code_model->create($client_id, $user_id);
             
-            // generate callback url
-            $redirect_uri = $redirect_uri . strpos($redirect_uri,'?')?'?':'&' . http_build_query(array('code' => $code, 'state' => $state));
+            // Generate callback url
+            $redirect_uri .= (strpos($redirect_uri,'?')?'?':'&') . http_build_query(array('code' => $code, 'state' => $state));
             
-            // redirect back to user website
+            // Redirect back to user website
             redirect($redirect_uri);
         } else {
-            
             // show access screen
-            $this->load->view('authenticate', array('client' => $client->name));
+            $data = array();
+            $data['client'] = $client->name ;
+            $this->load->view('authorize', $data );
         }
     }
     

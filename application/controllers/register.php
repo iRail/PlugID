@@ -18,7 +18,7 @@ class register extends CI_Controller {
         
         // it's a no go
         if( $user === FALSE ){
-            redirect('login');
+            redirect('/login');
         }
         
         // logged in

@@ -16,14 +16,6 @@ class Client_model extends CI_Model {
     }
     
     /*
-     * Get all user's clients
-     */
-    function get_clients( $user_id ){
-        $where = array('user_id' => $user_id);
-        return $this->db->get_where('clients', $where)->result() ;
-    }
-    
-    /*
      * 
      */
     function validate_secret( $client_id, $client_secret ){
@@ -103,4 +95,6 @@ class Client_model extends CI_Model {
         $this->db->delete($tables, $where);
         return true ;
     }
+    
+    function 
 }
