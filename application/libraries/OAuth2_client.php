@@ -117,7 +117,10 @@ class OAuth2_client {
         $token_type = $json->token_type ? $json->token_type : FALSE;
         $refresh_token = $json->refresh_token ? $json->refresh_token : FALSE;
 
-        return array($token, $refresh_token, $token_type);
+        return array(
+        		'token' => $token, 
+        		'refresh_token' => $refresh_token, 
+        		'token_type' => $token_type);
     }
     
     /**
@@ -143,8 +146,12 @@ class OAuth2_client {
         } else {
             $uriParameters['oauth_token'] = $this->token;
         }
-
-        $url = $this->settings['url_api_base'] . $uri;
+		
+        //Trim the uri and url
+        $trimmed_uri = trim($uri, '/');
+        $trimmed_url = rtrim($this->settings['url_api_base'], '/');
+        
+        $url = $trimmed_url . '/' . $trimmed_uri;
         if (!empty($uriParameters)) {
             $url .= (strpos($url, '?') !== false ? '&' : '?') . http_build_query($uriParameters);
         }
@@ -161,8 +168,9 @@ class OAuth2_client {
         return $json;
     }
 
-    /*
-     * 
+    /**
+     * Refresh the access token (when expired)
+     * @param refresh_token
      */
     public function refresh_access_token($refresh_token) {
         $params = array(
