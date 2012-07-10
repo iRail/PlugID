@@ -14,6 +14,8 @@ class Service_foursquare extends Abstract_service {
     
     function __construct(){
         parent::__construct('foursquare');
+        $this->service_name = 'foursquare' ;
+        $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
     }
     
     function user_id() {

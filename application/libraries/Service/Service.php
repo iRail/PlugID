@@ -27,25 +27,44 @@ class Service extends CI_Driver_Library {
 }
 
 /*
- * 
+ * Class to abstract functions from drivers
  */
-class Abstract_service extends CI_Driver {
+abstract class Abstract_service extends CI_Driver {
     protected $ci ;
     protected $service_name ;
     
-    /*
-     * 
+    /**
+     * Constructor
      */
     function __construct( $service_name ){
-        $this->service_name = $service_name ;
         $this->ci = &get_instance();
-        $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
     }
     
-    /*
+    /**
+     * Function to process code and setup further authentication
+     */
+    function complete_authorization( $data = array() ){
+        $data = $this->ci->{$this->service_name}->get_access_token( $data['code'] );
+        $data['ext_user_id'] = $this->user_id();
+        return $data ;
+    }
+    
+    /**
+     * Get ext_user_id from specific service
+     */
+    abstract function user_id();
+    
+    /**
      * Generic function
      */
     function get_authorization_url(){
         return $this->ci->{$this->service_name}->authorize();
+    }
+    
+    /**
+     * Pass on the token to the library
+     */
+    function set_token( $token ){
+        $this->ci->{$this->service_name}->set_token($token);
     }
 }

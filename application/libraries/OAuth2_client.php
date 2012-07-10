@@ -7,12 +7,13 @@
  */
 class OAuth2_client {
 
-    private $settings, $ci, $service, $token = FALSE ;
+    private $settings, $ci, $service, $token = FALSE, $refresh_token = FALSE ;
     private $hash_algo = 'md5';
 
     function __construct( $config = array() ){
         $this->ci = &get_instance();
         $this->service = $config['service'];
+        $this->ci->load->library('Session');
         
         // get config
         $this->ci->config->load('oauth2/' . $this->service, TRUE);
@@ -61,10 +62,10 @@ class OAuth2_client {
         );
         
         //Prevents CSRF
-        $this->session->state = hash($this->hash_algo, time() . uniqid()) ;
-        $params['state'] = $this->session->state ;
+        $this->ci->session->state = hash($this->hash_algo, time() . uniqid()) ;
+        $params['state'] = $this->ci->session->state ;
         $params['response_type'] = 'code';
-
+        
         if ($this->settings['scope']) {
             $params['scope'] = $this->settings['scope'];
         }
@@ -86,27 +87,31 @@ class OAuth2_client {
             'client_id' => $this->settings['client_id'],
             'client_secret' => $this->settings['client_secret'],
             'redirect_uri' => $this->settings['callback_url'],
-            'refresh_token' => $refresh_token,
             'grant_type' => 'authorization_code'
         );
+        
+        if( $this->refresh_token ){
+            $params['refresh_token'] = $this->refresh_token;
+        }
 
         if ($this->settings['scope']) {
             $params['scope'] = $this->settings['scope'];
         }
+        
         $this->ci->load->library('curl');
-
+        
         //Post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
         $data = $this->ci->curl->post($this->settings['url_access_token'], $params);
         $json = json_decode($data);
-
-
+        
         if (isset($json->error) || !isset($json->access_token)) {
             $this->error = 'Did not receive authentication token';
             return FALSE;
         }
 
-        $this->set_token($json->access_token);
-
+        $this->token = $json->access_token;
+        $this->refresh_token = isset( $json->refresh_token ) ? $json->refresh_token : FALSE ;
+        
         // response
         $token = $json->access_token;
         $token_type = $json->token_type ? $json->token_type : FALSE;
@@ -167,7 +172,7 @@ class OAuth2_client {
             'refresh_token' => $refresh_token,
         );
         $this->ci->load->library('curl');
-
+        
         $data = $this->ci->curl->post($url_access_token, $params);
         $json = json_decode($data);
 
@@ -176,6 +181,7 @@ class OAuth2_client {
             return FALSE;
         }
         //To Do : save new token and refresh_token in DB and set it in this class.
+        return array();
     }
 }
 

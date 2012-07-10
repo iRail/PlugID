@@ -13,14 +13,8 @@ class oauth2 extends CI_Controller {
     }
     
     function authorize() {
-        /* pre-checks:
-    	 * - user logged in yet?
-    	 * - token for this user?
-    	 * - ...
-    	 */
-        // check if signed in
+        $error = FALSE;
         
-
         // required
         $client_id = $this->input->get('client_id');
         $response_type = $this->input->get('response_type');
@@ -49,6 +43,14 @@ class oauth2 extends CI_Controller {
         }
         
         // optional callback
+        if( $redirect_uri !== FALSE ){
+            if( $redirect_uri != $client->redirect_uri ){
+                //
+            }else{
+                
+            }
+        }
+        
         $redirect_uri = $redirect_uri ? $redirect_uri : $client->redirect_uri;
         
         // check if user is actually signed in
