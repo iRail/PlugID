@@ -15,7 +15,7 @@ class Authenticate extends CI_Controller {
         if ($this->session->user) {
             redirect('');
         } else {
-            $this->load->view('login');
+            $this->load->view('authenticate');
         }
     }
 }

@@ -8,6 +8,4 @@
     </div>
 </div>
 
-<?php
-include ('footer.tpl');
-?>
+<?php include ('footer.tpl'); ?>

@@ -82,7 +82,7 @@ class Oauth2 extends CI_Controller {
             $this->ci->session->auth_request = $auth_request;
             
             // get the user to log in
-            redirect('login');
+            redirect('authenticate');
         }
         
         $is_authorized = $this->ci->user_model->is_client_authorized($user_id, $client_id);

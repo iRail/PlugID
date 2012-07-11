@@ -98,4 +98,3 @@ class Callback extends CI_Controller {
     }
 
 }
-   
