@@ -27,6 +27,7 @@ class Callback extends CI_Controller {
         $data = new stdClass();
         $data->code = $this->input->get('code');
         $data->oauth_token = $this->input->get('oauth_token');
+        $data->oauth_token = $this->input->get('oauth_verifier');
         
         // check state
         if ($state != $this->session->state) {
