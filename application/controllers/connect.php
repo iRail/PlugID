@@ -8,13 +8,16 @@
  * Distributes the clients requests to authorize this application to it's network, given in $service
  */
 
-class connect extends CI_Controller {
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class Connect extends CI_Controller {
     
-    function index( $service_name ){
+    function index($service) {
         // load plugin
-        $this->load->driver('service', array('adapter' => $service_name ));
+        $this->load->driver('service', array('adapter' => $service));
         
         // let plugin do authorization
-        $this->service->$service_name->authorize();
+        $this->service->{$service}->authorize();
     }
 }

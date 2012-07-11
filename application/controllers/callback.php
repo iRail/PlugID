@@ -9,72 +9,71 @@
  * depending on the service, the right authentication client is loaded to handle the identification
  * for matching with this applications users
  */
- 
-class callback extends CI_Controller {
 
-    private $ci ;
-    
-    function index( $service_name ){
-        $this->ci = &get_instance(); 
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class Callback extends CI_Controller {
+   
+    function index($service_name) {
         
         // for checking & merging users
-        $this->ci->load->model('user_model');
-        $this->ci->load->library('session');
+        $this->load->model('user_model');
+        $this->load->library('session');
         
         // collect callback data
-        $state = $this->ci->input->get('state');
+        $state = $this->input->get('state');
         
         $data = new stdClass();
-        $data->code        = $this->ci->input->get('code');
-        $data->oauth_token = $this->ci->input->get('oauth_token');
+        $data->code = $this->input->get('code');
+        $data->oauth_token = $this->input->get('oauth_token');
         
         // check state
-        if( $state != $this->ci->session->state ){
+        if ($state != $this->session->state) {
             show_error('invalid_state');
         }
         
         // check params
-        if( !$data->code && !$data->oauth_token ){
+        if (!$data->code && !$data->oauth_token) {
             show_error('invalid_response');
         }
         
         // load plugin
-        $this->ci->load->driver('service', array('adapter' => $service_name ));
+        $this->load->driver('service', array('adapter' => $service_name));
         
         // get user id from service
-        if( !$data = $this->ci->service->$service_name->identify($data) ){
+        if (!$data = $this->service->$service_name->identify($data)) {
             show_error('authentication failed');
         }
         
-        $data->service_type = $service_name ;
+        $data->service_type = $service_name;
         
         // check if service is linked to existing user
-        $user = $this->ci->user_model->get_token_by_ext_id( $data->service_type, $data->ext_user_id);
-        if( !isset($user->user_id) ){
+        $user = $this->user_model->get_token_by_ext_id($data->service_type, $data->ext_user_id);
+        if (!isset($user->user_id)) {
             // create user
-            $user_id = $this->ci->user_model->create()->user_id;
-        }else{
+            $user_id = $this->user_model->create()->user_id;
+        } else {
             // connect to logged in user
-            if( $this->session->user && $user->user_id != $this->ci->session->user ){
+            if ($this->session->user && $user->user_id != $this->session->user) {
                 // merge 2 users
-                $this->ci->user_model->merge( $user->user_id, $this->ci->session->user );
+                $this->user_model->merge($user->user_id, $this->session->user);
             }
             $user_id = $user->user_id;
         }
         
         // log in user
-        $this->ci->session->user = (int)$user_id ;
+        $this->session->user = (int) $user_id;
         
         // be sure to add token to db
         // prep data
-        $data->user_id = (int)$user_id ;
-        
+        $data->user_id = (int) $user_id;
         
         // set token
-        $this->ci->user_model->set_token( (array)$data );
+        $this->user_model->set_token((array) $data);
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
-        $auth_request = $this->ci->session->auth_request ;
+        $auth_request = $this->session->auth_request ;
         if( $auth_request ){
             $url  = 'oauth2/authorize' ;
             $params = array(
@@ -82,11 +81,13 @@ class callback extends CI_Controller {
                         'response_type' => $auth_request->response_type,
                         'redirect_uri'  => $auth_request->redirect_uri
                       );
-            if( $auth_request->state ){
-                $params['state']     = $auth_request->state ;
+                      
+            if ($auth_request->state) {
+                $params['state'] = $auth_request->state;
             }
-            $url .= '?' .http_build_query($params, NULL, '&');
-            redirect( $url );
+            
+            $url .= '?' . http_build_query($params, NULL, '&');
+            redirect($url);
         }
         
         redirect('');
