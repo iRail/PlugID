@@ -14,7 +14,6 @@ class OAuth2_client {
     function __construct( $config = array() ){
         $this->ci = &get_instance();
         $this->service = $config['service'];
-        $this->ci->load->library('Session');
         
         // get config
         $this->ci->config->load('oauth2/' . $this->service, TRUE);
