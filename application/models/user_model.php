@@ -30,9 +30,19 @@ class User_model extends CI_Model {
     }
     
     /**
+     * 
+     */
+    function get_tokens( $user_id, $service_type ){
+        $where = array( 'user_id' => $user_id,
+                        'service_type' => $service_type
+                      );
+        return $this->db->get_where('user_tokens', $where)->row();
+    }
+    
+    /**
      * Get user who's access_token and service are known
      */
-    function get_user_from_service( $service_type, $ext_user_id ){
+    function get_token_by_ext_id( $service_type, $ext_user_id ){
         $where = array( 'ext_user_id' => $ext_user_id,
                         'service_type' => $service_type
                         );

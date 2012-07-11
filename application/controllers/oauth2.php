@@ -81,8 +81,10 @@ class oauth2 extends CI_Controller {
             redirect('login');
         }
         
-        // Allow button clicked
-        if( $this->input->post('allow') ){
+        $is_authorized = $this->ci->user_model->is_client_authorized( $user_id, $client_id );
+        $is_allowed = $this->input->post('allow') !== FALSE ;
+        // Allow button clicked OR
+        if( $is_allowed || $is_authorized ){
             // Save allowance
             $this->ci->user_model->authorize_client( $user_id, $client_id );
             

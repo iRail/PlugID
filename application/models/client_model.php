@@ -95,6 +95,4 @@ class Client_model extends CI_Model {
         $this->db->delete($tables, $where);
         return true ;
     }
-    
-    function 
 }

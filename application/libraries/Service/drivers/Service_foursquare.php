@@ -14,17 +14,26 @@ class Service_foursquare extends Abstract_service {
     
     function __construct(){
         parent::__construct('foursquare');
-        $this->service_name = 'foursquare';
         $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
     }
     
-    function user_id() {
-        $json = $this->ci->{$this->service_name}->api('users/self');
-        $result = json_decode($json);
+    function identify( $callback_data ){
+        $code = $callback_data->code ;
+        // Access Token Response
+        $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
         
-        if($result == NULL || $result->meta->code != 200){
-        	return FALSE;
-        }        
-        return $result->response->user->id;
+        if( $access_token_resp !== FALSE ){
+            // get users external id
+            $json = $this->ci->{$this->service_name}->api('users/self');
+            $resp = json_decode($json);
+            $access_token_resp->ext_user_id = (int)$resp->response->user->id;
+            return $access_token_resp ;
+        }else{
+            return FALSE ;
+        }
+    }
+    
+    function set_identification( $config ){
+        $this->ci->{$this->service_name}->set_authentication( $config );
     }
 }

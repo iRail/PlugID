@@ -5,7 +5,9 @@
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
  * 
- * Retrieve callback attributes from authorisation
+ * This class is the controller for all callbacks from all oauth providers like twitter, facebook, ...
+ * depending on the service, the right authentication client is loaded to handle the identification
+ * for matching with this applications users
  */
  
 class callback extends CI_Controller {
@@ -20,7 +22,7 @@ class callback extends CI_Controller {
         $this->ci->load->library('session');
         
         // collect callback data
-        $state       = $this->ci->input->get('state');
+        $state = $this->ci->input->get('state');
         
         $data = new stdClass();
         $data->code        = $this->ci->input->get('code');
@@ -40,10 +42,14 @@ class callback extends CI_Controller {
         $this->ci->load->driver('service', array('adapter' => $service_name ));
         
         // get user id from service
-        $data = $this->ci->service->$service_name->complete_authorization((array)$data);
+        if( !$data = $this->ci->service->$service_name->identify($data) ){
+            show_error('authentication failed');
+        }
+        
+        $data->service_type = $service_name ;
         
         // check if service is linked to existing user
-        $user = $this->ci->user_model->get_user_from_service( $service_name, $data['ext_user_id']);
+        $user = $this->ci->user_model->get_token_by_ext_id( $data->service_type, $data->ext_user_id);
         if( !isset($user->user_id) ){
             // create user
             $user_id = $this->ci->user_model->create()->user_id;
@@ -61,27 +67,25 @@ class callback extends CI_Controller {
         
         // be sure to add token to db
         // prep data
-        $data['refresh_token'] = isset( $data['refresh_token'])? $data['refresh_token'] : NULL ;
-        $data['ext_user_id'  ] = isset( $data['ext_user_id'  ])? $data['ext_user_id'  ] : NULL ;
-        $data['user_id'] = (int)$user_id ;
-        $data['service_type'] = $service_name;
-        unset( $data['token_type'] );
+        $data->user_id = (int)$user_id ;
+        
         
         // set token
-        $this->ci->user_model->set_token( $data );
+        $this->ci->user_model->set_token( (array)$data );
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
         $auth_request = $this->ci->session->auth_request ;
         if( $auth_request ){
-            $url  = '/oauth2/authorize?' ;
-            $params = array();
-            $params['client_id']     = $auth_request->client_id;
-            $params['response_type'] = $auth_request->response_type ;
-            $params['redirect_uri']  = $auth_request->redirect_uri ;
+            $url  = 'oauth2/authorize' ;
+            $params = array(
+                        'client_id'     => $auth_request->client_id,
+                        'response_type' => $auth_request->response_type,
+                        'redirect_uri'  => $auth_request->redirect_uri
+                      );
             if( $auth_request->state ){
                 $params['state']     = $auth_request->state ;
             }
-            $url .= http_build_query($params);
+            $url .= '?' .http_build_query($params, NULL, '&');
             redirect( $url );
         }
         

@@ -7,7 +7,8 @@
  */
 class OAuth2_client {
 
-    private $settings, $ci, $service, $token = FALSE, $refresh_token = FALSE ;
+    private $settings, $ci, $service;
+    private $token = FALSE, $token_type = FALSE, $refresh_token = FALSE ;
     private $hash_algo = 'md5';
 
     function __construct( $config = array() ){
@@ -19,35 +20,11 @@ class OAuth2_client {
         $this->ci->config->load('oauth2/' . $this->service, TRUE);
         $this->settings = $this->ci->config->item('oauth2/' . $this->service );
     }
-
-    /**
-     * Set the token to use for following request
-     */
-    function token() {
-        return $this->token;
-    }
-
-    /**
-     * Get the current token
-     * @param string $token
-     */
-    function set_token($token) {
-        return $this->token = $token;
-    }
     
-    /**
-     * Set the refresh token to use for following request
-     */
-    function refresh_token() {
-        return $this->refresh_token;
-    }
-    
-    /**
-     * Get the current refresh token
-     * @param string $refreshtoken
-     */
-    function set_refresh_token($refresh_token) {
-        return $this->refresh_token = $refresh_token;
+    public function set_authentication( $config ){
+        $this->token         = $config->access_token ;
+        $this->refresh_token = $config->refresh_token ;
+        $this->token_type    = $config->token_type ;
     }
     
     /**
@@ -57,21 +34,17 @@ class OAuth2_client {
     public function authorize($options = array()) {
         // build params
         $params = array(
-            'client_id' => $this->settings['client_id'],
-            'redirect_uri' => $this->settings['callback_url']
+            'client_id'     => $this->settings['client_id'],
+            'redirect_uri'  => $this->settings['callback_url'],
+            'response_type' => 'code'
         );
-        
-        //Prevents CSRF
-        $this->ci->session->state = hash($this->hash_algo, time() . uniqid()) ;
-        $params['state'] = $this->ci->session->state ;
-        $params['response_type'] = 'code';
         
         if ($this->settings['scope']) {
             $params['scope'] = $this->settings['scope'];
         }
-
+        
         //Merge params with options
-        array_merge($options, $params);
+        $params = array_merge($options, $params);
         $url = $this->settings['url_authorize'];
         return $url . (strpos($url, '?') !== false ? '&' : '?') . http_build_query($params);
     }
@@ -89,80 +62,41 @@ class OAuth2_client {
             'redirect_uri' => $this->settings['callback_url'],
             'grant_type' => 'authorization_code'
         );
-        
-        if( $this->refresh_token ){
-            $params['refresh_token'] = $this->refresh_token;
-        }
-
-        if (isset($this->settings['scope'])) {
-            $params['scope'] = $this->settings['scope'];
-        }
-        
         $this->ci->load->library('curl');
         
         //Should be post as stated in http://tools.ietf.org/html/draft-ietf-oauth-v2-28#section-4.4.2
-        $data = $this->ci->curl->get($this->settings['url_access_token'], $params);
-        $json = json_decode($data);
+        $json = $this->ci->curl->post($this->settings['url_access_token'], $params);
+        $data = json_decode($json);
         
-        if (isset($json->error) || !isset($json->access_token)) {
+        if (isset($data->error) || !isset($data->access_token)) {
             $this->error = 'Did not receive authentication token';
             return FALSE;
         }
-
-        $this->token = $json->access_token;
-        $this->refresh_token = isset( $json->refresh_token ) ? $json->refresh_token : FALSE ;
         
-        // response
-        $access_token = $json->access_token;
-        $token_type = isset($json->token_type) ? $json->token_type : NULL;
-        $refresh_token = isset($json->refresh_token) ? $json->refresh_token : NULL;
+        $this->token = $data->access_token;
+        $this->refresh_token = isset( $data->refresh_token ) ? $data->refresh_token : FALSE ;
         
-        return array(
-        		'access_token' => $access_token,
-        		'refresh_token' => $refresh_token, 
-        		'token_type' => $token_type);
+        return $data ;
     }
     
     /**
      * Make API calls
-     * @param string $path
-     * @param string $method
-     * @param string $method
-     * @param null $postBody
-     * @param array $uriParameters
+     * @param string $endpoint
+     * @param associative array $params
+     * @return plain json
      */
-    function api($uri, $uriParameters = array(), $postBody = null, $method = 'GET') {
+    function api( $endpoint, $params = array(), $method = 'get' ){
         $this->ci->load->library('curl');
-        $parameters = null;
-
-        //Bearer token header notation:http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-21#section-2.1
         
-        if (strtoupper($method) !== 'GET') {
-            if (is_array($postBody)) {
-                $postBody['oauth_token'] = $this->token;
-                $parameters = http_build_query($postBody);
-            } else {
-                $postBody .= '&oauth_token=' . urlencode($this->token);
-                $parameters = $postBody;
-            }
-        } else {
-            $uriParameters['oauth_token'] = $this->token;
+        $url = rtrim($this->settings['url_api_base'], '/') . '/' . trim( $endpoint , '/') ;
+        
+        if( preg_match( '/bearer/i', $this->token_type ) ){
+            $auth_header = 'Bearer ' . $this->token ;
+        }else{
+            $auth_header = 'OAuth ' . $this->token ;
         }
-		
-        //Trim the uri and url
-        $trimmed_uri = trim($uri, '/');
-        $trimmed_url = rtrim($this->settings['url_api_base'], '/');
         
-        $url = $trimmed_url . '/' . $trimmed_uri . '/';
-        
-        if (!empty($uriParameters)) {
-            $json = $this->ci->curl->get($url, $uriParameters);
-        } else {
-            $json = $this->ci->curl->post($url, $parameters);
-        }
-        //http://beta.vikingspots.com/api/v3/users?user_id=123&bearer_token=dbd18ec52e51a642f9f8218fa10d888377d46156        
-
-        return $json;
+        return $this->ci->curl->{$method}( $url, $params, $auth_header );
     }
 
     /**

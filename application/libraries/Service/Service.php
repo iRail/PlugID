@@ -14,7 +14,7 @@ class Service extends CI_Driver_Library {
     protected $adapter = 'foursquare';
     
     public function __construct($config = array()) {
-        $this->valid_drivers = array('Service_foursquare','Service_facebook','Service_google','Service_viking');
+        $this->valid_drivers = array('Service_foursquare');//,'Service_facebook','Service_google','Service_viking');
         if (isset($config['adapter']) && in_array($config['adapter'], array_map('strtolower', $this->valid_drivers))) {
             $this->adapter = $config['adapter'];
         }
@@ -32,41 +32,44 @@ class Service extends CI_Driver_Library {
 abstract class Abstract_service extends CI_Driver {
     protected $ci ;
     protected $service_name ;
+    private $hash_algo = 'md5';
     
     /**
      * Constructor
      */
     function __construct( $service_name ){
         $this->ci = &get_instance();
+        $this->service_name = $service_name;
     }
     
     /**
-     * Function to process code and setup further authentication
+     * Generic function to provide a state for securing authorize request
      */
-    function complete_authorization( $data ){
-        $data = $this->ci->{$this->service_name}->get_access_token( $data['code'] );
-        $data['ext_user_id'] = $this->user_id();
-        return $data ;
+    public function get_state(){
+        return $this->ci->session->state = hash($this->hash_algo, time() . uniqid()) ;
     }
     
     /**
      * Get ext_user_id from specific service
      */
-    abstract function user_id();
+    abstract function identify( $callback_data );
     
     /**
-     * Generic function
+     * Can be overwritten if needed
      */
-    function authorize();
+    public function authorize(){
+        redirect($this->ci->{$this->service_name}->authorize( array('state'=> $this->get_state()) ));
+    }
     
     /**
      * Pass on the token to the library
      */
-    function set_token( $token ){
-        $this->ci->{$this->service_name}->set_token($token);
-    }
+    abstract function set_identification( $config );
     
-    function api(){
-        
+    /**
+     * proxy calls
+     */
+    public function api( $endpoint, $params = array(), $method = 'get' ){
+        return $this->ci->{$this->service_name}->api($endpoint);
     }
 }
