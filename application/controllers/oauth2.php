@@ -6,9 +6,12 @@
  * @author Hannes Van De Vreken <hannes at iRail.be>
  */
 
-class oauth2 extends CI_Controller {
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class Oauth2 extends CI_Controller {
     
-    private $ci ;
+    private $ci;
     
     function index() {
         redirect('register');
@@ -38,17 +41,17 @@ class oauth2 extends CI_Controller {
         $client = $this->ci->client_model->get($client_id);
         
         // client does not exist
-        if ( !isset($client->client_id)) {
+        if (!isset($client->client_id)) {
             show_error('unauthorized_client');
         }
         
         // optional callback
-        if( $redirect_uri !== FALSE ){
-            if( $redirect_uri != $client->redirect_uri ){
+        if ($redirect_uri !== FALSE) {
+            if ($redirect_uri != $client->redirect_uri) {
                 // Wrong redirect_uri
                 show_error('invalid_redirect_uri');
             }
-        }else{
+        } else {
             $redirect_uri = $client->redirect_uri;
         }
         
@@ -62,6 +65,7 @@ class oauth2 extends CI_Controller {
         
         // so, by now, all invalid request should be caught
         
+
         // it's a no go
         if ($user_id === FALSE) {
             // collect request data
@@ -74,33 +78,33 @@ class oauth2 extends CI_Controller {
             $auth_request->state = $state;
             
             // save request data to return later on
-            unset( $this->ci->session->auth_request );
-            $this->ci->session->auth_request = $auth_request ;
+            unset($this->ci->session->auth_request);
+            $this->ci->session->auth_request = $auth_request;
             
             // get the user to log in
             redirect('login');
         }
         
-        $is_authorized = $this->ci->user_model->is_client_authorized( $user_id, $client_id );
-        $is_allowed = $this->input->post('allow') !== FALSE ;
+        $is_authorized = $this->ci->user_model->is_client_authorized($user_id, $client_id);
+        $is_allowed = $this->input->post('allow') !== FALSE;
         // Allow button clicked OR
-        if( $is_allowed || $is_authorized ){
+        if ($is_allowed || $is_authorized) {
             // Save allowance
-            $this->ci->user_model->authorize_client( $user_id, $client_id );
+            $this->ci->user_model->authorize_client($user_id, $client_id);
             
             // Generate code
             $code = $this->ci->code_model->create($client_id, $user_id);
             
             // Generate callback url
-            $redirect_uri .= (strpos($redirect_uri,'?')?'?':'&') . http_build_query(array('code' => $code, 'state' => $state));
+            $redirect_uri .= (strpos($redirect_uri, '?') ? '?' : '&') . http_build_query(array('code' => $code, 'state' => $state));
             
             // Redirect back to user website
             redirect($redirect_uri);
         } else {
             // show access screen
             $data = array();
-            $data['client'] = $client->name ;
-            $this->load->view('authorize', $data );
+            $data['client'] = $client->name;
+            $this->load->view('authorize', $data);
         }
     }
     
@@ -125,10 +129,10 @@ class oauth2 extends CI_Controller {
         $this->load->model('client_model');
         
         // Client_secret must be given either way
-        if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri ) {
+        if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri) {
             $data['error'] = 'invalid_request';
         
-     	// Hard-coded: 'grant-type' must be 'authorization_code'
+        // Hard-coded: 'grant-type' must be 'authorization_code'
         } else if ($grant_type != 'authorization_code') {
             $data['error'] = 'unsupported_grant_type'; //'invalid_grant' ;
         
@@ -144,12 +148,12 @@ class oauth2 extends CI_Controller {
         // Validate code
         } else if (!$this->code_model->is_valid($code, $client_id)) {
             $data['error'] = 'unauthorized_client';
-            
+        
         // Hooray! Give the lad a token!
-        }else{
+        } else {
             $this->load->model('access_token_model');
-            $result = $this->access_token_model->create( $client_id, $this->session->user );
-            $data['access_token'] = $result->access_token ;
+            $result = $this->access_token_model->create($client_id, $this->session->user);
+            $data['access_token'] = $result->access_token;
         }
         
         $this->output->set_content_type('application/json');

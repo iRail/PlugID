@@ -6,12 +6,15 @@
  * @author Hannes Van De Vreken <hannes at iRail.be>
  */
 
-class login extends CI_Controller {
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class Authenticate extends CI_Controller {
     
     function index() {
-        if( $this->session->user ){
-            redirect( '' );
-        }else{
+        if ($this->session->user) {
+            redirect('');
+        } else {
             $this->load->view('login');
         }
     }
