@@ -17,8 +17,6 @@ Thumbs.db
 .settings
 .buildpath
 .project
-
-##Netbeans
 nbproject/
 nbproject/private/
 build/
@@ -27,8 +25,6 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
-
-##Eclipse
 *.pydevproject
 .project
 .metadata
@@ -43,10 +39,9 @@ local.properties
 .classpath
 .settings/
 .loadpath
-
-#FreeFileSync
 sync.ffs_db
 
-#CodeIgnitor
+###############
+# CodeIgniter #
+###############
 application/config/development/
-application/config/database.php
