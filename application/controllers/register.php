@@ -29,7 +29,7 @@ class Register extends CI_Controller {
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('redirect_uri', 'Redirect url', 'required|prep_url');
         
-        if ($this->form_validation->run() == FALSE) {
+        if ($this->form_validation->run()) {
             
             $data = new stdClass();
             $data->name = $this->input->post('name');

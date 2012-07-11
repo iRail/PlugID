@@ -96,7 +96,13 @@ class Oauth2 extends CI_Controller {
             $code = $this->ci->code_model->create($client_id, $user_id);
             
             // Generate callback url
-            $redirect_uri .= (strpos($redirect_uri, '?') ? '?' : '&') . http_build_query(array('code' => $code, 'state' => $state));
+            $params = array();
+            $params['code'] = $code;
+            if( $state !== FALSE ){
+                $params['state'] = $state;
+            }
+            
+            $redirect_uri .= (strpos($redirect_uri, '?') ? '?' : '&') . http_build_query( $params );
             
             // Redirect back to user website
             redirect($redirect_uri);
@@ -149,12 +155,15 @@ class Oauth2 extends CI_Controller {
         } else if (!$this->code_model->is_valid($code, $client_id)) {
             $data['error'] = 'unauthorized_client';
         
-        // Hooray! Give the lad a token!
         } else {
+            // Hooray! Give the lad a token!
             $this->load->model('access_token_model');
             $result = $this->access_token_model->create($client_id, $this->session->user);
             $data['access_token'] = $result->access_token;
+            // Only type supported
+            $data['token_type'] = 'Bearer' ;
         }
+        
         
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode($data));

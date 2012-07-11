@@ -15,7 +15,7 @@ if (!defined('BASEPATH'))
 
 class Callback extends CI_Controller {
 
-    function index( $service_name ){        
+    function index( $service_name ){ 
         // for checking & merging users
         $this->load->model('user_model');
         $this->load->library('session');

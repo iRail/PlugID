@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS `auth_codes` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `code` varchar(64) NOT NULL,
+  `code` varchar(128) NOT NULL,
   `expires` int(11) NOT NULL,
+  UNIQUE KEY `unique` (`client_id`,`user_id`),
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -11,9 +12,9 @@ CREATE TABLE IF NOT EXISTS `auth_codes` (
 CREATE TABLE IF NOT EXISTS `auth_tokens` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `access_token` varchar(40) NOT NULL,
+  `access_token` varchar(128) NOT NULL,
   `expires` int(11) NOT NULL,
-  UNIQUE KEY `unique` (`client_id`,`user_id`),
+  UNIQUE KEY `unique` (`access_token`),
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
