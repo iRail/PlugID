@@ -22,11 +22,13 @@
         // Access Token Response
         $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
         
-        if($code !== FALSE){
+        if($access_token_resp !== FALSE){
             // get users external id
-            $json = $this->ci->{$this->service_name}->api('accounts','');
+            $json = $this->ci->{$this->service_name}->api('me','');
             $resp = json_decode($json);
-            $access_token_resp->ext_user_id = (int)$resp->response->user->id;
+            $access_token_resp->ext_user_id = (int)$resp->id;
+            //We don't keep expires in the database
+            unset($access_token_resp->expires);
             return $access_token_resp;
         }else{
             return FALSE;
