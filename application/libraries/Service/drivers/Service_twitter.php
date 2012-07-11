@@ -46,7 +46,7 @@ class Service_twitter extends Abstract_service {
     	//Get request_token
     	$response = array();
     	$response = $this->ci->{$this->service_name}->get_request_token();
-    	if(isset($response->oauth_token))
+    	if($response != FALSE)
     	{
     		//Set the oauth_token and oauth_token_secret
     		$this->ci->{$this->service_name}->set_authentication($response);
