@@ -21,9 +21,9 @@ class OAuth2_client {
     }
     
     public function set_authentication( $config ){
-        $this->token         = $config->access_token ;
-        $this->refresh_token = $config->refresh_token ;
-        $this->token_type    = $config->token_type ;
+        $this->token         = $config->access_token;
+        $this->refresh_token = $config->refresh_token;
+        $this->token_type    = $config->token_type;
     }
     
     /**
@@ -73,10 +73,11 @@ class OAuth2_client {
         }
         
         $this->token = $data->access_token;
-        $this->refresh_token = isset( $data->refresh_token ) ? $data->refresh_token : FALSE ;
-        $this->token_type = isset( $data->token_type ) ? $data->token_type : FALSE ;
+        $this->refresh_token = isset($data->refresh_token) ? $data->refresh_token : FALSE;
+        $this->token_type = isset($data->token_type) ? $data->token_type : FALSE;
+
         
-        return $data ;
+        return $data;
     }
     
     /**
@@ -85,18 +86,18 @@ class OAuth2_client {
      * @param associative array $params
      * @return plain json
      */
-    function api( $endpoint, $params = array(), $method = 'get' ){
+    function api($endpoint, $params = array(), $method = 'get' ){
         $this->ci->load->library('curl');
         
         $url = rtrim($this->settings['url_api_base'], '/') . '/' . trim( $endpoint , '/') ;
         
         if( preg_match( '/bearer/i', $this->token_type ) ){
-            $auth_header = 'Bearer ' . $this->token ;
+            $auth_header = 'Bearer ' . $this->token;
         }else{
-            $auth_header = 'OAuth ' . $this->token ;
+            $auth_header = 'OAuth ' . $this->token;
         }
         
-        return $this->ci->curl->{$method}( $url, $params, $auth_header );
+        return $this->ci->curl->{$method}($url, $params, $auth_header);
     }
 
     /**
@@ -126,5 +127,3 @@ class OAuth2_client {
         		);
     }
 }
-
-    
