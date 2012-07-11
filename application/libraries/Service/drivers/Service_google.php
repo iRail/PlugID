@@ -10,7 +10,6 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-//me
 class Service_google extends Abstract_service {
 
 	private $ci ;

@@ -32,7 +32,7 @@ class OAuth1_client {
 	}
 	
 	public function set_authentication( $config ){
-		$token = $config->oauth_token;
+		$oauth_token = $config->oauth_token;
 		$oauth->setToken($config->oauth_token, $config->oauth_token_secret);
 	}
 	
