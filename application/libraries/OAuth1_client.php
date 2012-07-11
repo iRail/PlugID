@@ -1,4 +1,4 @@
-<?php
+<?php     if (!defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * OAuth 1.0a client, based on the OAuth class provided by PHP.net
  * @copyright (C) 2012 by iRail vzw/asbl

@@ -1,4 +1,4 @@
-<?php
+<?php     if (!defined('BASEPATH')) exit('No direct script access allowed');
 
     /**
      * @copyright (C) 2012 by iRail vzw/asbl
