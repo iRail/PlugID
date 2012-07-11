@@ -33,6 +33,9 @@ class callback extends CI_Controller {
             show_error('invalid_state');
         }
         
+        // empty this
+        unset( $this->ci->session->state );
+        
         // check params
         if( !$data->code && !$data->oauth_token ){
             show_error('invalid_response');
@@ -75,6 +78,7 @@ class callback extends CI_Controller {
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
         $auth_request = $this->ci->session->auth_request ;
+        unset( $this->ci->session->auth_request );
         if( $auth_request ){
             $url  = 'oauth2/authorize' ;
             $params = array(

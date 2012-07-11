@@ -42,6 +42,7 @@ $route['default_controller'] = 'main';
 $route['404_override'] = '';
 $route['connect/(:any)'] = 'connect/index/$1';
 $route['callback/(:any)'] = 'callback/index/$1';
+$route['api/(:any)'] = 'api/index/$1';
 
 
 /* End of file routes.php */

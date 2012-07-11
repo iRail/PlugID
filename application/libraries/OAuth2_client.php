@@ -75,6 +75,7 @@ class OAuth2_client {
         
         $this->token = $data->access_token;
         $this->refresh_token = isset( $data->refresh_token ) ? $data->refresh_token : FALSE ;
+        $this->token_type = isset( $data->token_type ) ? $data->token_type : FALSE ;
         
         return $data ;
     }
