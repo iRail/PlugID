@@ -14,9 +14,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Callback extends CI_Controller {
-    
-    function index($service_name) {
-        
+
+    function index( $service_name ){        
         // for checking & merging users
         $this->load->model('user_model');
         $this->load->library('session');
@@ -35,7 +34,7 @@ class Callback extends CI_Controller {
         }
         
         // empty this
-        unset($this->ci->session->state);
+        unset($this->session->state);
         
         // check params
         if (!$data->code && !$data->oauth_token) {
@@ -77,8 +76,8 @@ class Callback extends CI_Controller {
         $this->user_model->set_token((array) $data);
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
-        $auth_request = $this->ci->session->auth_request;
-        unset($this->ci->session->auth_request);
+        $auth_request = $this->session->auth_request;
+        unset($this->session->auth_request);
         
         if( $auth_request ){
             $url  = 'oauth2/authorize' ;
@@ -100,4 +99,3 @@ class Callback extends CI_Controller {
     }
 
 }
-   
