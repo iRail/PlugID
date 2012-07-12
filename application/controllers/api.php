@@ -56,7 +56,7 @@ class api extends CI_Controller {
         $get_params  = $this->input->get();
         $post_params = $this->input->post();
         
-        $method = NULL ;
+        $method = 'get' ; // default
         $params = array();
         if( $get_params !== FALSE ){
             $method = 'get';
@@ -70,10 +70,13 @@ class api extends CI_Controller {
             }
         }
         
-        $this->load->driver('service',array( 'adapter' => $service_name ));
+        // Y U NO LOAD?
+        $this->load->driver('service', array('adapter' => $service_name));
         if( !isset( $this->service->$service_name )){
             $this->return_error( array( 'error' => $service_name . ' does not exist' ));
         }
+        
+        $this->service->$service_name->set_authentication( $tokens );
         echo $this->service->$service_name->api($endpoint_uri, $params, $method );
     }
     

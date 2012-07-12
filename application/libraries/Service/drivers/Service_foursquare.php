@@ -58,4 +58,8 @@ class Service_foursquare extends Abstract_oauth2_service {
     function set_authentication( $tokens ){
         $this->access_token = $tokens->access_token ;
     }
+    
+    public function api( $endpoint, $params = array(), $method = 'get' ){
+        return $this->ci->{$this->service_name}->api($endpoint, $this->access_token, $params, $method);
+    }
 }
