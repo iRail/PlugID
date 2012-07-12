@@ -60,11 +60,9 @@ abstract class Abstract_service extends CI_Driver {
     abstract function set_authentication($tokens);
     
     /**
-* proxy calls
-*/
-    public function api( $endpoint, $params = array(), $method = 'get' ){
-        //return $this->ci->{$this->service_name}->api($endpoint, $params, $method);
-    }
+    * proxy calls
+    */
+    abstract function api( $endpoint, $params = array(), $method = 'get' );
     
     /**
      * Makes config loading easier
