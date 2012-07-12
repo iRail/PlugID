@@ -47,8 +47,8 @@ class Service extends CI_Driver_Library {
  * Class to abstract functions from drivers
  */
 abstract class Service_driver extends CI_Driver {
+	
     protected $ci;
-    protected $settings;
     private $hash_algo = 'md5';
     
     /**
@@ -82,8 +82,6 @@ abstract class Service_driver extends CI_Driver {
      * Makes config loading easier
      */
     abstract function intitialize($config = array());
-    
-
     
     /**
      * Generic function to provide a state for securing authorize request
