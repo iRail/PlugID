@@ -12,23 +12,22 @@ if (!defined('BASEPATH'))
 
 abstract class Service_default extends CI_Driver {
     
-    protected $ci ;
-    protected $settings ;
+    protected $ci;
+    protected $url_api_base;
     
     function __construct(){
         $this->ci = &get_instance();
         $this->ci->load->library('curl');
     }
     
-    protected function load_config($name, $conf_dir = NULL) {
-        $file = is_null($conf_dir) ? '' : rtrim($conf_dir, '/') . '/';
-        $file .= $name;
+    function set_service_name( $service_name ){
         $this->ci->config->load($file, TRUE);
-        $this->settings = $this->ci->config->item($file);
+        $settings = $this->ci->config->item($file);
+        var_dump( $settings ); exit ;
     }
     
     public function api( $endpoint_uri, $params = array(), $method = 'get' ){
-        $endpoint_uri = $this->settings['url_api_base'] . $endpoint_uri ;
+        $endpoint_uri = $this->url_api_base . $endpoint_uri ;
         return $this->ci->curl->{$method}( $endpoint_uri, $params );
     }
 }
