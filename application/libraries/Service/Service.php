@@ -11,11 +11,11 @@ if (!defined('BASEPATH'))
 
 class Service extends CI_Driver_Library {
     
-    protected $adapter = 'foursquare';
+    protected $adapter = NULL ;
+    protected $valid_drivers = array('Service_foursquare','Service_facebook','Service_google','Service_viking');
     
     public function __construct($config = array()) {
-        $this->valid_drivers = array('Service_foursquare','Service_facebook','Service_google','Service_viking');
-        if (isset($config['adapter']) && in_array($config['adapter'], array_map('strtolower', $this->valid_drivers))) {
+        if (isset($config['adapter']) && in_array('service_' . $config['adapter'], array_map('strtolower', $this->valid_drivers))) {
             $this->adapter = $config['adapter'];
         }
     }
@@ -23,7 +23,10 @@ class Service extends CI_Driver_Library {
     function __call($method, $args = array()) {
         return call_user_func_array(array($this->{$this->adapter}, $method), $args);
     }
-
+    
+    function __isset( $driver_adapter ){
+        return $this->adapter == $driver_adapter ;
+    }
 }
 
 /*
@@ -31,22 +34,15 @@ class Service extends CI_Driver_Library {
  */
 abstract class Abstract_service extends CI_Driver {
     protected $ci ;
-    protected $service_name ;
+    protected $settings ;
+    protected $tokens ;
     private $hash_algo = 'md5';
     
     /**
      * Constructor
      */
-    function __construct( $service_name ){
+    function __construct(){
         $this->ci = &get_instance();
-        $this->service_name = $service_name;
-    }
-    
-    /**
-     * Generic function to provide a state for securing authorize request
-     */
-    public function get_state(){
-        return $this->ci->session->state = hash($this->hash_algo, time() . uniqid()) ;
     }
     
     /**
@@ -55,21 +51,44 @@ abstract class Abstract_service extends CI_Driver {
     abstract function identify( $callback_data );
     
     /**
-     * Can be overwritten if needed
+     * Gets all params ready and calls build_and_redirect(
      */
-    public function authorize(){
-        redirect($this->ci->{$this->service_name}->authorize( array('state'=> $this->get_state()) ));
-    }
+    abstract function authorize();
     
     /**
      * Pass on the token to the library
      */
-    abstract function set_identification( $config );
+    abstract function set_identification( $tokens );
+    
+    /**
+     * Makes config loading easier
+     */
+    protected function load_config( $name, $conf_dir = NULL ){
+        $file  = is_null( $conf_dir ) ? '' : rtrim($conf_dir,'/') . '/';
+        $file .= $name ;
+        $this->ci->config->load( $file , TRUE);
+        $this->settings = $this->ci->config->item( $file );
+    }
+    
+    /**
+     * Simply rounds of this authorization request
+     */
+    protected function build_and_redirect( $params ){
+        redirect( $this->settings['url_authorize'] . '?' . http_build_query($params) );
+    }
+    
+    /**
+     * Generic function to provide a state for securing authorize request
+     * Saves the state in Session
+     */
+    protected function get_state(){
+        return $this->ci->session->state = hash($this->hash_algo, time() . uniqid()) ;
+    }
     
     /**
      * proxy calls
      */
     public function api( $endpoint, $params = array(), $method = 'get' ){
-        return $this->ci->{$this->service_name}->api($endpoint);
+        //return $this->ci->{$this->service_name}->api($endpoint, $params, $method);
     }
 }

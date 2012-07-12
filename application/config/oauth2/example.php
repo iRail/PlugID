@@ -8,11 +8,11 @@
 |
 */
 
-$config['client_id']     = '';
-$config['client_secret'] = '';
-$config['callback_url']  = '';
+$config['client_id']         = '';
+$config['client_secret']     = '';
+$config['callback_url']      = '';
 $config['url_authorize']     = '';
-$config['url_access_token'] = '';
-$config['url_api_base']  = '';
-$config['scope']   = '';
+$config['url_access_token']  = '';
+$config['url_api_base']      = '';
+$config['scope']             = '';
 

@@ -24,7 +24,7 @@ class Access_token_model extends CI_Model {
             $data->access_token = $this->token_version . hash( $this->hash_algo, time() . uniqid()) ;
         }
         
-        $this->db->delete( array( 'user_id' => $user_id, 'client_id' => $client_id ));
+        $this->db->delete( 'auth_tokens', array( 'user_id' => $user_id, 'client_id' => $client_id ));
         $this->db->insert( 'auth_tokens', (array)$data );
         
         return $data ;
@@ -33,6 +33,13 @@ class Access_token_model extends CI_Model {
     function is_valid( $access_token ){
         $where = array( 'access_token' => $access_token,
                         'expires >'    => time() );
-        return $this->db->get_where('auth_tokens',$where)->row() ;
+        $row = $this->db->get_where('auth_tokens',$where)->row();
+        if( !isset( $row->user_id ) ){
+            return FALSE;
+        }
+        
+        $where = array( 'client_id' => $row->client_id,
+                        'user_id'   => $row->user_id);
+        return $this->db->get_where('auth_clients',$where)->row();
     }
 }
