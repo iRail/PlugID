@@ -19,7 +19,7 @@ class Callback extends CI_Controller {
         // for checking & merging users
         $this->load->model('user_model');
         $this->load->driver('service', array('adapter' => $service_name));
-        if( !isset($this->service->$service_name) ){
+        if( !$this->service->is_valid($service_name)) {
             show_error( $service_name .' is not a valid service name.');
         }
         

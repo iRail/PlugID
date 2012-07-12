@@ -25,7 +25,7 @@ class Service extends CI_Driver_Library {
     }
     
     function is_valid($driver) {
-        return in_array($driver, $this->valid_drives);
+        return in_array('Service_'.strtolower($driver), $this->valid_drivers);
     }
 }
 
@@ -60,9 +60,11 @@ abstract class Abstract_service extends CI_Driver {
     abstract function set_authentication($tokens);
     
     /**
-     * proxy calls
-     */
-    public function api($endpoint, $params = array(), $method = 'get');
+* proxy calls
+*/
+    public function api( $endpoint, $params = array(), $method = 'get' ){
+        //return $this->ci->{$this->service_name}->api($endpoint, $params, $method);
+    }
     
     /**
      * Makes config loading easier
