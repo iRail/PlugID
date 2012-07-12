@@ -82,7 +82,7 @@ abstract class Service_driver extends CI_Driver {
     /**
      * Makes config loading easier
      */
-    abstract function intitialize($config = array());
+    abstract function initialize($config = array());
     
     /**
      * Generic function to provide a state for securing authorize request

@@ -19,7 +19,8 @@ class OAuth2 {
      * @param string $client_secret
      * @param stirng $callback_url
      */
-    public function __construct($client_id, $client_secret, $callback_url) {
+    public function __construct($client_id = FALSE, $client_secret = FALSE, $callback = FALSE) {
+
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->callback_url = $callback;
