@@ -52,8 +52,8 @@ class OAuth2 {
     /**
      * @return boolean
      */
-    public function fetch($url, $params = array(), $method = 'get') {
-        if (!is_null($token_type) && preg_match('/bearer/i', $token_type)) {
+    public function fetch($url, $params = array(), $method = 'get', $token_type = FALSE) {
+        if ($token_type && preg_match('/bearer/i', $token_type)) {
             $auth_header = 'Bearer ' . $access_token;
         } else {
             $auth_header = 'OAuth ' . $access_token;
