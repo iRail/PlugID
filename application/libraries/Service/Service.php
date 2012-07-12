@@ -83,12 +83,7 @@ abstract class Service_driver extends CI_Driver {
      */
     abstract function intitialize($config = array());
     
-    /**
-     * Simply rounds of this authorization request
-     */
-    protected function build_and_redirect($params) {
-        redirect($this->settings['url_authorize'] . '?' . http_build_query($params));
-    }
+
     
     /**
      * Generic function to provide a state for securing authorize request
