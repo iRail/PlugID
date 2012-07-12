@@ -10,7 +10,7 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class Service_google extends Abstract_service {
+class Service_google extends Service_driver {
 
 	private $service_name = 'google';
     private $access_token = NULL;

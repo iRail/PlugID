@@ -10,7 +10,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_facebook extends Abstract_service {
+class Service_facebook extends Service_driver {
     
     private $service_name = 'facebook';
     private $access_token = NULL;

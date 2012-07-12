@@ -10,7 +10,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_foursquare extends Abstract_oauth2_service {
+class Service_foursquare extends Service_driver {
     
     private $service_name = 'foursquare';
     private $access_token;
