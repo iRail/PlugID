@@ -17,6 +17,8 @@ class Service_viking extends Service_driver {
     
     function __construct(){
         parent::__construct(); // important
+        
+        $this->oauth = new OAuth2();
         $this->ci->load->library('OAuth2_client', NULL, 'oauth2');
         $this->load_config($this->service_name, 'oauth2'); // file & optional subdir
         $this->setup_oauth_client_lib();

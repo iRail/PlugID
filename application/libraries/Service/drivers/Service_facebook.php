@@ -13,24 +13,18 @@ if (!defined('BASEPATH'))
 
 class Service_facebook extends Service_driver {
     
-    private $service_name = 'facebook';
-    private $access_token = NULL;
+    private $oauth, $config;
+    
+    private $auth_url = 
     
     function __construct(){
-        parent::__construct(); // important
-        $this->ci->load->library('OAuth2_client', NULL, 'oauth2');
-        $this->load_config($this->service_name, 'oauth2'); // file & optional subdir
-        $this->setup_oauth_client_lib();
+        parent::__construct();
+        
+        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$callback']);
+		$this->config = $config;
     }
     
-    private function setup_oauth_client_lib(){
-        $this->ci->oauth2->callback_url     = $settings['callback_url'];
-        $this->ci->oauth2->url_authorize    = $settings['url_authorize'];
-        $this->ci->oauth2->url_access_token = $settings['url_access_token'];
-        $this->ci->oauth2->url_api_base     = $settings['url_api_base'];
-    }
-/*
-    function callback( $callback_data ){
+    /*function callback( $callback_data ){
         $code = $callback_data->code ;
         // Access Token Response
         $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
@@ -48,12 +42,13 @@ class Service_facebook extends Service_driver {
         }
     }
     */
+    
     function authorize(){
-        $params = array(
-                'client_id' => $this->settings['client_id'],
-                'redirect_uri' => $this->settings['callback_url'],
+    	$params = array(
+                'client_id' => $this->config['client_id'],
+                'redirect_uri' => $this->config['callback_url'],
                 'response_type' => 'code'
-            );
+         );
         $this->build_and_redirect( $params );
     }
     
