@@ -31,10 +31,9 @@ class Callback extends CI_Controller {
         
         // collect callback data
         $data = new stdClass();
-        $data->service_type = $service_name;
-        $data->code         = $this->input->get('code'); // OAuth2
-        $data->oauth_token  = $this->input->get('oauth_token'); // OAuth1
-        $data->oauth_token  = $this->input->get('oauth_verifier'); // OAuth1.0a
+        $data->code           = $this->input->get('code'); // OAuth2
+        $data->oauth_token    = $this->input->get('oauth_token'); // OAuth1
+        $data->oauth_verifier = $this->input->get('oauth_verifier'); // OAuth1.0a
         
         // one of them has to be filled in, at least
         if (!$data->code && !$data->oauth_token) {
@@ -44,12 +43,12 @@ class Callback extends CI_Controller {
         // call is valid!
         
         // get user id and tokens from service
-        if (!$data = $this->service->$service_name->identify($data)) {
+        if (!$data = $this->service->$service_name->callback($data)) {
             show_error('authentication failed');
         }
         
         // check if service is linked to existing user
-        $user = $this->user_model->get_token_by_ext_id($data->service_type, $data->ext_user_id);
+        $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
         
         // do some if else checks
         if (!isset($user->user_id) && !$this->session->user) {
@@ -68,6 +67,7 @@ class Callback extends CI_Controller {
         $this->session->user = (int) $user_id;
         // prep data
         $data->user_id = (int) $user_id;
+        $data->service_type = $service_name;
         // save tokens
         $this->user_model->set_token((array) $data);
         

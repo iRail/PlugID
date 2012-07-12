@@ -64,6 +64,10 @@ class api extends CI_Controller {
         }else if( $post_params !== FALSE ){
             $method = 'post';
             $params = $post_params;
+        }else{
+            if( $postbody = file_get_contents('php://input')){
+                $this->return_error(array('error' => 'plain postbody not yet supported'));
+            }
         }
         
         $this->load->driver('service',array( 'adapter' => $service_name ));

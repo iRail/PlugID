@@ -1,23 +1,35 @@
 <?php
 
-    /**
-     * @copyright (C) 2012 by iRail vzw/asbl
-     * @license AGPLv3
-     * @author Jens Segers <jens at iRail.be>
-     * @author Hannes Van De Vreken <hannes at iRail.be>
-     * @author Lennart Martens <lennart at iRail.be>
-     */
-    if (!defined('BASEPATH'))
-        exit('No direct script access allowed');
+/**
+ * @copyright (C) 2012 by iRail vzw/asbl
+ * @license AGPLv3
+ * @author Jens Segers <jens at iRail.be>
+ * @author Hannes Van De Vreken <hannes at iRail.be>
+ * @author Lennart Martens <lennart at iRail.be>
+ */
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 
-    class Service_facebook extends Abstract_service {
-
-        function __construct(){
-        parent::__construct('facebook');
-        $this->ci->load->library('OAuth2_client', array('service' => $this->service_name), $this->service_name);
+class Service_facebook extends Abstract_service {
+    
+    private $service_name = 'facebook';
+    private $access_token = NULL;
+    
+    function __construct(){
+        parent::__construct(); // important
+        $this->ci->load->library('OAuth2_client', NULL, 'oauth2');
+        $this->load_config($this->service_name, 'oauth2'); // file & optional subdir
+        $this->setup_oauth_client_lib();
     }
     
-    function identify( $callback_data ){
+    private function setup_oauth_client_lib(){
+        $this->ci->oauth2->callback_url     = $settings['callback_url'];
+        $this->ci->oauth2->url_authorize    = $settings['url_authorize'];
+        $this->ci->oauth2->url_access_token = $settings['url_access_token'];
+        $this->ci->oauth2->url_api_base     = $settings['url_api_base'];
+    }
+/*
+    function callback( $callback_data ){
         $code = $callback_data->code ;
         // Access Token Response
         $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
@@ -34,9 +46,21 @@
             return FALSE;
         }
     }
+    */
+    function authorize(){
+        $params = array(
+                'client_id' => $this->settings['client_id'],
+                'redirect_uri' => $this->settings['callback_url'],
+                'response_type' => 'code'
+            );
+        $this->build_and_redirect( $params );
+    }
     
-    function set_identification( $config ){
-        $this->ci->{$this->service_name}->set_authentication( $config );
+    function callback( $callback_data ){
+        
     }
-
+    
+    function set_authentication( $config ){
+        
     }
+}
