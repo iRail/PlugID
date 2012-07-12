@@ -94,9 +94,15 @@ abstract class Abstract_service extends CI_Driver {
 
 abstract class Abstract_oauth2_service extends Abstract_service {
     
+	private $oauth2;
+	
     function __construct() {
-        parent::__construct();
+        parent::__construct();        
     }
+    function initialize($config = array())    {
+    	$this->oauth2 = new OAuth2($config['client_id'], $config['client_secret'], $config['callback']);
+    }
+    
     
     //abstract function callback( $callback_data );
     //abstract function authorize();
