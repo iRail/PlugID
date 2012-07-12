@@ -6,6 +6,7 @@
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
  * @author Lennart Martens <lennart at iRail.be>
+ * @author Koen De Groote <koen at iRail.be>
  */
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');

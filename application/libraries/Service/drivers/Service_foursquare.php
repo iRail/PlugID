@@ -59,7 +59,7 @@ class Service_foursquare extends Service_driver {
         $this->access_token = $tokens->access_token ;
     }
     
-    public function api( $endpoint, $params = array(), $method = 'get' ){
-        return $this->ci->{$this->service_name}->api($endpoint, $this->access_token, $params, $method);
+    public function api( $endpoint_uri, $params = array(), $method = 'get' ){
+        return $this->ci->oauth2->api($endpoint_uri, $this->access_token, NULL, $params, $method);
     }
 }

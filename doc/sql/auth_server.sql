@@ -1,9 +1,18 @@
+
+CREATE TABLE IF NOT EXISTS `auth_clients` (
+  `client_id` varchar(32) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  UNIQUE KEY `unique` (`client_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_id` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 CREATE TABLE IF NOT EXISTS `auth_codes` (
   `client_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
   `code` varchar(128) NOT NULL,
   `expires` int(11) NOT NULL,
-  UNIQUE KEY `unique` (`client_id`,`user_id`),
   KEY `user_id` (`user_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -50,6 +59,11 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+ALTER TABLE `auth_clients`
+  ADD CONSTRAINT `auth_clients_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `auth_clients_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+
 ALTER TABLE `auth_codes`
   ADD CONSTRAINT `auth_codes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `auth_codes_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE CASCADE;
@@ -66,4 +80,3 @@ ALTER TABLE `clients`
 
 ALTER TABLE `user_tokens`
   ADD CONSTRAINT `user_tokens_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
-

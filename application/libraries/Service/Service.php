@@ -39,7 +39,7 @@ class Service extends CI_Driver_Library {
     }*/
     
     function is_valid($driver) {
-        return in_array($driver, $this->valid_drives);
+        return in_array('Service_'.strtolower($driver), $this->valid_drivers);
     }
 }
 
@@ -98,3 +98,31 @@ abstract class Service_driver extends CI_Driver {
         return $this->ci->session->state = hash($this->hash_algo, time() . uniqid());
     }
 }
+<<<<<<< HEAD
+=======
+
+abstract class Abstract_oauth2_service extends Abstract_service {
+    
+	private $oauth2;
+	
+    function __construct() {
+        parent::__construct();        
+    }
+    function initialize($config = array())    {
+    	$this->oauth2 = new OAuth2($config['client_id'], $config['client_secret'], $config['callback']);
+    }
+    
+    
+    //abstract function callback( $callback_data );
+    //abstract function authorize();
+    //abstract function set_authentication( $tokens );
+    
+
+    protected function setup_oauth_client_lib() {
+        $this->ci->oauth2->callback_url = $this->settings['callback_url'];
+        $this->ci->oauth2->url_authorize = $this->settings['url_authorize'];
+        $this->ci->oauth2->url_access_token = $this->settings['url_access_token'];
+        $this->ci->oauth2->url_api_base = $this->settings['url_api_base'];
+    }
+}
+>>>>>>> a984bee0d74b2115d37a0f6fa9f04d4c00ad469a
