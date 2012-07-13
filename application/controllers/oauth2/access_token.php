@@ -35,7 +35,7 @@ class Access_token extends CI_Controller {
         if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri) {
             $data['error'] = 'invalid_request';
         
-     // Hard-coded: 'grant-type' must be 'authorization_code'
+        // Hard-coded: 'grant-type' must be 'authorization_code'
         } else if ($grant_type != 'authorization_code') {
             $data['error'] = 'unsupported_grant_type'; //'invalid_grant' ;
         
@@ -44,18 +44,19 @@ class Access_token extends CI_Controller {
         } else if (!$this->client_model->validate_secret($client_id, $client_secret)) {
             $data['error'] = 'invalid_client';
         
-     // Validate code
+        // Validate code
         } else if (!$this->client_model->validate_redirect_uri($client_id, $redirect_uri)) {
             $data['error'] = '';
         
-     // Validate code
-        } else if (!$this->code_model->is_valid($code, $client_id)) {
+        // Validate code
+        } else if (! $code = $this->code_model->is_valid($code, $client_id)) {
             $data['error'] = 'unauthorized_client';
         
         } else {
+            var_dump( $code ); exit ;
             // Hooray! Give the lad a token!
             $this->load->model('access_token_model');
-            $result = $this->access_token_model->create($client_id, $this->session->user);
+            $result = $this->access_token_model->create($client_id, $code->user);
             $data['access_token'] = $result->access_token;
             // Only type supported
             $data['token_type'] = 'Bearer';
