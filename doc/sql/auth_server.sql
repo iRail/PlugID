@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   `ext_user_id` varchar(32) NOT NULL,
   `access_token` varchar(128) NOT NULL,
   `refresh_token` varchar(128) DEFAULT NULL,
+  `oauth_token` varchar(128) DEFAULT NULL,
+  `oauth_token_secret` varchar(128) DEFAULT NULL,
   UNIQUE KEY `unique1` (`service_type`,`user_id`),
   UNIQUE KEY `unique2` (`service_type`,`user_id`,`ext_user_id`),
   KEY `user_id` (`user_id`)
