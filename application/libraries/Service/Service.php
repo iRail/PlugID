@@ -14,15 +14,10 @@ class Service extends CI_Driver_Library {
     protected $adapter = NULL;
     protected $valid_drivers = array('Service_foursquare', 'Service_facebook', 'Service_google', 'Service_viking');
     
-    /*public function __construct($config = array()) {
-        if (isset($config['adapter']) && in_array('service_' . $config['adapter'], array_map('strtolower', $this->valid_drivers))) {
-            $this->adapter = $config['adapter'];
-        }
-    }*/
-    
     /**
      * Only executed on first request
      * @param string $child
+     * @return object $child
      */
     function __get($child) {
     	parent::__get($child);
@@ -37,10 +32,10 @@ class Service extends CI_Driver_Library {
     	return $this->$child;
     }
     
-    /*function __call($method, $args = array()) {
-        return call_user_func_array(array($this->{$this->adapter}, $method), $args);
-    }*/
-    
+    /**
+     * Try and see if a driver is availabel before loading and using it
+     * @param string $driver drivername
+     */
     function is_valid($driver) {
         return in_array('Service_'.strtolower($driver), $this->valid_drivers);
     }
@@ -64,7 +59,15 @@ abstract class Service_driver extends CI_Driver {
     }
     
     /**
-     * Get ext_user_id and authentication_tokens from specific service
+     * Get access_token & ext_user_id
+     * 
+     * @param oject $callback_data contains
+     * @return  FALSE on failure
+     *          object->ext_user_id
+     *          object->access_token
+     *          object->refresh_token (if given)
+     *          object->expires (if given)
+     *          object->token_type (if given)
      */
     abstract function callback($data);
     
@@ -74,23 +77,31 @@ abstract class Service_driver extends CI_Driver {
     abstract function authorize();
     
     /**
-     * Get all necessary tokens to sign requests
+     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * 
+     * @param object $tokens(->access_token)
      */
     abstract function set_authentication($tokens);
     
     /**
-     * proxy calls
+     * Make an api call to the service and sign it with the tokens given in set_authentication
+     * 
+     * @param string $endpoint_uri
+     * @param array $params for passing all post/get parameters
+     * @param enum(get,post) $method
+     * @return string: returns all content of the http body returned on the request
      */
     abstract function api($endpoint, $params = array(), $method = 'get');
     
     /**
-     * Makes config loading easier
+     * give config array with needed parameters like client_id, $client_secret etc.
+     * @param array $config (loaded in service & passed)
      */
     abstract function initialize($config = array());
     
     /**
      * Generic function to provide a state for securing authorize request
-     * Saves the state in Session
+     * @return string $state, as it is saved in the session
      */
     protected function get_state() {
         return $this->ci->session->state = hash($this->hash_algo, time() . uniqid());

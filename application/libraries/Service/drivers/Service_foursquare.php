@@ -54,18 +54,25 @@ class Service_foursquare extends Service_driver {
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
-        if ($response === FALSE) {
-            return FALSE;
+        
+        // response valid?
+        $response = json_decode($response);
+        if(is_null($response)){
+            return FALSE ;
         }
         
+        // save some stuff, we'll need it to sign our first api call
         $this->access_token = $response->access_token;
         
         // get current user
         $user = $this->api('users/self');
-        if ($user === FALSE) {
-            return FALSE;
-        }
+        
+        // valid json response?
         $user = json_decode($user);
+        if( is_null($user) || !isset($user->response->user->id) ){
+            return FALSE ;
+        }
+        
         $auth = new stdClass();
         $auth->ext_user_id = (int) $user->response->user->id;
         $auth->access_token = $this->access_token;
@@ -91,7 +98,7 @@ class Service_foursquare extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-    	$endpoint = $this->url_base . $endpoint;
+        $endpoint = rtrim($this->url_base,'/') . '/' . $endpoint;
     	$params['access_token'] = $this->access_token;
     	
     	return $this->oauth->fetch($endpoint, $params);

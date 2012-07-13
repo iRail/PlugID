@@ -38,7 +38,7 @@ class Api extends Api_Controller {
         }
         
         // load tokens for service
-        $tokens = $this->user_model->get_tokens($this->auth->user_id, $service_name);
+        $tokens = $this->user_model->get_token($this->auth->user_id, $service_name);
         
         $get_params = $this->input->get();
         $post_params = $this->input->post();

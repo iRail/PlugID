@@ -44,16 +44,16 @@ class OAuth2 {
         if ($use_auth_headers) {
             // Not all OAuth2.0 providers accepts Basic Authentication header
             $auth_header = 'Basic ' . $this->client_secret;
-            $json = $this->makeRequest($url,'post', $params, $auth_header);
+            $response = $this->makeRequest($url,'post', $params, $auth_header);
         } else {
             $params['client_secret'] = $this->client_secret;
-            $json = $this->makeRequest($url,'post', $params);
+            $response = $this->makeRequest($url,'post', $params);
         }
-        if (empty($json)) {
+        if (empty($response)) {
             return FALSE;
         }
         
-        return json_decode($json);
+        return $response;
     }
     
     /**
