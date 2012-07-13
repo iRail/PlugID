@@ -33,7 +33,7 @@ class Service_facebook extends Service_driver {
         $token = $this->oauth->getAccessToken($this->url_access_token, $data['code']);
     }
     
-    function set_authentication($config) {
+    function set_authentication($tokens) {
         $this->access_token = $tokens->access_token;
     }
     

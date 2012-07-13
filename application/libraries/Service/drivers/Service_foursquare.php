@@ -12,7 +12,7 @@ if (!defined('BASEPATH'))
 
 class Service_foursquare extends Service_driver {
     
-    private $oauth, $config, $access_token;
+    private $oauth, $access_token;
     
     private $url_authorize = 'https://foursquare.com/oauth2/authorize';
     private $url_access_token = 'https://foursquare.com/oauth2/access_token';
@@ -24,7 +24,7 @@ class Service_foursquare extends Service_driver {
     
     function authorize() {
         $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['redirect_uri'], 'response_type' => 'code');
-        redirect('https://foursquare.com/oauth2/authenticate' . '?' . http_build_query($params));
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     /**
@@ -50,9 +50,10 @@ class Service_foursquare extends Service_driver {
             return FALSE;
         }
         
-        $auth = array();
-        $auth['ext_user_id'] = (int) $user->response->user->id;
-        $auth['access_token'] = $this->access_token;
+        $auth = new stdClass();
+        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->access_token = $this->access_token;
+        
         return $auth;
     }
     
@@ -60,11 +61,10 @@ class Service_foursquare extends Service_driver {
         $this->access_token = $tokens->access_token;
     }
     
-    public function api($endpoint_uri, $params = array(), $method = 'get') {
+    public function api($endpoint, $params = array(), $method = 'get') {
     	$endpoint = $this->url_base . $endpoint;
     	$params['access_token'] = $this->access_token;
     	
-    	$data = json_decode($this->oauth->fetch($endpoint, $params));
-    	return $data;
+    	return $this->oauth->fetch($endpoint, $params);
     }
 }

@@ -30,6 +30,7 @@ class Service extends CI_Driver_Library {
     	$ci = &get_instance();
     	$ci->load->config('services/'.$child, TRUE);
     	$config = $ci->config->item('services/'.$child);
+    	
     	$this->$child->config = $config;
     	$this->$child->initialize($config);
     	
@@ -52,7 +53,8 @@ abstract class Service_driver extends CI_Driver {
 	
     protected $ci;
     private $hash_algo = 'md5';
-    private $config = array();
+    
+    public $config = array();
     
     /**
      * Constructor
