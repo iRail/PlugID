@@ -13,7 +13,7 @@ if (!defined('BASEPATH'))
 
 class Service_facebook extends Service_driver {
     
-    private $oauth, $config;
+    private $oauth, $config, $access_token;
     
     private $url_authorize = 'https://www.facebook.com/dialog/oauth';
     private $url_access_token = 'https://graph.facebook.com/oauth/access_token';
@@ -26,20 +26,20 @@ class Service_facebook extends Service_driver {
     
     function authorize() {
         $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['callback_url'], 'response_type' => 'code');
-        $this->build_and_redirect($this->url_authorize, $params);
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     function callback($data) {
-    	$token = $this->oauth->getAccessToken($this->url_access_token, $data['code']);
+        $token = $this->oauth->getAccessToken($this->url_access_token, $data['code']);
     }
     
     function set_authentication($config) {
-   
+        $this->access_token = $tokens->access_token;
     }
     
     function api($endpoint, $params = array(), $method = 'get') {
-    	$endpoint = $this->url_base . $endpoint;
-    	$data = json_decode($this->oauth->fetch($endpoint, $params));
-    	return $data;
+        $endpoint = $this->url_base . $endpoint;
+        $data = json_decode($this->oauth->fetch($endpoint, $params));
+        return $data;
     }
 }

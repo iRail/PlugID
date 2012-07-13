@@ -52,6 +52,7 @@ abstract class Service_driver extends CI_Driver {
 	
     protected $ci;
     private $hash_algo = 'md5';
+    private $config = array();
     
     /**
      * Constructor
