@@ -30,7 +30,7 @@ class Service extends CI_Driver_Library {
     	$ci = &get_instance();
     	$ci->load->config('services/'.$child, TRUE);
     	$config = $ci->config->item('services/'.$child);
-    	$this->$child->config($config);
+    	$this->$child->config = $config;
     	$this->$child->initialize($config);
     	
     	return $this->$child;
