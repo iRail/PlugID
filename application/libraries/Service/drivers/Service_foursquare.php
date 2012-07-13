@@ -10,25 +10,25 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Service_foursquare extends Abstract_oauth2_service {
+class Service_foursquare extends Service_driver {
     
     private $service_name = 'foursquare';
     private $access_token;
+    private $oauth;
+    private $config;
     
-    function __construct(){
-        parent::__construct(); // important
-        $this->ci->load->library('OAuth2_client', NULL, 'oauth2');
-        $this->load_config($this->service_name, 'oauth2'); // file & optional subdir
-        $this->setup_oauth_client_lib();
-    }
+	function initialize($config = array()){
+		$this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$redirect_uri']);
+		$this->config = $config;
+	}
     
     function authorize(){
         $params = array(
-                'client_id' => $this->settings['client_id'],
-                'redirect_uri' => $this->settings['callback_url'],
+                'client_id' => $this->config['client_id'],
+                'redirect_uri' => $this->config['redirect_uri'],
                 'response_type' => 'code'
             );
-        $this->build_and_redirect( $params );
+        redirect('https://foursquare.com/oauth2/authenticate' . '?' . http_build_query($params));
     }
     
     /**
@@ -40,17 +40,18 @@ class Service_foursquare extends Abstract_oauth2_service {
             return FALSE;
         }
         // Access Token Response
-        $access_token_resp = $this->ci->oauth2->get_access_token($code, $this->settings['client_id'], $this->settings['client_secret']);
+        $access_token_resp = $this->oauth->getAccessToken('https://foursquare.com/oauth2/access_token',$code);
         if( $access_token_resp === FALSE ){
             return FALSE ;
-        }
-        $access_token_resp = json_decode($access_token_resp);
-        
+        }     
         $this->access_token = $access_token_resp->access_token ;
         
         // Get users external id
-        $json = $this->ci->oauth2->api('users/self',$this->access_token );
-        $resp = json_decode($json);
+        $fetch_response = $this->oauth->fetch('https://api.foursquare.com/v2/users/self',$this->access_token );
+        if( $fetch_response === FALSE ){
+        	return FALSE ;
+        }
+        $resp = json_decode($this->oauth->getLastResponse());
         $access_token_resp->ext_user_id = (int)$resp->response->user->id;
         return $access_token_resp ;
     }
@@ -60,6 +61,11 @@ class Service_foursquare extends Abstract_oauth2_service {
     }
     
     public function api( $endpoint_uri, $params = array(), $method = 'get' ){
-        return $this->ci->oauth2->api($endpoint_uri, $this->access_token, NULL, $params, $method);
+    	$url = 'https://api.foursquare.com/v2/' . trim($endpoint_uri, '/');
+    	$fetch_response = $this->oauth->fetch($url, $this->access_token );
+    	if( $fetch_response === FALSE ){
+    		return FALSE ;
+    	}
+        return $this->oauth->getLastResponse();
     }
 }

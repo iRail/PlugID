@@ -9,36 +9,34 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class CI_Session{
+class CI_Session {
     
-    // expire time for cookie (31 days)
-    private $expire = 2678400;
     private $ci;
     
-    function __construct(){
+    function __construct() {
         $this->ci = &get_instance();
-        $this->ci->load->library('encrypt');
+        
         // start up session
         session_start();
     }
     
-    function __set($name, $val){
-        $_SESSION[$name] = $val ;
-        return $this ;
+    function __set($name, $val) {
+        $_SESSION[$name] = $val;
+        return TRUE;
     }
     
-    function __get($name){
-        if( isset($_SESSION[$name]) ){
+    function __get($name) {
+        if (isset($_SESSION[$name])) {
             return $_SESSION[$name];
         }
-        return false ;
+        return FALSE;
     }
     
-    function __isset($name){
+    function __isset($name) {
         return isset($_SESSION[$name]);
     }
     
-    function __unset($name){
+    function __unset($name) {
         unset($_SESSION[$name]);
         return $this;
     }
