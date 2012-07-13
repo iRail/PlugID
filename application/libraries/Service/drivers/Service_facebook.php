@@ -15,48 +15,31 @@ class Service_facebook extends Service_driver {
     
     private $oauth, $config;
     
-    private $auth_url = 
+    private $url_authorize = 'https://www.facebook.com/dialog/oauth';
+    private $url_access_token = 'https://graph.facebook.com/oauth/access_token';
+    private $url_base = 'https://graph.facebook.com/';
     
-    function __construct(){
+    function __construct() {
         parent::__construct();
-        
-        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$callback']);
-		$this->config = $config;
+        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
     }
     
-    /*function callback( $callback_data ){
-        $code = $callback_data->code ;
-        // Access Token Response
-        $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
-        
-        if($access_token_resp !== FALSE){
-            // get users external id
-            $json = $this->ci->{$this->service_name}->api('me','');
-            $resp = json_decode($json);
-            $access_token_resp->ext_user_id = (int)$resp->id;
-            //We don't keep expires in the database
-            unset($access_token_resp->expires);
-            return $access_token_resp;
-        }else{
-            return FALSE;
-        }
-    }
-    */
-    
-    function authorize(){
-    	$params = array(
-                'client_id' => $this->config['client_id'],
-                'redirect_uri' => $this->config['callback_url'],
-                'response_type' => 'code'
-         );
-        $this->build_and_redirect( $params );
+    function authorize() {
+        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['callback_url'], 'response_type' => 'code');
+        $this->build_and_redirect($this->url_authorize, $params);
     }
     
-    function callback( $callback_data ){
-        
+    function callback($data) {
+    	$token = $this->oauth->getAccessToken($this->url_access_token, $data['code']);
     }
     
-    function set_authentication( $config ){
-        
+    function set_authentication($config) {
+   
+    }
+    
+    function api($endpoint, $params = array(), $method = 'get') {
+    	$endpoint = $this->url_base . $endpoint;
+    	$data = json_decode($this->oauth->fetch($endpoint, $params));
+    	return $data;
     }
 }
