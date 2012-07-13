@@ -18,14 +18,14 @@ class Service_foursquare extends Service_driver {
     private $config;
     
 	function initialize($config = array()){
-		$this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$callback']);
+		$this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$redirect_uri']);
 		$this->config = $config;
 	}
     
     function authorize(){
         $params = array(
                 'client_id' => $this->config['client_id'],
-                'redirect_uri' => $this->config['callback_url'],
+                'redirect_uri' => $this->config['redirect_uri'],
                 'response_type' => 'code'
             );
         redirect('https://foursquare.com/oauth2/authenticate' . '?' . http_build_query($params));
