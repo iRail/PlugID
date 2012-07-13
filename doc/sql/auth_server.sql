@@ -51,10 +51,11 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   `user_id` int(11) NOT NULL,
   `service_type` enum('foursquare','facebook','twitter','google','viking') NOT NULL,
   `ext_user_id` varchar(32) NOT NULL,
-  `access_token` varchar(128) NOT NULL,
+  `access_token` varchar(128) DEFAULT NULL,
   `refresh_token` varchar(128) DEFAULT NULL,
   `oauth_token` varchar(128) DEFAULT NULL,
   `oauth_token_secret` varchar(128) DEFAULT NULL,
+  `expires` int(11) DEFAULT NULL,
   UNIQUE KEY `unique1` (`service_type`,`user_id`),
   UNIQUE KEY `unique2` (`service_type`,`user_id`,`ext_user_id`),
   KEY `user_id` (`user_id`)

@@ -58,8 +58,8 @@ class Access_token extends CI_Controller {
             $this->load->model('access_token_model');
             $result = $this->access_token_model->create($client_id, $code->user);
             $data['access_token'] = $result->access_token;
-            // Only type supported
-            $data['token_type'] = 'Bearer';
+            // Removed. Authentication header OAuhth (case insensitive) or ?oauth_token= are allowed
+            //$data['token_type'] = 'Bearer';
         }
         
         $this->output->set_content_type('application/json');
