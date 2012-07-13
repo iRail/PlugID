@@ -10,7 +10,7 @@ class OAuth2 {
     // private members
     private $client_id;
     private $client_secret;
-    private $callback_url;
+    private $redirect_uri;
     private $last_response;
     
     /**
@@ -19,11 +19,11 @@ class OAuth2 {
      * @param string $client_secret
      * @param stirng $callback_url
      */
-    public function __construct($client_id = FALSE, $client_secret = FALSE, $callback = FALSE) {
+    public function __construct($client_id = FALSE, $client_secret = FALSE, $redirect_uri = FALSE) {
 
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
-        $this->callback_url = $callback;
+        $this->redirect_uri = $redirect_uri;
     }
     
     /**
@@ -32,16 +32,22 @@ class OAuth2 {
      * @param boolean $use_auth_headers
      * @return array or FALSE if failure. Still has to check on errorcodes.
      */
-    public function getAccessToken($url, $code, $use_auth_headers = FALSE) {
-        $params = array('code' => $code, 'client_id' => $this->client_id, 'redirect_uri' => $this->callback_url, 'grant_type' => 'authorization_code');
+    public function getAccessToken($url, $params = array(), $use_auth_headers = FALSE) {
+    	if(!isset($params['code'])){
+    		return FALSE;
+    	}
+
+        $params['client_id'] = $this->client_id;
+        $params['redirect_uri'] = $this->redirect_uri;
+        $params['grant_type'] = 'authorization_code';
         
         if ($use_auth_headers) {
             // Not all OAuth2.0 providers accepts Basic Authentication header
-            $auth_header = 'Basic ' . $this->$client_secret;
-            $json = $this->curl_post($url, $params, $auth_header);
+            $auth_header = 'Basic ' . $this->client_secret;
+            $json = $this->makeRequest($url,'post', $params, $auth_header);
         } else {
-            $params['client_secret'] = $this->$client_secret;
-            $json = $this->curl_post($url, $params);
+            $params['client_secret'] = $this->client_secret;
+            $json = $this->makeRequest($url,'post', $params);
         }
         if (empty($json)) {
             return FALSE;
@@ -54,10 +60,13 @@ class OAuth2 {
      * @return boolean
      */
     public function fetch($url, $params = array(), $method = 'get', $token_type = FALSE) {
+    	if(!isset($params['access_token'])){
+    		return FALSE;
+    	}
         if ($token_type && preg_match('/bearer/i', $token_type)) {
-            $auth_header = 'Bearer ' . $access_token;
+            $auth_header = 'Bearer ' . $params['access_token'];
         } else {
-            $auth_header = 'OAuth ' . $access_token;
+            $auth_header = 'OAuth ' . $params['access_token'];
         }
         
         $this->last_response = $this->makeRequest($url, $method, $params, $auth_header);
@@ -102,7 +111,7 @@ class OAuth2 {
      * @param string $auth_header
      */
     private function makeRequest($path, $method = 'GET', $params = array(), $auth_header = FALSE) {
-        $curl = curl_init($url);
+        $curl = curl_init();
         $params = http_build_query($params, NULL, '&');
         
         switch (strtoupper($method)) {
@@ -123,6 +132,7 @@ class OAuth2 {
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
                 break;
         }
+        curl_setopt($curl, CURLOPT_URL, $path);
         
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
