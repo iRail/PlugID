@@ -17,22 +17,36 @@ class Service_foursquare extends Service_driver {
     private $oauth;
     private $config;
     
+    /**
+     * give config array with needed parameters like client_id, $client_secret etc.
+     * @param array $config (loaded in service & passed)
+     */
 	function initialize($config = array()){
 		$this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$redirect_uri']);
 		$this->config = $config;
 	}
     
+    /**
+     * Initial function to start authentication proces. Redirect user to oauth provider's authenticate url
+     * no param - no return
+     */
     function authorize(){
         $params = array(
                 'client_id' => $this->config['client_id'],
                 'redirect_uri' => $this->config['redirect_uri'],
                 'response_type' => 'code'
             );
-        redirect('https://foursquare.com/oauth2/authenticate' . '?' . http_build_query($params));
+        redirect( $this->config['url_authorize'] . '?' . http_build_query($params));
     }
     
     /**
      * Get access_token & ext_user_id
+     * 
+     * @param oject $callback_data contains ->code to finish authentication
+     * @return  FALSE on failure
+     *          object->ext_user_id
+     *          object->access_token
+     *          object->refresh_token (if given)
      */
     function callback( $callback_data ){
         $code = $callback_data->code ;
@@ -56,10 +70,23 @@ class Service_foursquare extends Service_driver {
         return $access_token_resp ;
     }
     
+    /**
+     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * 
+     * @param object $tokens(->access_token)
+     */
     function set_authentication( $tokens ){
         $this->access_token = $tokens->access_token ;
     }
     
+    /**
+     * Make an api call to the service and sign it with the tokens given in set_authentication
+     * 
+     * @param string $endpoint_uri
+     * @param array $params for passing all post/get parameters
+     * @param enum(get,post) $method
+     * @return string: returns all content of the http body returned on the request
+     */
     public function api( $endpoint_uri, $params = array(), $method = 'get' ){
     	$url = 'https://api.foursquare.com/v2/' . trim($endpoint_uri, '/');
     	$fetch_response = $this->oauth->fetch($url, $this->access_token );
