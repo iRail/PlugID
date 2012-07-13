@@ -30,6 +30,7 @@ class Service extends CI_Driver_Library {
     	$ci = &get_instance();
     	$ci->load->config('services/'.$child, TRUE);
     	$config = $ci->config->item('services/'.$child);
+    	$this->$child->config($config);
     	$this->$child->initialize($config);
     	
     	return $this->$child;
@@ -62,7 +63,7 @@ abstract class Service_driver extends CI_Driver {
     /**
      * Get ext_user_id and authentication_tokens from specific service
      */
-    abstract function callback($callback_data);
+    abstract function callback($data);
     
     /**
      * Gets all params ready and calls build_and_redirect(
