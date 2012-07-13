@@ -12,10 +12,6 @@ if (!defined('BASEPATH'))
 class Authenticate extends CI_Controller {
     
     function index() {
-        if ($this->session->user) {
-            redirect('');
-        } else {
-            $this->load->view('authenticate');
-        }
+        $this->load->view('authenticate');
     }
 }
