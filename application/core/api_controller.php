@@ -12,6 +12,7 @@ class Api_Controller extends CI_Controller{
     /**
      * @return object ( 'client_id','user_id','access_token')
      */
+     
     protected function is_authenticated(){
         // Get token
         $auth_header = $this->input->get_request_header('Authorization');

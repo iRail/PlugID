@@ -43,3 +43,4 @@ sync.ffs_db
 # CodeIgniter #
 ###############
 application/config/development/
+application/config/autoload.php

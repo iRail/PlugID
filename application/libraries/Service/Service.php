@@ -11,10 +11,15 @@ if (!defined('BASEPATH'))
 
 class Service extends CI_Driver_Library {
     
-    protected $adapter = NULL;
+    protected $adapter = NULL; //default
     protected $valid_drivers = array('Service_foursquare', 'Service_facebook', 'Service_google', 'Service_viking');
     
+<<<<<<< HEAD
+    /*
+    public function __construct($config = array()) {
+=======
     /*public function __construct($config = array()) {
+>>>>>>> master
         if (isset($config['adapter']) && in_array('service_' . $config['adapter'], array_map('strtolower', $this->valid_drivers))) {
             $this->adapter = $config['adapter'];
         }
@@ -36,8 +41,13 @@ class Service extends CI_Driver_Library {
     	
     	return $this->$child;
     }
+<<<<<<< HEAD
+    */
+    function __call($method, $args = array()) {
+=======
     
     /*function __call($method, $args = array()) {
+>>>>>>> master
         return call_user_func_array(array($this->{$this->adapter}, $method), $args);
     }*/
     
@@ -62,6 +72,8 @@ abstract class Service_driver extends CI_Driver {
     function __construct() {
         $this->ci = &get_instance();
     }
+    
+    function set_service_name( $service_name ){}; // do nothing
     
     /**
      * Get ext_user_id and authentication_tokens from specific service

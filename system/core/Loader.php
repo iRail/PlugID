@@ -882,7 +882,7 @@ class CI_Loader {
 		// The directory path can be included as part of the class name,
 		// but we don't want a leading slash
 		$class = str_replace('.php', '', trim($class, '/'));
-
+        
 		// Was the path included with the class name?
 		// We look for a slash to determine this
 		$subdir = '';
@@ -899,12 +899,12 @@ class CI_Loader {
 		foreach (array(ucfirst($class), strtolower($class)) as $class)
 		{
 			$subclass = APPPATH.'libraries/'.$subdir.config_item('subclass_prefix').$class.'.php';
-
+            
 			// Is this a class extension request?
 			if (file_exists($subclass))
 			{
 				$baseclass = BASEPATH.'libraries/'.ucfirst($class).'.php';
-
+                
 				if ( ! file_exists($baseclass))
 				{
 					log_message('error', "Unable to load the requested class: ".$class);
@@ -937,17 +937,17 @@ class CI_Loader {
 
 				return $this->_ci_init_class($class, config_item('subclass_prefix'), $params, $object_name);
 			}
-
+            
 			// Lets search for the requested library file and load it.
 			$is_duplicate = FALSE;
 			foreach ($this->_ci_library_paths as $path)
 			{
 				$filepath = $path.'libraries/'.$subdir.$class.'.php';
-
+                
 				// Does the file exist?  No?  Bummer...
 				if ( ! file_exists($filepath))
 				{
-					continue;
+				    continue;
 				}
 
 				// Safety:  Was the class already loaded by a previous call?
