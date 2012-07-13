@@ -29,7 +29,11 @@ class Service_foursquare extends Service_driver {
      * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
     function authorize() {
-        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['redirect_uri'], 'response_type' => 'code');
+        $params = array('client_id' => $this->config['client_id'], 
+                        'redirect_uri' => $this->config['redirect_uri'], 
+                        'response_type' => 'code',
+                        'state' => $this->get_state()
+                        );
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -61,7 +65,7 @@ class Service_foursquare extends Service_driver {
         if ($user === FALSE) {
             return FALSE;
         }
-        
+        $user = json_decode($user);
         $auth = new stdClass();
         $auth->ext_user_id = (int) $user->response->user->id;
         $auth->access_token = $this->access_token;
