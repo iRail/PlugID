@@ -33,7 +33,7 @@ class Code_model extends CI_Model {
         $where = array( 'code' => $code, 
                         'client_id' => $client_id,
                         'expires >' => time() );
-        return $this->db->get_where('auth_codes', $where )->num_rows() > 0 ;
+        return $this->db->get_where('auth_codes', $where )->row() ;
     }
 	
 }
