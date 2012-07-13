@@ -21,9 +21,7 @@ class Service_facebook extends Service_driver {
     
     function __construct() {
         parent::__construct();
-        
-        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['callback']);
-        $this->config = $config;
+        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
     }
     
     function authorize() {
