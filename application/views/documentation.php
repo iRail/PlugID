@@ -16,7 +16,7 @@
         width:21.97%;
     }
 
-    .hero-unit h1 {
+    h1 {
         word-wrap: break-word;
     }
 
