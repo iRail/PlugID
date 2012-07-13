@@ -14,5 +14,5 @@ $config['redirect_uri']      = '';
 $config['url_authorize']     = '';
 $config['url_access_token']  = '';
 $config['url_api_base']      = '';
-$config['scope']             = '';
+$config['scope']             = array();
 

@@ -13,33 +13,98 @@ if (!defined('BASEPATH'))
 
 class Service_facebook extends Service_driver {
     
-    private $oauth, $config, $access_token;
-    
+    private $oauth, $access_token, $scope;
+    private $scope_delim = ',';
     private $url_authorize = 'https://www.facebook.com/dialog/oauth';
     private $url_access_token = 'https://graph.facebook.com/oauth/access_token';
     private $url_base = 'https://graph.facebook.com/';
     
-    function __construct() {
-        parent::__construct();
+    /**
+     * give config array with needed parameters like client_id, $client_secret etc.
+     * @param array $config (loaded in service & passed)
+     */
+    function initialize($config = array()) {
         $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
+        $this->scope = implode(',', $config['scope']);
     }
     
+    /**
+     * Redirect user to start authentication proces to authorize application to remote oauth provider
+     */
     function authorize() {
-        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['callback_url'], 'response_type' => 'code');
+        $params = array('client_id' => $this->config['client_id'], 
+                        'redirect_uri' => $this->config['redirect_uri'], 
+                      //'response_type' => 'code',
+                        'state' => $this->get_state(),
+                        'scope' => $this->scope
+                        );
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
+    /**
+     * Get access_token & ext_user_id
+     * 
+     * @param oject $callback_data contains ->code to finish authentication
+     * @return  FALSE on failure
+     *          object->ext_user_id
+     *          object->access_token
+     *          object->refresh_token (if given)
+     */
     function callback($data) {
-        $token = $this->oauth->getAccessToken($this->url_access_token, $data['code']);
+        $code = $data->code;
+        if (!$code) {
+            return FALSE;
+        }
+        
+        // get access token
+        $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
+        
+        // response valid?
+        $resp_parts = explode('&',$response);
+        foreach( $resp_parts as $var ){
+            
+        }
+        
+        // save some stuff, we'll need it to sign our first api call
+        $this->access_token = $response->access_token;
+        
+        // get current user
+        $user = $this->api('users/self');
+        
+        // valid json response?
+        $user = json_decode($user);
+        if( is_null($user) || !isset($user->response->user->id) ){
+            return FALSE ;
+        }
+        
+        $auth = new stdClass();
+        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->access_token = $this->access_token;
+        
+        return $auth;
     }
     
+    /**
+     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * 
+     * @param object $tokens(->access_token)
+     */
     function set_authentication($tokens) {
         $this->access_token = $tokens->access_token;
     }
     
-    function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = $this->url_base . $endpoint;
-        $data = json_decode($this->oauth->fetch($endpoint, $params));
-        return $data;
+    /**
+     * Make an api call to the service and sign it with the tokens given in set_authentication
+     * 
+     * @param string $endpoint_uri
+     * @param array $params for passing all post/get parameters
+     * @param enum(get,post) $method
+     * @return string: returns all content of the http body returned on the request
+     */
+    public function api($endpoint, $params = array(), $method = 'get') {
+        $endpoint = rtrim($this->url_base,'/') . '/' . $endpoint;
+        $params['access_token'] = $this->access_token;
+        
+        return $this->oauth->fetch($endpoint, $params);
     }
 }

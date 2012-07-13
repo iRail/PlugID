@@ -2,8 +2,8 @@
 
 class User_model extends CI_Model {
     
-    /*
-     * obvs.
+    /**
+     * @return obj->user_id
      */
     function get($user_id) {
         // obvs.
@@ -11,8 +11,9 @@ class User_model extends CI_Model {
         return $this->db->get_where('users', $where)->row();
     }
     
-    /*
+    /**
      * Create new user and return user_id
+     * @return object->user_id
      */
     function create(){
         // generate data
@@ -30,28 +31,52 @@ class User_model extends CI_Model {
     }
     
     /**
-     * 
+     * @param int $user_id
+     * @param string $service_type
+     * @return empty array
+     *      or int    object->user_id
+     *         string object->service_type (this and next params may be NULL)
+     *         string object->access_token
+     *         string object->refresh_token
+     *         string object->oauth_token
+     *         string object->oauth_secret
+     *         int    object->expires (actual timestamp)
      */
-    function get_tokens( $user_id, $service_type ){
+    function get_token( $user_id, $service_type ){
         $where = array( 'user_id' => $user_id,
-                        'service_type' => $service_type
+                        'service_type' => $service_type,
+                        'expires >' => time()
                       );
         return $this->db->get_where('user_tokens', $where)->row();
     }
     
     /**
      * Get user who's access_token and service are known
+     * ONLY TO BE USED TO SEE IF EXT_USER_ID IS CONNECTED TO A INTERNAL USER_ID (in the past) 
+     * @param string $service_type
+     * @param string $external user id
+     * @return empty array
+     *      or int    object->user_id
+     *         string object->service_type (this and next params may be NULL)
+     *         string object->access_token
+     *         string object->refresh_token
+     *         string object->oauth_token
+     *         string object->oauth_secret
+     *         int    object->expires (actual timestamp)
      */
     function get_token_by_ext_id( $service_type, $ext_user_id ){
         $where = array( 'ext_user_id' => $ext_user_id,
-                        'service_type' => $service_type
+                        'service_type' => $service_type,
                         );
         return $this->db->get_where('user_tokens', $where)->row();
     }
     
-    /*
+    /**
      * Add or update an access_token of a certain type to a user
      * Leave refresh_token and or external user id null if they did not change
+     * @param array data(user_id, ext_user_id, service_type,  // ← required
+     *                   access_token, refresh_token, expires, oauth_token, oauth_token_secret ) // ← optional
+     * @return same array
      */
     function set_token( $data ){
         
@@ -67,7 +92,9 @@ class User_model extends CI_Model {
     }
     
     /**
-     * 
+     * @param int user_id
+     * @param string client_id
+     * @return TRUE of FALSE, it may be, she's still out to get meeee ♬ (boolean)
      */
     function authorize_client( $user_id, $client_id ){
         if( !$this->is_client_authorized($user_id, $client_id) ){
@@ -79,7 +106,8 @@ class User_model extends CI_Model {
     }
     
     /**
-     * 
+     * @param int $user_id
+     * @param string $user_id
      */
     function is_client_authorized( $user_id, $client_id ){
         $where = array( 'user_id' => $user_id,
@@ -89,6 +117,7 @@ class User_model extends CI_Model {
     
     /*
      * Get all user's clients
+     * @param int $user_id
      */
     function get_clients( $user_id ){
         $where = array('user_id' => $user_id);
