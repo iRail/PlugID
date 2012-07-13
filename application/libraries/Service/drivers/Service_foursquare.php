@@ -41,7 +41,6 @@ class Service_foursquare extends Service_driver {
         }
         // Access Token Response
         $access_token_resp = $this->oauth->getAccessToken('https://foursquare.com/oauth2/access_token',array('code' => $code));
-        echo("past this");
         if( $access_token_resp === FALSE ){
             return FALSE ;
         }     
@@ -49,11 +48,9 @@ class Service_foursquare extends Service_driver {
         
         // Get users external id
         $fetch_response = $this->oauth->fetch('https://api.foursquare.com/v2/users/self',array('access_token' => $this->access_token));
-        echo("past this2");
         if( $fetch_response === FALSE ){
         	return FALSE ;
         }
-        echo("past this3");
         $resp = json_decode($this->oauth->getLastResponse());
         $access_token_resp->ext_user_id = (int)$resp->response->user->id;
         return $access_token_resp ;

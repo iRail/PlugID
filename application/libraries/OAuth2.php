@@ -33,11 +33,10 @@ class OAuth2 {
      * @return array or FALSE if failure. Still has to check on errorcodes.
      */
     public function getAccessToken($url, $params = array(), $use_auth_headers = FALSE) {
-    	echo("past step1");
     	if(!isset($params['code'])){
     		return FALSE;
     	}
-    	echo("past step1");
+
         $params['client_id'] = $this->client_id;
         $params['redirect_uri'] = $this->redirect_uri;
         $params['grant_type'] = 'authorization_code';
@@ -50,7 +49,6 @@ class OAuth2 {
             $params['client_secret'] = $this->client_secret;
             $json = $this->makeRequest($url,'post', $params);
         }
-        echo("past step1");
         if (empty($json)) {
             return FALSE;
         }
