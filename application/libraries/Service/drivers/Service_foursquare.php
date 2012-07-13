@@ -12,31 +12,25 @@ if (!defined('BASEPATH'))
 
 class Service_foursquare extends Service_driver {
     
-    private $service_name = 'foursquare';
-    private $access_token;
-    private $oauth;
-    private $config;
+    private $oauth, $access_token;
+    private $url_authorize = 'https://foursquare.com/oauth2/authorize';
+    private $url_access_token = 'https://foursquare.com/oauth2/access_token';
+    private $url_base = 'https://api.foursquare.com/v2/';
     
     /**
      * give config array with needed parameters like client_id, $client_secret etc.
      * @param array $config (loaded in service & passed)
      */
-	function initialize($config = array()){
-		$this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['$redirect_uri']);
-		$this->config = $config;
-	}
+    function initialize($config = array()) {
+        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
+    }
     
     /**
-     * Initial function to start authentication proces. Redirect user to oauth provider's authenticate url
-     * no param - no return
+     * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
-    function authorize(){
-        $params = array(
-                'client_id' => $this->config['client_id'],
-                'redirect_uri' => $this->config['redirect_uri'],
-                'response_type' => 'code'
-            );
-        redirect( $this->config['url_authorize'] . '?' . http_build_query($params));
+    function authorize() {
+        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['redirect_uri'], 'response_type' => 'code');
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     /**
@@ -48,26 +42,31 @@ class Service_foursquare extends Service_driver {
      *          object->access_token
      *          object->refresh_token (if given)
      */
-    function callback( $callback_data ){
-        $code = $callback_data->code ;
-        if( !$code ){
+    function callback($data) {
+        $code = $data->code;
+        if (!$code) {
             return FALSE;
         }
-        // Access Token Response
-        $access_token_resp = $this->oauth->getAccessToken('https://foursquare.com/oauth2/access_token',$code);
-        if( $access_token_resp === FALSE ){
-            return FALSE ;
-        }     
-        $this->access_token = $access_token_resp->access_token ;
         
-        // Get users external id
-        $fetch_response = $this->oauth->fetch('https://api.foursquare.com/v2/users/self',$this->access_token );
-        if( $fetch_response === FALSE ){
-        	return FALSE ;
+        // get access token
+        $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
+        if ($response === FALSE) {
+            return FALSE;
         }
-        $resp = json_decode($this->oauth->getLastResponse());
-        $access_token_resp->ext_user_id = (int)$resp->response->user->id;
-        return $access_token_resp ;
+        
+        $this->access_token = $response->access_token;
+        
+        // get current user
+        $user = $this->api('users/self');
+        if ($user === FALSE) {
+            return FALSE;
+        }
+        
+        $auth = new stdClass();
+        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->access_token = $this->access_token;
+        
+        return $auth;
     }
     
     /**
@@ -75,8 +74,8 @@ class Service_foursquare extends Service_driver {
      * 
      * @param object $tokens(->access_token)
      */
-    function set_authentication( $tokens ){
-        $this->access_token = $tokens->access_token ;
+    function set_authentication($tokens) {
+        $this->access_token = $tokens->access_token;
     }
     
     /**
@@ -87,12 +86,10 @@ class Service_foursquare extends Service_driver {
      * @param enum(get,post) $method
      * @return string: returns all content of the http body returned on the request
      */
-    public function api( $endpoint_uri, $params = array(), $method = 'get' ){
-    	$url = 'https://api.foursquare.com/v2/' . trim($endpoint_uri, '/');
-    	$fetch_response = $this->oauth->fetch($url, $this->access_token );
-    	if( $fetch_response === FALSE ){
-    		return FALSE ;
-    	}
-        return $this->oauth->getLastResponse();
+    public function api($endpoint, $params = array(), $method = 'get') {
+    	$endpoint = $this->url_base . $endpoint;
+    	$params['access_token'] = $this->access_token;
+    	
+    	return $this->oauth->fetch($endpoint, $params);
     }
 }

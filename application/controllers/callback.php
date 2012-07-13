@@ -51,7 +51,7 @@ class Callback extends CI_Controller {
         $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
         
         // do some if else checks
-        if (!isset($user->user_id) && !$this->session->user) {
+        if (!$user && !$this->session->user) {
             // no user exists
             $user_id = $this->user_model->create()->user_id;
         } else {
