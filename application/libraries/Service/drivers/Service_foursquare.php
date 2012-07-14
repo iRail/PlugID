@@ -98,7 +98,7 @@ class Service_foursquare extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base,'/') . '/' . $endpoint;
+        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
     	$params['access_token'] = $this->access_token;
     	
     	return $this->oauth->fetch($endpoint, $params);

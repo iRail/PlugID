@@ -46,9 +46,7 @@ class Service_facebook extends Service_driver {
      * 
      * @param oject $callback_data contains ->code to finish authentication
      * @return  FALSE on failure
-     *          object->ext_user_id
-     *          object->access_token
-     *          object->refresh_token (if given)
+     *          object
      */
     function callback($data) {
         $code = $data->code;
@@ -61,25 +59,31 @@ class Service_facebook extends Service_driver {
         
         // response valid?
         $resp_parts = explode('&',$response);
-        foreach( $resp_parts as $var ){
-            
+        $response = new stdClass();
+        foreach( $resp_parts as &$var ){
+            list($one,$two) = explode('=',$var);
+            $response->$one = $two ;
+        }
+        if( !isset($response->access_token)){
+            return FALSE ;
         }
         
         // save some stuff, we'll need it to sign our first api call
         $this->access_token = $response->access_token;
         
         // get current user
-        $user = $this->api('users/self');
+        $user = $this->api('me');
         
         // valid json response?
         $user = json_decode($user);
-        if( is_null($user) || !isset($user->response->user->id) ){
+        if( is_null($user) || !isset($user->id) ){
             return FALSE ;
         }
         
         $auth = new stdClass();
-        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->ext_user_id = (int) $user->id;
         $auth->access_token = $this->access_token;
+        $auth->expires = time() + (int)$response->expires ;
         
         return $auth;
     }
@@ -102,7 +106,7 @@ class Service_facebook extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base,'/') . '/' . $endpoint;
+        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
         $params['access_token'] = $this->access_token;
         
         return $this->oauth->fetch($endpoint, $params);
