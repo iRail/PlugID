@@ -5,6 +5,8 @@
  * @author Lennart Martens <lennart at iRail.be>
  * 
  */
+if (!defined('BASEPATH'))
+	exit('No direct script access allowed');
 class OAuth2 {
     
     // private members
