@@ -22,13 +22,13 @@ class Callback extends CI_Controller {
         if( !$this->service->is_valid($service_name)) {
             show_error( $service_name .' is not a valid service name.');
         }
-        
+        /*
         // check state
         if ($this->input->get('state') != $this->session->state) {
             show_error('invalid_state');
         }
         unset($this->session->state);
-        
+        */
         // collect callback data
         $data = new stdClass();
         $data->code           = $this->input->get('code'); // OAuth2
@@ -46,25 +46,32 @@ class Callback extends CI_Controller {
         if (!$data = $this->service->$service_name->callback($data)) {
             show_error('authentication failed');
         }
-        
+        var_dump( $data );
         // check if service is linked to existing user
         $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
-        
+        $user_id = NULL ;
         // do some if else checks
         if (!$user && !$this->session->user) {
             // no user exists
             $user_id = $this->user_model->create()->user_id;
-        } else {
-            // connect to logged in user
-            if ($this->session->user && $user->user_id != $this->session->user) {
-                // merge 2 users
-                $this->user_model->merge($user->user_id, $this->session->user);
-            }
+        } else if ( $user && $this->session->user_id && $user->user_id != $this->session->user_id ) {
+            // merge 2 users
+            $this->user_model->merge($user->user_id, $this->session->user);
+            $user_id = $user->user_id ;
+        } else if ( $user && !$this->session->user_id ) {
+            // connect to previous registered logged in user
             $user_id = $user->user_id;
+        } else if ( !$user && $this->session->user_id ) {
+            // connect to logged in user
+            $user_id = $this->session->user_id;
+        }else{
+            // logged in and registered before
+            $user_id = $this->session->user_id; 
+            // OR: $user_id = $user->user_id;
         }
         
         // log in user
-        $this->session->user = (int) $user_id;
+        $this->session->user_id = (int) $user_id;
         // prep data
         $data->user_id = (int) $user_id;
         $data->service_type = $service_name;

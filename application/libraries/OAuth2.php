@@ -137,7 +137,7 @@ class OAuth2 {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         
-        if (!is_null($auth_header)) {
+        if ( $auth_header !== FALSE ) {
             curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ' . $auth_header));
         }
         

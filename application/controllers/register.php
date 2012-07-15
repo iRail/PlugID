@@ -19,7 +19,7 @@ class Register extends CI_Controller {
         $this->load->library('form_validation');
         
         // check if signed in
-        $user = $this->session->user;
+        $user = $this->session->user_id;
         
         // it's a no go
         if ($user === FALSE) {
@@ -36,7 +36,7 @@ class Register extends CI_Controller {
             $data->redirect_uri = $this->input->post('redirect_uri');
             
             $this->load->model('client_model');
-            $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->user);
+            $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->user_id);
             redirect('consumer/' . $client->client_id);
         
         } else {

@@ -13,7 +13,6 @@ class Authorize extends CI_Controller {
 	
     function index() {
         $this->ci = &get_instance();
-        $this->ci->load->library('Session');
         $this->ci->load->model('user_model');
         $this->ci->load->model('code_model');
         
@@ -55,7 +54,7 @@ class Authorize extends CI_Controller {
         }
         
         // check if user is actually signed in
-        $user_id = $this->ci->session->user;
+        $user_id = $this->ci->session->user_id;
         
         // so, by now, all invalid request should be caught
         

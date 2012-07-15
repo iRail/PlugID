@@ -16,10 +16,7 @@
 
         function index() {
             // check if signed in. Can't revoke access if not logged in.
-            $user_id = $this->session->user;
-
-            // it's a no go
-            if ($user_id === FALSE) {
+            if (!$user_id = $this->session->user_id) {
                 redirect('authenticate');
             }
 

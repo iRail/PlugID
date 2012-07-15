@@ -57,7 +57,7 @@ class Service_foursquare extends Service_driver {
         
         // response valid?
         $response = json_decode($response);
-        if(is_null($response)){
+        if(is_null($response) || !isset($response->access_token)){
             return FALSE ;
         }
         

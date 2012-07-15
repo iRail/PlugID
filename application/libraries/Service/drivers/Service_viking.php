@@ -5,6 +5,7 @@
  * @license AGPLv3
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
+ * @author Lennart Martens <lennart at iRail.be>
  * @author Koen De Groote <koen at iRail.be>
  */
 if (!defined('BASEPATH'))
@@ -12,56 +13,93 @@ if (!defined('BASEPATH'))
 
 class Service_viking extends Service_driver {
     
-    private $service_name = 'viking';
-    private $access_token = NULL;
+    private $oauth, $access_token;
+    private $url_authorize = 'https://vikingspots.com/oauth2/authenticate';
+    private $url_access_token = 'https://vikingspots.com/oauth2/access_token';
+    private $url_base = 'https://api.vikingspots.com/v3/';
     
-    function __construct(){
-        parent::__construct(); // important
-        
-        $this->oauth = new OAuth2();
-        $this->ci->load->library('OAuth2_client', NULL, 'oauth2');
-        $this->load_config($this->service_name, 'oauth2'); // file & optional subdir
-        $this->setup_oauth_client_lib();
+    /**
+     * give config array with needed parameters like client_id, $client_secret etc.
+     * @param array $config (loaded in service & passed)
+     */
+    function initialize($config = array()) {
+        $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
     }
     
-    private function setup_oauth_client_lib(){
-        $this->ci->oauth2->callback_url     = $settings['callback_url'];
-        $this->ci->oauth2->url_authorize    = $settings['url_authorize'];
-        $this->ci->oauth2->url_access_token = $settings['url_access_token'];
-        $this->ci->oauth2->url_api_base     = $settings['url_api_base'];
+    /**
+     * Redirect user to start authentication proces to authorize application to remote oauth provider
+     */
+    function authorize() {
+        $params = array('client_id' => $this->config['client_id'], 
+                        'redirect_uri' => $this->config['redirect_uri'], 
+                        'response_type' => 'code',
+                        'state' => $this->get_state()
+                        );
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
-/*
-    function identify($callback_data) {
-        $code = $callback_data->code;
-        // Access Token Response
-        $access_token_resp = $this->ci->{$this->service_name}->get_access_token($code);
-
-        if ($access_token_resp !== FALSE) {
-            // get users external id
-            $json = $this->ci->{$this->service_name}->api('users/', array('bearer_token' => $bearer_token));
-            $resp = json_decode($json);
-            $access_token_resp->ext_user_id = (int) $resp->response->id;
-            return $access_token_resp;
-        } else {
+    
+    /**
+     * Get access_token & ext_user_id
+     * 
+     * @param oject $callback_data contains ->code to finish authentication
+     * @return  FALSE on failure
+     *          object
+     */
+    function callback($data) {
+        $code = $data->code;
+        if (!$code) {
             return FALSE;
         }
-    }
-    */
-    function authorize(){
-        $params = array(
-                'client_id' => $this->settings['client_id'],
-                'redirect_uri' => $this->settings['callback_url'],
-                'response_type' => 'code'
-            );
-        $this->build_and_redirect( $params );
+        
+        // get access token
+        $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
+        // response valid?
+        $response = json_decode($response);
+        if(is_null($response)){
+            return FALSE ;
+        }
+        var_dump( $response ); exit ;
+        
+        // save some stuff, we'll need it to sign our first api call
+        $this->access_token = $response->access_token;
+        
+        // get current user
+        $user = $this->api('users/self');
+        
+        // valid json response?
+        $user = json_decode($user);
+        if( is_null($user) || !isset($user->response->user->id) ){
+            return FALSE ;
+        }
+        
+        $auth = new stdClass();
+        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->access_token = $this->access_token;
+        
+        return $auth;
     }
     
-    function callback( $callback_data ){
-        
+    /**
+     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * 
+     * @param object $tokens(->access_token)
+     */
+    function set_authentication($tokens) {
+        $this->access_token = $tokens->access_token;
     }
     
-    function set_authentication( $config ){
+    /**
+     * Make an api call to the service and sign it with the tokens given in set_authentication
+     * 
+     * @param string $endpoint_uri
+     * @param array $params for passing all post/get parameters
+     * @param enum(get,post) $method
+     * @return string: returns all content of the http body returned on the request
+     */
+    public function api($endpoint, $params = array(), $method = 'get') {
+        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
+        $params['access_token'] = $this->access_token;
         
+        return $this->oauth->fetch($endpoint, $params);
     }
-
 }

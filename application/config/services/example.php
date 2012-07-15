@@ -11,8 +11,5 @@
 $config['client_id']         = '';
 $config['client_secret']     = '';
 $config['redirect_uri']      = '';
-$config['url_authorize']     = '';
-$config['url_access_token']  = '';
-$config['url_api_base']      = '';
 $config['scope']             = array();
 

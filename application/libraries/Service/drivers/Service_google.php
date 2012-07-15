@@ -10,6 +10,12 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
+/*
+$config['url_authorize']    = 'https://accounts.google.com/o/oauth2/auth';
+$config['url_access_token'] = 'https://accounts.google.com/o/oauth2/token';
+$config['url_api_base']     = 'https://www.googleapis.com/oauth2/v1/';
+ */
+
 class Service_google extends Service_driver {
 
 	private $service_name = 'google';
