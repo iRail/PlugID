@@ -32,11 +32,10 @@ class Callback extends CI_Controller {
         // collect callback data
         $data = new stdClass();
         $data->code           = $this->input->get('code'); // OAuth2
-        $data->oauth_token    = $this->input->get('oauth_token'); // OAuth1
         $data->oauth_verifier = $this->input->get('oauth_verifier'); // OAuth1.0a
         
         // one of them has to be filled in, at least
-        if (!$data->code && !$data->oauth_token) {
+        if (!$data->code && !$data->oauth_verifier) {
             show_error('invalid_response');
         }
         

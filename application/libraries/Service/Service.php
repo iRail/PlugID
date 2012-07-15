@@ -12,7 +12,7 @@ if (!defined('BASEPATH'))
 class Service extends CI_Driver_Library {
     
     protected $adapter = NULL;
-    protected $valid_drivers = array('Service_foursquare', 'Service_facebook', 'Service_google', 'Service_viking');
+    protected $valid_drivers = array('Service_foursquare', 'Service_facebook', 'Service_google', 'Service_viking', 'Service_twitter');
     
     /**
      * Only executed on first request
