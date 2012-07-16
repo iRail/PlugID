@@ -58,7 +58,12 @@ abstract class Service_driver extends CI_Driver {
         $this->ci = &get_instance();
     }
     
-    //function set_service_name( $service_name ){}; // do nothing
+    /**
+     * CodeIgniter proxy
+     */
+    function __get($attr) {
+    	return $this->ci->$attr;
+    }
     
     /**
      * Get access_token & ext_user_id
