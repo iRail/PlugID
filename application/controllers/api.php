@@ -51,13 +51,10 @@ class Api extends Api_Controller {
         } else if ($post_params !== FALSE) {
             $method = 'post';
             $params = $post_params;
-        } else {
-            if ($postbody = file_get_contents('php://input')) {
-                return $this->return_error(array('error' => 'plain text postbody not yet supported'));
-            }
+        } else if ($postbody = file_get_contents('php://input')) {
+            return $this->return_error(array('error' => 'plain text postbody not yet supported'));
         }
         
-        // Y U NO LOAD?
         $this->load->driver('service', array('adapter' => $service_name));
         if (!$this->service->is_valid($service_name)) {
             return $this->return_error(array('error' => $service_name . ' does not exist'));
@@ -65,5 +62,6 @@ class Api extends Api_Controller {
         
         $this->service->{$service_name}->set_authentication($tokens);
         echo $this->service->{$service_name}->api($endpoint_uri, $params, $method);
+        
     }
 }
