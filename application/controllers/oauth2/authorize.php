@@ -54,10 +54,10 @@ class Authorize extends CI_Controller {
         }
         
         // check if user is actually signed in
-        $user_id = $this->ci->session->user_id;
+        $user_id = $this->session->user_id;
         
         // so, by now, all invalid request should be caught
-
+        
         // it's a no go
         if ($user_id === FALSE && count( $this->user_model->get_tokens( $user_id )) > 0 ) {
             // collect request data
@@ -70,8 +70,8 @@ class Authorize extends CI_Controller {
             $auth_request->state = $state;
             
             // save request data to return later on
-            unset($this->ci->session->auth_request);
-            $this->ci->session->auth_request = $auth_request;
+            unset($this->session->auth_request);
+            $this->session->auth_request = $auth_request;
             
             // get the user to log in
             redirect('authenticate');
