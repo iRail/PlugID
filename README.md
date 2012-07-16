@@ -14,7 +14,7 @@ Once the user gives permission, your webservice can work with the connected acco
 
 PlugID can be run on any server that runs PHP 5.3 or higher.
 
-
+Dependencies
 =======
 OAuth library for php
 ---------------------
