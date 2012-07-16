@@ -83,19 +83,23 @@ class OAuth2 {
     /**
      * @return array
      */
-    public function refreshAccessToken($url, $refresh_token) {
+    public function refreshAccessToken($url, $refresh_token, $auth_header = FALSE) {
         $params = array('grant_type' => 'refresh_token', 'client_id' => $this->$client_id, 'refresh_token' => $refresh_token);
         
-        $auth_header = 'Basic ' . $this->$client_secret;
+        if( $auth_header ){
+            $auth_header = 'Basic ' . $this->$client_secret;
+        }else{
+            $params['client_secret'] = $this->$client_secret ;
+        }
         
         $json = $this->makeRequest($url, $params, $auth_header);
-        $data = json_decode($json);
+        //$data = json_decode($json);
         
         /*if (isset($data->error)) {
             $this->error = 'Did not receive refresh token';
             return FALSE;
         }*/
-        return $data;
+        return $json;
     }
     
     /**

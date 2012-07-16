@@ -139,7 +139,7 @@ class User_model extends CI_Model {
         $this->db->update( 'auth_codes',  $data, $where );
         
         //delete user from users table
-        $this->db->delete('users', $where); 
+        $this->db->delete('users', $where);
     }
     
     /**

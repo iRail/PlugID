@@ -58,13 +58,12 @@ class Service_viking extends Service_driver {
         if(is_null($response)){
             return FALSE ;
         }
-        var_dump( $response ); exit ;
         
         // save some stuff, we'll need it to sign our first api call
         $this->access_token = $response->access_token;
         
         // get current user
-        $user = $this->api('users/self');
+        $user = $this->api('users/');
         
         // valid json response?
         $user = json_decode($user);

@@ -25,7 +25,7 @@ class Service_facebook extends Service_driver {
      */
     function initialize($config = array()) {
         $this->oauth = new OAuth2($config['client_id'], $config['client_secret'], $config['redirect_uri']);
-        $this->scope = implode(',', $config['scope']);
+        $this->scope = implode($this->scope_delim, $config['scope']);
     }
     
     /**

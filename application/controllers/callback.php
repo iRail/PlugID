@@ -32,10 +32,11 @@ class Callback extends CI_Controller {
         // collect callback data
         $data = new stdClass();
         $data->code           = $this->input->get('code'); // OAuth2
+        $data->oauth_token    = $this->input->get('oauth_token'); // OAuth1
         $data->oauth_verifier = $this->input->get('oauth_verifier'); // OAuth1.0a
         
         // one of them has to be filled in, at least
-        if (!$data->code && !$data->oauth_verifier) {
+        if (!$data->code && !$data->oauth_token) {
             show_error('invalid_response');
         }
         
@@ -50,12 +51,12 @@ class Callback extends CI_Controller {
         $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
         $user_id = NULL ;
         // do some if else checks
-        if (!$user && !$this->session->user) {
+        if (!$user && !$this->session->user_id) {
             // no user exists
             $user_id = $this->user_model->create()->user_id;
         } else if ( $user && $this->session->user_id && $user->user_id != $this->session->user_id ) {
             // merge 2 users
-            $this->user_model->merge($user->user_id, $this->session->user);
+            $this->user_model->merge($user->user_id, $this->session->user_id);
             $user_id = $user->user_id ;
         } else if ( $user && !$this->session->user_id ) {
             // connect to previous registered logged in user
