@@ -55,7 +55,7 @@ class Access_token extends CI_Controller {
         } else {
             // Hooray! Give the lad a token!
             $this->load->model('access_token_model');
-            $result = $this->access_token_model->create($client_id, $code->user);
+            $result = $this->access_token_model->create($client_id, $code->user_id);
             $data['access_token'] = $result->access_token;
             // Removed. Authentication header OAuhth (case insensitive) or ?oauth_token= are allowed
             //$data['token_type'] = 'Bearer';
