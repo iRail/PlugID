@@ -42,7 +42,8 @@
                     <li><a href="/solomidem">Home</a></li>
                     <li><a href="/solomidem/authenticate">Authenticate</a></li>
                     <li><a href="/solomidem/register">Register</a></li>
-                    <li><a href="/solomidem/documentation">Documentation</a></li>
+                    <li><a href="/solomidem/userdoc">Users</a></li>
+                    <li><a href="/solomidem/documentation">Developers</a></li>
                 </ul>
             </div>
         </div>
