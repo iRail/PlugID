@@ -646,11 +646,13 @@ class tmhOAuth {
     $info = curl_getinfo($c);
     $error = curl_error($c);
     $errno = curl_errno($c);
+/*
     echo $response;
     echo $code;
     echo $info;
     echo $error;
     echo $errno;
+   */
     curl_close($c);
 
     // store the response

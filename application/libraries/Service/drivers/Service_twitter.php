@@ -35,8 +35,10 @@ class Service_twitter extends Service_driver {
     function authorize() {
     	$code = $this->oauth->request('POST',$this->oauth->url($this->url_request_token, ''),array('oauth_callback' => $this->config['redirect_uri']));
     	if ($code == 200) {
-    		$_SESSION['oauth'] = $this->oauth->extract_params($this->oauth->response['response']);
-    		$authurl = $this->oauth->url($this->url_authorize, '') .  "?oauth_token={$_SESSION['oauth']['oauth_token']}";
+    		$this->session->twitter_token = new stdClass();
+
+    		$this->session->twitter_token = $this->oauth->extract_params($this->oauth->response['response']);
+    		$authurl = $this->oauth->url($this->url_authorize, '') .  "?oauth_token={$this->session->twitter_token['oauth_token']}";
   			redirect($authurl);
     	} else {
     		echo "mislukt";
@@ -54,19 +56,31 @@ class Service_twitter extends Service_driver {
      *          object->refresh_token (if given)
      */
     function callback($data) {
-    	$this->oauth->config['user_token']  = $_SESSION['oauth']['oauth_token'];
-    	$this->oauth->config['user_secret'] = $_SESSION['oauth']['oauth_token_secret'];
+    	if(!isset($data->oauth_verifier)){
+    		return FALSE;
+    	}
+    	$this->oauth->config['user_token']  = $this->session->twitter_token['oauth_token'];
+    	$this->oauth->config['user_secret'] = $this->session->twitter_token['oauth_token_secret'];
     	
-    	$code = $this->oauth->request('POST', $this->oauth->url($this->url_access_token, ''), array('oauth_verifier' => $_REQUEST['oauth_verifier']));
+    	$code = $this->oauth->request('POST', $this->oauth->url($this->url_access_token, ''), array('oauth_verifier' => $data->oauth_verifier));
 		if ($code == 200) {
 			$access_token = array();
 			$access_token = $this->oauth->extract_params($this->oauth->response['response']);
-			unset($_SESSION['oauth']);
+			
+			unset($this->session->oauth);
 			// To DO: Get User ID
+
+			$this->oauth_token = $access_token['oauth_token'];
+			$this->oauth_token_secret = $access_token['oauth_token_secret'];
 			
-			
+			$user_response = $this->api('1/account/verify_credentials');
+			$user = json_decode($user_response);
+			if( is_null($user) || !isset($user->id) ){
+				return FALSE ;
+			}
         	$auth = new stdClass();
-        	$auth->ext_user_id = (int) $user->response->user->id;
+        	
+        	$auth->ext_user_id = (int) $user->id;
         	$auth->oauth_token = $access_token['oauth_token'];
         	$auth->oauth_token_secret = $access_token['oauth_token_secret'];
         	
@@ -95,8 +109,8 @@ class Service_twitter extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-    	$this->oauth->config['user_token']  = $_SESSION['access_token']['oauth_token'];
-    	$this->oauth->config['user_secret'] = $_SESSION['access_token']['oauth_token_secret'];
+    	$this->oauth->config['user_token']  = $this->oauth_token;
+    	$this->oauth->config['user_secret'] = $this->oauth_token_secret;
     	
     	$code = $this->oauth->request(strtoupper($method),$this->oauth->url($endpoint), $params);
     	

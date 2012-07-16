@@ -12,7 +12,7 @@ class Access_token_model extends CI_Model {
     private $token_version = '$1$';
     
     function create( $client_id, $user_id ){
-        
+        $data = new stdClass();
         // generate data
         $data->client_id = $client_id ;
         $data->user_id = $user_id ;
