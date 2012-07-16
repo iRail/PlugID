@@ -55,7 +55,7 @@ class Authorize extends CI_Controller {
         
         // check if user is actually signed in
         $user_id = $this->session->user_id;
-        echo $user_id;
+        
         // so, by now, all invalid request should be caught
         
         // it's a no go
@@ -82,7 +82,6 @@ class Authorize extends CI_Controller {
         // Allow button clicked OR
         if ($is_allowed || $is_authorized) {
             // Save allowance
-            echo $user_id;
             $this->ci->user_model->authorize_client($user_id, $client_id);
             
             // Generate code

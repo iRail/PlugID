@@ -58,7 +58,7 @@ class tmhOAuth {
         // for security this should always be set to 2.
        // 'curl_ssl_verifyhost'        => 2,
         // for security this should always be set to true.
-        //'curl_ssl_verifypeer'        => true,
+        'curl_ssl_verifypeer'        => FALSE,
 
         // you can get the latest cacert.pem from here http://curl.haxx.se/ca/cacert.pem
        // 'curl_cainfo'                => dirname(__FILE__) . '/cacert.pem',
@@ -573,7 +573,7 @@ class tmhOAuth {
       CURLOPT_CONNECTTIMEOUT => $this->config['curl_connecttimeout'],
       CURLOPT_TIMEOUT        => $this->config['curl_timeout'],
       CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_SSL_VERIFYPEER => false,//$this->config['curl_ssl_verifypeer'],
+      CURLOPT_SSL_VERIFYPEER => $this->config['curl_ssl_verifypeer'],
       //CURLOPT_SSL_VERIFYHOST => $this->config['curl_ssl_verifyhost'],
 
       CURLOPT_FOLLOWLOCATION => $this->config['curl_followlocation'],
