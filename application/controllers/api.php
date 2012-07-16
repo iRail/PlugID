@@ -17,7 +17,7 @@ class Api extends Api_Controller {
         
         // at least 3
         $num_segments = $this->uri->total_segments();
-        if ($num_segments < 3) {
+        if ($num_segments < $service_name_index + 1) {
             return $this->return_error(array('error' => 'Not enough parameters. We need "api/SERVICE_NAME/ENDPOINT_URI" .'));
         }
         
@@ -38,7 +38,8 @@ class Api extends Api_Controller {
         }
         
         // load tokens for service
-        $tokens = $this->user_model->get_token($this->auth->user_id, $service_name);
+        $tokens = $this->user_model->get_tokens($this->auth->user_id, $service_name);
+        $tokens = reset( $tokens ); // gives first row from array of access_tokens, should be unique
         
         $get_params = $this->input->get();
         $post_params = $this->input->post();
@@ -59,7 +60,7 @@ class Api extends Api_Controller {
         if (!$this->service->is_valid($service_name)) {
             return $this->return_error(array('error' => $service_name . ' does not exist'));
         }
-        
+        unset( $params['oauth_token'] );
         $this->service->{$service_name}->set_authentication($tokens);
         echo $this->service->{$service_name}->api($endpoint_uri, $params, $method);
         

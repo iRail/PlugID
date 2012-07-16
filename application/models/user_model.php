@@ -42,12 +42,12 @@ class User_model extends CI_Model {
      *         string object->oauth_secret
      *         int    object->expires (actual timestamp)
      */
-    function get_token( $user_id, $service_type ){
-        $where = array( 'user_id' => $user_id,
-                        'service_type' => $service_type,
-                        'expires >' => time()
-                      );
-        return $this->db->get_where('user_tokens', $where)->row();
+    function get_tokens( $user_id, $service_type = FALSE ){
+        $this->db->where('user_id', $user_id);
+        if( $service_type !== FALSE ){
+            $this->db->where('service_type',$service_type);
+        }
+        return $this->db->get('user_tokens')->result();
     }
     
     /**

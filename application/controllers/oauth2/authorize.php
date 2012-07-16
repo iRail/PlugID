@@ -57,10 +57,9 @@ class Authorize extends CI_Controller {
         $user_id = $this->ci->session->user_id;
         
         // so, by now, all invalid request should be caught
-        
 
         // it's a no go
-        if ($user_id === FALSE) {
+        if ($user_id === FALSE && count( $this->user_model->get_tokens( $user_id )) > 0 ) {
             // collect request data
             $auth_request = new stdClass();
             
