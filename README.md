@@ -1,5 +1,11 @@
-solomidem
+PlugID
 =========
+PluGID is an [OAuth2](http://oauth.net/2/)(Draft 29 at time of writing) server
+
+
+
+
+
 
 
 
