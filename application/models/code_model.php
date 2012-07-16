@@ -15,8 +15,12 @@ class Code_model extends CI_Model {
      * Create new code
      */
 	function create($client_id, $user_id) {
-	    
         $code = hash($this->hash_algo, time() . uniqid());
+        // delete possible existing row
+	    $where = array('client_id' => $client_id, 'user_id' => $user_id);
+        if( $this->db->get_where('auth_codes', $where )->num_rows() == 1 ){
+            $this->db->delete('auth_code',$where);
+        }
 		$data =  array(   'client_id' => $client_id, 
 		                  'user_id' => $user_id, 
 		                  'code' => $code, 
