@@ -39,11 +39,11 @@
             </div>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li><a href="/solomidem">Home</a></li>
-                    <li><a href="/solomidem/authenticate">Authenticate</a></li>
-                    <li><a href="/solomidem/register">Register</a></li>
-                    <li><a href="/solomidem/userdoc">Users</a></li>
-                    <li><a href="/solomidem/documentation">Developers</a></li>
+                    <li><a href="<?php echo site_url(''); ?>">Home</a></li>
+                    <li><a href="<?php echo site_url('authenticate'); ?>">Authenticate</a></li>
+                    <li><a href="<?php echo site_url('register'); ?>">Register</a></li>
+                    <li><a href="<?php echo site_url('userdoc'); ?>">Users</a></li>
+                    <li><a href="<?php echo site_url('documentation'); ?>">Developers</a></li>
                 </ul>
             </div>
         </div>
