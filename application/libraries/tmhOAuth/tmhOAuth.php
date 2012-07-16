@@ -22,7 +22,7 @@ class tmhOAuth {
    *
    * @param string $config, the configuration to use for this request
    */
-  function __construct($config) {
+  function __construct($config = array()) {
     $this->params = array();
     $this->headers = array();
     $this->auto_fixed_time = false;
@@ -83,7 +83,7 @@ class tmhOAuth {
       ),
       $config
     );
-    $this->set_user_agent();
+    //$this->set_user_agent();
   }
 
   function set_user_agent() {
@@ -573,7 +573,7 @@ class tmhOAuth {
       CURLOPT_CONNECTTIMEOUT => $this->config['curl_connecttimeout'],
       CURLOPT_TIMEOUT        => $this->config['curl_timeout'],
       CURLOPT_RETURNTRANSFER => true,
-      //CURLOPT_SSL_VERIFYPEER => $this->config['curl_ssl_verifypeer'],
+      CURLOPT_SSL_VERIFYPEER => false,//$this->config['curl_ssl_verifypeer'],
       //CURLOPT_SSL_VERIFYHOST => $this->config['curl_ssl_verifyhost'],
 
       CURLOPT_FOLLOWLOCATION => $this->config['curl_followlocation'],
@@ -646,6 +646,11 @@ class tmhOAuth {
     $info = curl_getinfo($c);
     $error = curl_error($c);
     $errno = curl_errno($c);
+    echo $response;
+    echo $code;
+    echo $info;
+    echo $error;
+    echo $errno;
     curl_close($c);
 
     // store the response
