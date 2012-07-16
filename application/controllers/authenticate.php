@@ -12,7 +12,7 @@
     class Authenticate extends CI_Controller {
 
         function index() {
-            if ($user_id = $this->session->user) {
+            if ($user_id = $this->session->user_id) {
                 //Load user model
                 $this->load->model('user_model');
                 //Retrieve all services this user has tokens for. ie, is using.
