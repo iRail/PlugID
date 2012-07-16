@@ -23,9 +23,9 @@ class Service_twitter extends Service_driver {
      * @param array $config (loaded in service & passed)
      */
     function initialize($config = array()) {
-        $this->oauth =  new tmhOAuth(array('consumer_key'    => 'YOUR_CONSUMER_KEY',
-        									'consumer_secret' => 'YOUR_CONSUMER_SECRET',
-        									'host' => $url_base
+		$this->oauth = new tmhOAuth(array('consumer_key'    => $config['consumer_key'],
+        									'consumer_secret' => $config['consumer_secret'],
+        									'host' => $this->url_base,
         									));
     }
     
@@ -33,12 +33,13 @@ class Service_twitter extends Service_driver {
      * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
     function authorize() {
-    	$code = $this->oauth->request('POST',$this->oauth->url($url_request_token, ''),array('oauth_callback' => $this->config['redirect_uri']));
+    	$code = $this->oauth->request('POST',$this->oauth->url($this->url_request_token, ''),array('oauth_callback' => $this->config['redirect_uri']));
     	if ($code == 200) {
     		$_SESSION['oauth'] = $this->oauth->extract_params($this->oauth->response['response']);
-    		$authurl = $this->oauth->url($url_authorize, '') .  "?oauth_token={$_SESSION['oauth']['oauth_token']}";
+    		$authurl = $this->oauth->url($this->url_authorize, '') .  "?oauth_token={$_SESSION['oauth']['oauth_token']}";
   			redirect($authurl);
     	} else {
+    		echo "mislukt";
     		return FALSE;
     	}
     }
@@ -56,7 +57,7 @@ class Service_twitter extends Service_driver {
     	$this->oauth->config['user_token']  = $_SESSION['oauth']['oauth_token'];
     	$this->oauth->config['user_secret'] = $_SESSION['oauth']['oauth_token_secret'];
     	
-    	$code = $this->oauth->request('POST', $this->oauth->url($url_access_token, ''), array('oauth_verifier' => $_REQUEST['oauth_verifier']));
+    	$code = $this->oauth->request('POST', $this->oauth->url($this->url_access_token, ''), array('oauth_verifier' => $_REQUEST['oauth_verifier']));
 		if ($code == 200) {
 			$access_token = array();
 			$access_token = $this->oauth->extract_params($this->oauth->response['response']);
