@@ -31,7 +31,12 @@ All there is to it.
 
 How to install in Windows:
 
+...
+
 
 Copyright and license
 =====================
-To be added
+
+© 2012 - iRail vzw/asbl
+
+AGPLv3
