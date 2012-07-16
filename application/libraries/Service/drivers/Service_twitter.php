@@ -13,37 +13,34 @@ if (!defined('BASEPATH'))
 class Service_twitter extends Service_driver {
     
     private $oauth, $oauth_token, $oauth_token_secret;
-    private $url_authorize = 'oauth/authorize';
-    private $url_request_token = 'oauth/request_token';
-    private $url_access_token = 'oauth/access_token';
-    private $url_base = 'api.twitter.com';
+    private $url_authorize = 'https://api.twitter.com/oauth/authorize';
+    private $url_request_token = 'https://api.twitter.com/oauth/request_token';
+    private $url_access_token = 'https://api.twitter.com/oauth/access_token';
+    private $url_base = 'https://api.twitter.com/1/';
     
     /**
      * give config array with needed parameters like client_id, $client_secret etc.
      * @param array $config (loaded in service & passed)
      */
     function initialize($config = array()) {
-		$this->oauth = new tmhOAuth(array('consumer_key'    => $config['consumer_key'],
-        									'consumer_secret' => $config['consumer_secret'],
-        									'host' => $this->url_base,
-        									));
+        $this->oauth = new OAuth1($config['consumer_key'], $config['consumer_secret']);
     }
     
     /**
      * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
     function authorize() {
-    	$code = $this->oauth->request('POST',$this->oauth->url($this->url_request_token, ''),array('oauth_callback' => $this->config['redirect_uri']));
-    	if ($code == 200) {
-    		$this->session->twitter_token = new stdClass();
-
-    		$this->session->twitter_token = $this->oauth->extract_params($this->oauth->response['response']);
-    		$authurl = $this->oauth->url($this->url_authorize, '') .  "?oauth_token={$this->session->twitter_token['oauth_token']}";
-  			redirect($authurl);
-    	} else {
-    		echo "mislukt";
-    		return FALSE;
-    	}
+        $request_token = $this->oauth->getRequestToken($this->url_request_token, array('oauth_callback' => $this->config['redirect_uri']));
+        
+        if (!$request_token) {
+            return FALSE;
+        }
+        
+        $this->session->twitter_token = $request_token;
+        
+        $params = array();
+        $params['oauth_token'] = $request_token['oauth_token'];
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     /**
@@ -51,43 +48,40 @@ class Service_twitter extends Service_driver {
      * 
      * @param oject $callback_data contains ->code to finish authentication
      * @return  FALSE on failure
-     *          object->ext_user_id
-     *          object->access_token
-     *          object->refresh_token (if given)
+     * object->ext_user_id
+     * object->access_token
+     * object->refresh_token (if given)
      */
     function callback($data) {
-    	if(!isset($data->oauth_verifier)){
-    		return FALSE;
-    	}
-    	$this->oauth->config['user_token']  = $this->session->twitter_token['oauth_token'];
-    	$this->oauth->config['user_secret'] = $this->session->twitter_token['oauth_token_secret'];
-    	
-    	$code = $this->oauth->request('POST', $this->oauth->url($this->url_access_token, ''), array('oauth_verifier' => $data->oauth_verifier));
-		if ($code == 200) {
-			$access_token = array();
-			$access_token = $this->oauth->extract_params($this->oauth->response['response']);
-			
-			unset($this->session->oauth);
-			// To DO: Get User ID
-
-			$this->oauth_token = $access_token['oauth_token'];
-			$this->oauth_token_secret = $access_token['oauth_token_secret'];
-			
-			$user_response = $this->api('1/account/verify_credentials');
-			$user = json_decode($user_response);
-			if( is_null($user) || !isset($user->id) ){
-				return FALSE ;
-			}
-        	$auth = new stdClass();
-        	
-        	$auth->ext_user_id = (int) $user->id;
-        	$auth->oauth_token = $access_token['oauth_token'];
-        	$auth->oauth_token_secret = $access_token['oauth_token_secret'];
-        	
-        	return $auth;
-		} else {
-			return FALSE;
-		}
+        if (!isset($data->oauth_verifier)) {
+            return FALSE;
+        }
+        
+        $params['oauth_token'] = $this->session->twitter_token['oauth_token'];
+        $params['oauth_token_secret'] = $this->session->twitter_token['oauth_token_secret'];
+        $params['oauth_verifier'] = $data->oauth_verifier;
+        
+        $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
+        if (!$access_token) {
+            return FALSE;
+        }
+        
+        unset($this->session->twitter_token);
+        
+        $this->oauth_token = $access_token['oauth_token'];
+        $this->oauth_token_secret = $access_token['oauth_token_secret'];
+        
+        $user = $this->api('account/verify_credentials');
+        if (!$user) {
+            return FALSE;
+        }
+        
+        $auth = new stdClass();
+        $auth->ext_user_id = (int) $user->id;
+        $auth->oauth_token = $access_token['oauth_token'];
+        $auth->oauth_token_secret = $access_token['oauth_token_secret'];
+        
+        return $auth;
     }
     
     /**
@@ -96,7 +90,7 @@ class Service_twitter extends Service_driver {
      * @param object $tokens(->access_token)
      */
     function set_authentication($tokens) {
-    	$this->oauth_token = $tokens->oauth_token;
+        $this->oauth_token = $tokens->oauth_token;
         $this->oauth_token_secret = $tokens->oauth_token_secret;
     }
     
@@ -109,15 +103,11 @@ class Service_twitter extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-    	$this->oauth->config['user_token']  = $this->oauth_token;
-    	$this->oauth->config['user_secret'] = $this->oauth_token_secret;
-    	
-    	$code = $this->oauth->request(strtoupper($method),$this->oauth->url($endpoint), $params);
-    	
-    	if ($code == 200) {
-    		return $this->oauth->response['response'];
-    	} else {
-    		return FALSE;
-    	}
+        $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/');
+        
+        $params['oauth_token'] = $this->oauth_token;
+        $params['oauth_token_secret'] = $this->oauth_token_secret;
+        
+        return json_decode($this->oauth->fetch($endpoint, $params));
     }
 }

@@ -7,6 +7,7 @@
  */
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
+	
 class OAuth2 {
     
     // private members
@@ -22,7 +23,6 @@ class OAuth2 {
      * @param stirng $callback_url
      */
     public function __construct($client_id = FALSE, $client_secret = FALSE, $redirect_uri = FALSE) {
-
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->redirect_uri = $redirect_uri;
