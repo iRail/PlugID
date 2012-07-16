@@ -22,13 +22,13 @@ class Callback extends CI_Controller {
         if( !$this->service->is_valid($service_name)) {
             show_error( $service_name .' is not a valid service name.');
         }
-        /*
+        
         // check state
         if ($this->input->get('state') != $this->session->state) {
             show_error('invalid_state');
         }
         unset($this->session->state);
-        */
+        
         // collect callback data
         $data = new stdClass();
         $data->code           = $this->input->get('code'); // OAuth2

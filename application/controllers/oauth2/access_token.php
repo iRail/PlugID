@@ -53,7 +53,6 @@ class Access_token extends CI_Controller {
             $data['error'] = 'unauthorized_client';
         
         } else {
-            var_dump( $code ); exit ;
             // Hooray! Give the lad a token!
             $this->load->model('access_token_model');
             $result = $this->access_token_model->create($client_id, $code->user);

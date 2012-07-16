@@ -95,8 +95,7 @@ class Authorize extends CI_Controller {
                 $params['state'] = $state;
             }
             
-            $redirect_uri .= (strpos($redirect_uri, '?') ? '?' : '&') . http_build_query($params);
-            
+            $redirect_uri .= (strpos($redirect_uri, '?') ? '&' : '?') . http_build_query($params);
             // Redirect back to user website
             redirect($redirect_uri);
         } else {
