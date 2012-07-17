@@ -23,7 +23,7 @@
             //Load user model
             $this->load->model('user_model');
 
-            $clients = $this->user_model->get_clients($user_id);
+            $clients = $this->user_model->authorized_clients($user_id);
 
 
             $client_id = $this->input->post('revoke');
@@ -46,7 +46,5 @@
                 $this->load->view('footer.tpl');
             }
         }
-
     }
-
 ?>
