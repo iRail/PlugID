@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <div class="container">
     <div class="hero-unit">
         <form method="POST">
@@ -16,5 +14,3 @@
     </div>
 
 </div>
-
-<?php include ('footer.tpl'); ?>

@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <div class="container">
 	<div class="hero-unit">
 		<h1>Hello!</h1>
@@ -7,5 +5,3 @@
 		<p>Praesent auctor condimentum ante eu blandit. Nunc dictum fermentum dolor, non mollis erat commodo lobortis. Sed viverra est non est viverra id ultrices velit eleifend. Nam molestie venenatis sapien, eget tristique mi scelerisque eu. Aliquam rutrum aliquam vestibulum. Suspendisse dictum erat varius libero imperdiet vestibulum. Duis non nisl magna, eu faucibus sem. Donec ac leo arcu, vel pretium elit. Nullam vitae turpis nec dolor tincidunt viverra id vel ipsum. </p>
 	</div>
 </div>
-
-<?php include('footer.tpl'); ?>

@@ -40,7 +40,9 @@ class Register extends CI_Controller {
             redirect('consumer/' . $client->client_id);
         
         } else {
+            $this->load->view('header.tpl');
             $this->load->view('register');
+            $this->load->view('footer.tpl');
         }
     
     }

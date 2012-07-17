@@ -5,12 +5,14 @@
      * @license AGPLv3
      * @author Koen De Groote <koen at iRail.be>
      */
-    class Userdoc extends CI_Controller {
+    class Documentation extends CI_Controller {
 
         private $data = array();
 
         function index() {
-            $this->load->view('userdoc');
+            $this->load->view('header.tpl');
+            $this->load->view('docs/documentation');
+            $this->load->view('footer.tpl');
         }
 
     }

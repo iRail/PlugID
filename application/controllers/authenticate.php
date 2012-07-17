@@ -28,9 +28,13 @@
                 }
                 
                 $data['services'] = $service_have;
+                $this->load->view('header.tpl');
                 $this->load->view('authenticate', $data);
+                $this->load->view('footer.tpl');
             } else {
+                $this->load->view('header.tpl');
                 $this->load->view('authenticate');
+                $this->load->view('footer.tpl');
             }
         }
     }

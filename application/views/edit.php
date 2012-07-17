@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <div class="container">
     <div class="hero-unit">
         <h2>Your registered applications</h2>
@@ -32,5 +30,3 @@
         <?php } ?>
     </div>
 </div>
-
-<?php include ('footer.tpl'); ?>
