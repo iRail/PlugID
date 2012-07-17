@@ -58,7 +58,7 @@
             </div><!--/span-->
             <div id="access" class="span8">
                 <h2>Access token</h2>
-                <p>Access tokens allow apps to make requests to foursquare on the behalf of a user. Each access token is unique to the user and consumer key. Access tokens do not expire, but they may be revoked by the user.</p>
+                <p>Access tokens allow apps to make requests on the behalf of a user. Each access token is unique to the user and consumer key. Access tokens do not expire, but they may be revoked by the user.</p>
                 <h4 class="inline">Code (Preferred) - Web server applications</h4>
                 <div>
                     <ul>

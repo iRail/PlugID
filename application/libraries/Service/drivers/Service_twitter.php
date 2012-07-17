@@ -18,7 +18,7 @@ class Service_twitter extends Service_driver {
     private $url_access_token = 'https://api.twitter.com/oauth/access_token';
     private $url_base = 'https://api.twitter.com/1/';
     
-    function __construct(){
+    function __construct() {
         $this->ci = &get_instance();
         $this->ci->load->library('Session');
     }
@@ -117,7 +117,7 @@ class Service_twitter extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/');
+        $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/') . '.json';
         
         $params['oauth_token'] = $this->oauth_token;
         $params['oauth_token_secret'] = $this->oauth_token_secret;

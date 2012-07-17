@@ -1,0 +1,15 @@
+curl to https://api.twitter.com/oauth/request_token
+Array
+(
+)
+-----------------------------------------
+curl to https://api.twitter.com/oauth/access_token
+Array
+(
+)
+-----------------------------------------
+curl to https://api.twitter.com/1/account/verify_credentials
+Array
+(
+)
+-----------------------------------------
