@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <style type="text/css">
     .logo {
         float: left;
@@ -100,5 +98,3 @@
     </footer>
 
 </div><!--/.fluid-container-->
-
-<?php include ('footer.tpl'); ?>

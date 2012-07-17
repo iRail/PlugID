@@ -101,7 +101,9 @@ class Authorize extends CI_Controller {
             // show access screen
             $data = array();
             $data['client'] = $client->name;
+            $this->load->view('header.tpl');
             $this->load->view('authorize', $data);
+            $this->load->view('footer.tpl');
         }
     }
 }

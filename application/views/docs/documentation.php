@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <style type="text/css">
     body {
         padding-bottom: 40px;
@@ -92,7 +90,3 @@
     </footer>
 
 </div><!--/.fluid-container-->
-
-
-
-<?php include ('footer.tpl'); ?>

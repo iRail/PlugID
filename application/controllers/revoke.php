@@ -41,7 +41,9 @@
                     array_push($data, $vars);
                 }
                 $clientinfo['multi'] = $data;
+                $this->load->view('header.tpl');
                 $this->load->view('revoke', $clientinfo);
+                $this->load->view('footer.tpl');
             }
         }
 

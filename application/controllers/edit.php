@@ -43,8 +43,9 @@
                 }
 
                 //Get all the clients this user has.
-                
+                $this->load->view('header.tpl');
                 $this->load->view('edit', $results);
+                $this->load->view('footer.tpl');
             } else {
                 redirect('');
             }

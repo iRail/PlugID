@@ -42,8 +42,8 @@
                     <li><a href="<?php echo site_url(''); ?>">Home</a></li>
                     <li><a href="<?php echo site_url('authenticate'); ?>">Authenticate</a></li>
                     <li><a href="<?php echo site_url('register'); ?>">Register</a></li>
-                    <li><a href="<?php echo site_url('userdoc'); ?>">Users</a></li>
-                    <li><a href="<?php echo site_url('documentation'); ?>">Developers</a></li>
+                    <li><a href="<?php echo site_url('docs/userdoc'); ?>">Users</a></li>
+                    <li><a href="<?php echo site_url('docs/documentation'); ?>">Developers</a></li>
                 </ul>
             </div>
         </div>
