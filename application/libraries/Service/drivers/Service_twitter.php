@@ -13,6 +13,7 @@ if (!defined('BASEPATH'))
 class Service_twitter extends Service_driver {
     
     private $oauth, $oauth_token, $oauth_token_secret;
+    
     private $url_authorize = 'https://api.twitter.com/oauth/authorize';
     private $url_request_token = 'https://api.twitter.com/oauth/request_token';
     private $url_access_token = 'https://api.twitter.com/oauth/access_token';
@@ -24,6 +25,7 @@ class Service_twitter extends Service_driver {
     }
     
     /**
+     * Construct an object of the wrapper class OAuth1 (which will construct an object of tmhOAuth)
      * give config array with needed parameters like client_id, $client_secret etc.
      * @param array $config (loaded in service & passed)
      */
@@ -32,7 +34,10 @@ class Service_twitter extends Service_driver {
     }
     
     /**
-     * Redirect user to start authentication proces to authorize application to remote oauth provider
+     * Step 1: Get a request token with getRequestToken
+     * Response: oauth_token and oauth_token_secret: store this in the session
+     * 
+     * Step 2: Redirect to the authorize endpoint of twitter with parameter oauth_token
      */
     function authorize() {
         $request_token = $this->oauth->getRequestToken($this->url_request_token, array('oauth_callback' => $this->config['redirect_uri']));
@@ -50,13 +55,17 @@ class Service_twitter extends Service_driver {
     }
     
     /**
-     * Get access_token & ext_user_id
+     * Function AFTER authorize
+     * Step 1 : Get the oauth_token and oauth_verifier from the callback data, and the secret from the session
+     * Step 2 : Obtain an access token with these parameters (GetAccessToken)
+     * Response: oauth_token and oauth_token_secret
+     * Step 3: Verify the credentials with oauth_token and oauth_token_secret an extract the user id.
      * 
-     * @param oject $callback_data contains ->code to finish authentication
+     * @param object data contains oauth_token and oauth_verifier to request access token.
      * @return  FALSE on failure
      * object->ext_user_id
-     * object->access_token
-     * object->refresh_token (if given)
+     * object->oauth_token
+     * object->oauth_token_secret
      */
     function callback($data) {
         $error = new stdClass();
@@ -111,7 +120,7 @@ class Service_twitter extends Service_driver {
     /**
      * Make an api call to the service and sign it with the tokens given in set_authentication
      * 
-     * @param string $endpoint_uri
+     * @param string $endpoint: the endpoint of the API.
      * @param array $params for passing all post/get parameters
      * @param enum(get,post) $method
      * @return string: returns all content of the http body returned on the request

@@ -1,8 +1,9 @@
 <?php
 /**
  * Implementing OAuth 1 for clients
- * Using tmhOAuth
+ * Wrapping the library tmhOAuth
  * @author Jens Segers <jens at iRail.be>
+ * @author Lennart Martens <lennart at iRail.be>
  * 
  */
 if (!defined('BASEPATH'))
@@ -12,12 +13,21 @@ require (APPPATH . '/libraries/oauth1/tmhOAuth.php');
 
 class OAuth1 {
     
-    private $tmhOAuth;
+    private $tmhOAuth;///< Holds an object of the class tmhOAuth, a OAuth 1.0a library
     
+    /** 
+     * Constructs a new OAuth1 object. 
+     * All parameters have to be set on false, because it will be autoloaded.
+     * 
+     * @param  string $consumer_key : consumer_key, get it from dev.twitter.com/apps
+     * @param  string $consumer_secret : consumer_secret, get it from dev.twitter.com/apps
+     */
     function __construct($consumer_key = FALSE, $consumer_secret = FALSE) {
         $config = array();
         $config['consumer_key'] = $consumer_key;
         $config['consumer_secret'] = $consumer_secret;
+        
+        //Disables a part of the SSL security => has to be implemented in final version
         $config['curl_ssl_verifyhost'] = 0;
         $config['curl_ssl_verifypeer'] = FALSE;
         
@@ -25,7 +35,7 @@ class OAuth1 {
     }
     
     /**
-     * Magic call method that passes every call to the R object
+     * Magic call method that passes every call to the tmhOAuth object
      * @return mixed
      */
     public function __call($name, $arguments) {
@@ -33,7 +43,7 @@ class OAuth1 {
     }
     
     /**
-     * Magic get method that passes every property request to the R object
+     * Magic get method that passes every property request to the tmhOAuth object
      * @return mixed
      */
     public function __get($name) {
@@ -41,7 +51,12 @@ class OAuth1 {
     }
     
     /**
-     * @return boolean
+     * Gets the result of a call to an endpoint of the API
+     * 
+     * @param string $url : the full URL to the requested endpoint
+     * @param $params : extra parameters (such as POST-parameters), optional
+     * @param string $method : default 'get'.
+     * @return string $response if success, else return FALSE
      */
     public function fetch($url, $params = array(), $method = 'get') {
         if (!isset($params['oauth_token']) || !isset($params['oauth_token_secret'])) {
@@ -63,6 +78,7 @@ class OAuth1 {
     }
     
     /**
+     * Get the latest response of the API
      * @return string
      */
     public function getLastResponse() {
@@ -70,10 +86,11 @@ class OAuth1 {
     }
     
     /**
-     * @param string $url
-     * @param string $code
-     * @param boolean $use_auth_headers
-     * @return array or FALSE if failure. Still has to check on errorcodes.
+     * Retrieves an access token of the API.
+     * 
+     * @param string $url : complete url to the access_token endpoint
+     * @param string $params : must contain oauth_token and oauth_token_secret (both from getRequestToken) and oauth_verifier (from the callback)
+     * @return array or FALSE if failure.
      */
     public function getAccessToken($url, $params = array()) {
         if (!isset($params['oauth_verifier'])) {
@@ -95,9 +112,11 @@ class OAuth1 {
     }
     
     /**
-     * @param string $url
-     * @param string $code
-     * @param boolean $use_auth_headers
+     * Get a request token of the API
+     * First step in authentication
+     * 
+     * @param string $url : full URL to the request_token endpoint
+     * @param boolean $params : must contain oauth_callback.
      * @return array or FALSE if failure. Still has to check on errorcodes.
      */
     public function getRequestToken($url, $params = array()) {
