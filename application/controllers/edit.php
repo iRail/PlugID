@@ -41,10 +41,9 @@
                     }
                     $results['item'] = $item;
                 }
-                
 
                 //Get all the clients this user has.
-
+                
                 $this->load->view('edit', $results);
             } else {
                 redirect('');
