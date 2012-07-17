@@ -63,7 +63,7 @@
         <div class="span9">
             <div class="hero-unit">
                 <h1>Services you can connect to</h1>
-                <p>The solomidem platform offers connection with various social media. Allowing you to post about the things you're doing, look up places to eat or drink and find deals by local businesses. By connecting, you let solomidem post on the accounts you've connected.</p>
+                <p>The PlugID platform offers connection with various social media. Allowing you to post about the things you're doing, look up places to eat or drink and find deals by local businesses. By connecting, you let PlugID post on the accounts you've connected.</p>
                 <p><a href="#vs" class="btn btn-primary btn-large">Start reading &raquo;</a></p>
                 <p><a href="<?php echo site_url('authenticate'); ?>" class="btn btn-primary btn-large">Get connected &raquo;</a></p>
             </div>
@@ -82,13 +82,13 @@
             <div id="tw" class="span8">
                 <figure>
                 <img class="logo" width="116" height="116" alt="Twitter logo" src="<?php echo base_url('img/twitter-logo.png'); ?>" />
-                    <figcaption>Solomidem will be able to post on your twitter account and by connecting it, you agree to this. It is mentioned again when you first connect.</figcaption>
+                    <figcaption>PlugID will be able to post on your twitter account and by connecting it, you agree to this. It is mentioned again when you first connect.</figcaption>
                 </figure>
             </div><!--/span-->
             <div id="fb" class="span8">
                 <figure>
                     <img class="logo" width="116" height="116" alt="Facebook logo" src="<?php echo base_url('img/facebook-logo.png'); ?>" />
-                    <figcaption>Solomidem can post to your facebook account.</figcaption>
+                    <figcaption>PlugID can post to your facebook account.</figcaption>
                 </figure>
             </div><!--/span-->
         </div>
