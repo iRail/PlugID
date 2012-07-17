@@ -42,7 +42,7 @@
                         if($this->input->post('resetSecret') !== false) {
                             $client_id = $this->input->post('clientid');
                             $data = $this->client_model->reset_secret($client_id);
-                            redirect('consumer/'.$client_id);
+                            redirect('consumer/');
                         }
                         //We're updating the user
                         if($this->input->post('updateUri') !== false) {
