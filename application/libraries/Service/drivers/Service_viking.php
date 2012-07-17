@@ -46,17 +46,20 @@ class Service_viking extends Service_driver {
      *          object
      */
     function callback($data) {
+        $error = new stdClass();
         $code = $data->code;
         if (!$code) {
-            return FALSE;
+            $error->error = 'Invalid request: no code returned';
         }
         $state = $data->state;
         if (!$state) {
             $error->error = 'Invalid request: no state returned';
-            return $error;
         }
         if ($state != $this->ci->session->state) {
             $error->error = 'Invalid state returned';
+        }
+        unset($this->ci->session->state);
+        if (isset($error->error)) {
             return $error;
         }
         

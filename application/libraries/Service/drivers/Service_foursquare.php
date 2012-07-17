@@ -47,18 +47,20 @@ class Service_foursquare extends Service_driver {
      *          object->refresh_token (if given)
      */
     function callback($data) {
+        $error = new stdClass();
         $code = $data->code;
         if (!$code) {
             $error->error = 'Invalid request: no code returned';
-            return $error;
         }
         $state = $data->state;
         if (!$state) {
             $error->error = 'Invalid request: no state returned';
-            return $error;
         }
         if ($state != $this->ci->session->state) {
             $error->error = 'Invalid state returned';
+        }
+        unset($this->ci->session->state);
+        if (isset($error->error)) {
             return $error;
         }
         

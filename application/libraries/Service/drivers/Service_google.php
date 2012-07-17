@@ -52,17 +52,20 @@ class Service_google extends Service_driver {
      *          object
      */
     function callback($data) {
+        $error = new stdClass();
         $code = $data->code;
         if (!$code) {
-            return FALSE;
+            $error->error = 'Invalid request: no code returned';
         }
         $state = $data->state;
         if (!$state) {
             $error->error = 'Invalid request: no state returned';
-            return $error;
         }
         if ($state != $this->ci->session->state) {
             $error->error = 'Invalid state returned';
+        }
+        unset($this->ci->session->state);
+        if (isset($error->error)) {
             return $error;
         }
         
@@ -86,7 +89,7 @@ class Service_google extends Service_driver {
         }
         
         $auth = new stdClass();
-        $auth->ext_user_id = (int) $user->user_id;
+        $auth->ext_user_id = $user->user_id;
         $auth->access_token = $this->access_token;
         $auth->refresh_token = $this->refresh_token;
         $auth->expires = $response->expires_in + time();
