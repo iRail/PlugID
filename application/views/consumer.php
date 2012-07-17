@@ -1,3 +1,8 @@
+<style type="text/css">
+    input {
+        width:250px;
+    }
+</style>
 <div class="container">
     <div class="hero-unit">
         <h2>Your authorized applications</h2>

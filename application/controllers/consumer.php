@@ -50,7 +50,7 @@
                             $name = $this->input->post('name');
                             $redirect_uri = $this->input->post('redirect_uri');
                             $this->client_model->update($client_id,$name,$redirect_uri);
-                            redirect('consumer/'.$this->input->post('clientid'));
+                            redirect('consumer');
                         }
                     }
                     $results['item'] = $item;
