@@ -24,8 +24,11 @@ class Api_Controller extends CI_Controller{
                 return TRUE ;
             }
         }
-        if( !$auth_header ){ // for usability
-            $auth_header = $this->input->get('oauth_token');
+        if ( !$auth_header ) {
+            if ($auth_header = $this->input->get('oauth_token')) {
+                $this->auth = $auth_header;
+                return TRUE;
+            }
         }
         $this->return_error( array('error'=>'authentication failure'));
         return FALSE ;
