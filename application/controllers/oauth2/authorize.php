@@ -38,9 +38,11 @@ class Authorize extends CI_Controller {
             show_error('unauthorized_client');
         }
         
+        var_dump( strtok($redirect_uri,'?') ); exit ;
+        
         // optional callback
         if ($redirect_uri !== FALSE) {
-            if ($redirect_uri != $client->redirect_uri) {
+            if (strtok($redirect_uri,'?') != $client->redirect_uri) { // allow state param set, etc...
                 // Wrong redirect_uri
                 show_error('invalid_redirect_uri');
             }

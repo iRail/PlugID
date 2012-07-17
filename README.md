@@ -12,27 +12,13 @@ The original team of coders is:
 With PlugID, users can register on your service using their accounts on various social media sites. Currently supported are Vikingspots, Foursquare, Facebook, Twitter and Google+.
 Once the user gives permission, your webservice can work with the connected account(s).
 
-PlugID can be run on any server that runs PHP 5.3 or higher.
+Also possible is to clone this base application, write your own api in a subfolder of application/controllers and write a route towards it in the application/config/routes.php config file. From there you can load your drivers and authenticate them to do some api calls to the connected services.
 
 Dependencies
-=======
-OAuth library for php
----------------------
-
-This is the OAuth1.0a library for PHP, which is to be installed when using OAuth1.0a service providers. More documentation can be found at: http://php.net/manual/en/book.oauth.php
-
-How to install in Linux:
-```
-$ sudo apt-get install php-pear php5-dev make libpcre3-dev
-$ sudo pecl install oauth
-```
-
-All there is to it.
-
-How to install in Windows:
-
-...
-
+============
+PHP 5.3+
+--------
+Minumum required php version installed is 5.3 . The .htaccess file is for apache2 webserver. The sql dump file is for mySQL but can be adapted for other RDBMS's.
 
 Copyright and license
 =====================
