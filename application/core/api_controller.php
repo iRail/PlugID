@@ -15,21 +15,25 @@ class Api_Controller extends CI_Controller{
      
     protected function is_authenticated(){
         // Get token
-        $auth_header = $this->input->get_request_header('Authorization');
-        if (preg_match('/^OAuth\ (.*)$/i', $auth_header, $matches)) {
+        $token = $this->input->get_request_header('Authorization');
+        
+        if (preg_match('/^OAuth\ (.*)$/i', $token, $matches)) {
             // Validate token
-            $row = $this->access_token_model->is_valid($matches[1]);
+            $token = $matches[1];
+        }
+        
+        if (!$token) {
+            $token = $this->input->get('oauth_token');
+        }
+        
+        if ($token) {
+            $row = $this->access_token_model->is_valid($token);
             if (isset($row->user_id)) {
                 $this->auth = $row ;
                 return TRUE ;
             }
         }
-        if ( !$auth_header ) {
-            if ($auth_header = $this->input->get('oauth_token')) {
-                $this->auth = $auth_header;
-                return TRUE;
-            }
-        }
+        
         $this->return_error( array('error'=>'authentication failure'));
         return FALSE ;
     }
