@@ -17,6 +17,7 @@ class CI_Session {
         $this->ci = &get_instance();
         
         // start up session
+        session_name('PlugID');
         session_start();
     }
     
