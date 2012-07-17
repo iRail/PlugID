@@ -45,8 +45,9 @@ class Callback extends CI_Controller {
         // call is valid!
         
         // get user id and tokens from service
-        if (!$data = $this->service->$service_name->callback($data)) {
-            show_error('authentication failed');
+        $data = $this->service->$service_name->callback($data);
+        if (isset($data->error)) {
+            show_error($data->error);
         }
         
         // check if service is linked to existing user
