@@ -97,7 +97,7 @@ class Service_viking extends Service_driver {
      */
     public function api($endpoint, $params = array(), $method = 'get') {
         $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
-        $params['access_token'] = $this->access_token;
+        $params['oauth_token'] = $this->access_token;
         
         return $this->oauth->fetch($endpoint, $params);
     }

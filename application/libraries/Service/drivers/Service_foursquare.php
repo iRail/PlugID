@@ -63,7 +63,6 @@ class Service_foursquare extends Service_driver {
         
         // save some stuff, we'll need it to sign our first api call
         $this->access_token = $response->access_token;
-        
         // get current user
         $user = $this->api('users/self');
         
