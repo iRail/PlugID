@@ -33,14 +33,7 @@ class User_model extends CI_Model {
     /**
      * @param int $user_id
      * @param string $service_type
-     * @return empty array
-     *      or int    object->user_id
-     *         string object->service_type (this and next params may be NULL)
-     *         string object->access_token
-     *         string object->refresh_token
-     *         string object->oauth_token
-     *         string object->oauth_secret
-     *         int    object->expires (actual timestamp)
+     * @return array
      */
     function get_tokens( $user_id, $service_type = FALSE ){
         $this->db->where('user_id', $user_id);
@@ -103,6 +96,15 @@ class User_model extends CI_Model {
             return $this->db->insert('auth_clients', $data);
         }
         return TRUE;    
+    }
+    
+    /**
+     * @param int user_id
+     * @return array of clients
+     */
+    function authorized_clients( $user_id ){
+         $query = 'select * from auth_clients a join clients c on a.client_id = c.client_id where a.user_id = ? ';
+         return $this->db->query( $query, array($user_id) )->result();
     }
     
     /**
