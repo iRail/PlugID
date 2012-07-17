@@ -124,6 +124,7 @@ class Service_twitter extends Service_driver {
      * @param array $params for passing all post/get parameters
      * @param enum(get,post) $method
      * @return string: returns all content of the http body returned on the request
+     * 					or FALSE
      */
     public function api($endpoint, $params = array(), $method = 'get') {
         $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/') . '.json';

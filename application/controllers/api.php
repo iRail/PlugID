@@ -18,7 +18,7 @@ class Api extends Api_Controller {
         // at least 3
         $num_segments = $this->uri->total_segments();
         if ($num_segments < $service_name_index + 1) {
-            return $this->return_error(array('error' => 'Not enough parameters. We need "api/SERVICE_NAME/ENDPOINT_URI" .'));
+            show_json_error('Not enough parameters. Need "api/SERVICE_NAME/ENDPOINT_URI"' );
         }
         
         // Get segments
@@ -39,6 +39,11 @@ class Api extends Api_Controller {
         
         // load tokens for service
         $tokens = $this->user_model->get_tokens($this->auth->user_id, $service_name);
+        
+        //Check if we have tokens for this service and user
+        if(!isset($tokens)){
+        	show_json_error("Unable to find credentials for " . $service_name, '403');
+        }
         $tokens = reset( $tokens ); // gives first row from array of access_tokens, should be unique
         
         $get_params = $this->input->get();
@@ -53,16 +58,21 @@ class Api extends Api_Controller {
             $method = 'post';
             $params = $post_params;
         } else if ($postbody = file_get_contents('php://input')) {
-            return $this->return_error(array('error' => 'plain text postbody not yet supported'));
+            show_json_error('plain text postbody not yet supported');
         }
         
         $this->load->driver('service', array('adapter' => $service_name));
         if (!$this->service->is_valid($service_name)) {
-            return $this->return_error(array('error' => $service_name . ' does not exist'));
+            show_json_error($service_name . ' does not exist');
         }
         unset( $params['oauth_token'] );
         $this->service->{$service_name}->set_authentication($tokens);
-        echo $this->service->{$service_name}->api($endpoint_uri, $params, $method);
+        
+        $output = $this->service->{$service_name}->api($endpoint_uri, $params, $method);
+        if(json_decode($output)){
+        	header('Content-type: application/json');
+        }        	
+        echo $output;
         
     }
 }

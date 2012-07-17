@@ -3,6 +3,7 @@
 /**
 * JSON Error Handler
 *
+* 
 * Display error messages using json format
 *
 * @access	public
