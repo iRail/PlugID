@@ -2,6 +2,11 @@
 /**
  * Implementing OAuth 1 for clients
  * Wrapping the library tmhOAuth
+ * 
+ * To implement this class, check out Service_twitter (application/libraries/Service/drivers) and this image:
+ * http://teeky.org/wp-content/uploads/2010/10/Twitter-oAuth-Diagram.png
+ * 
+ * 
  * @author Jens Segers <jens at iRail.be>
  * @author Lennart Martens <lennart at iRail.be>
  * 
