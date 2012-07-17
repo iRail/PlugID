@@ -95,7 +95,7 @@ class User_model extends CI_Model {
                            'client_id' => $client_id );
             return $this->db->insert('auth_clients', $data);
         }
-        return TRUE;    
+        return TRUE;
     }
     
     /**
