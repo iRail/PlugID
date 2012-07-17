@@ -49,7 +49,17 @@ class Service_foursquare extends Service_driver {
     function callback($data) {
         $code = $data->code;
         if (!$code) {
-            return FALSE;
+            $error->error = 'Invalid request: no code returned';
+            return $error;
+        }
+        $state = $data->state;
+        if (!$state) {
+            $error->error = 'Invalid request: no state returned';
+            return $error;
+        }
+        if ($state != $this->ci->session->state) {
+            $error->error = 'Invalid state returned';
+            return $error;
         }
         
         // get access token
@@ -58,7 +68,8 @@ class Service_foursquare extends Service_driver {
         // response valid?
         $response = json_decode($response);
         if(is_null($response) || !isset($response->access_token)){
-            return FALSE ;
+            $error->error = 'Access token request failed';
+            return $error;
         }
         
         // save some stuff, we'll need it to sign our first api call
@@ -69,7 +80,8 @@ class Service_foursquare extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if( is_null($user) || !isset($user->response->user->id) ){
-            return FALSE ;
+            $error->error = '';
+            return $error;
         }
         
         $auth = new stdClass();

@@ -18,6 +18,11 @@ class Service_twitter extends Service_driver {
     private $url_access_token = 'https://api.twitter.com/oauth/access_token';
     private $url_base = 'https://api.twitter.com/1/';
     
+    function __construct(){
+        $this->ci = &get_instance();
+        $this->ci->load->library('Session');
+    }
+    
     /**
      * give config array with needed parameters like client_id, $client_secret etc.
      * @param array $config (loaded in service & passed)
@@ -36,10 +41,11 @@ class Service_twitter extends Service_driver {
             return FALSE;
         }
         
-        $this->session->twitter_token = $request_token;
+        $this->ci->session->twitter_token = $request_token;
         
         $params = array();
         $params['oauth_token'] = $request_token['oauth_token'];
+        //$params['state'] = $this->get_state(); there's no point in this
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -53,27 +59,35 @@ class Service_twitter extends Service_driver {
      * object->refresh_token (if given)
      */
     function callback($data) {
+        $error = new stdClass();
+        if (!isset($data->oauth_token)) {
+            $error->error = 'Invalid request: no oauth token returned';
+            return $error;
+        }
         if (!isset($data->oauth_verifier)) {
-            return FALSE;
+            $error->error = 'Invalid request: no oauth verifier returned';
+            return $error;
         }
         
-        $params['oauth_token'] = $this->session->twitter_token['oauth_token'];
-        $params['oauth_token_secret'] = $this->session->twitter_token['oauth_token_secret'];
+        $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
+        $params['oauth_token_secret'] = $this->ci->session->twitter_token['oauth_token_secret'];
         $params['oauth_verifier'] = $data->oauth_verifier;
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
         if (!$access_token) {
-            return FALSE;
+            $error->error = 'Access token request failed';
+            return $error;
         }
         
-        unset($this->session->twitter_token);
+        unset($this->ci->session->twitter_token);
         
         $this->oauth_token = $access_token['oauth_token'];
         $this->oauth_token_secret = $access_token['oauth_token_secret'];
         
         $user = $this->api('account/verify_credentials');
         if (!$user) {
-            return FALSE;
+            $error->error = 'Failed to get external user id';
+            return $error;
         }
         
         $auth = new stdClass();

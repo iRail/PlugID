@@ -50,6 +50,15 @@ class Service_viking extends Service_driver {
         if (!$code) {
             return FALSE;
         }
+        $state = $data->state;
+        if (!$state) {
+            $error->error = 'Invalid request: no state returned';
+            return $error;
+        }
+        if ($state != $this->ci->session->state) {
+            $error->error = 'Invalid state returned';
+            return $error;
+        }
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));

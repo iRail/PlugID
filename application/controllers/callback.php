@@ -24,14 +24,16 @@ class Callback extends CI_Controller {
         }
         
         // check state
+        /*
         if ($this->input->get('state') != $this->session->state) {
             show_error('invalid_state');
         }
-        unset($this->session->state);
+        unset($this->session->state);*/
         
         // collect callback data
         $data = new stdClass();
         $data->code           = $this->input->get('code'); // OAuth2
+        $data->state          = $this->input->get('state'); // OAuth2
         $data->oauth_token    = $this->input->get('oauth_token'); // OAuth1
         $data->oauth_verifier = $this->input->get('oauth_verifier'); // OAuth1.0a
         
