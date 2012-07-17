@@ -20,7 +20,8 @@
                 $service_have = array();
                 foreach ($services_types as $service) {
                     //get_object_vars expects array. If not present, will not return array. Error suppresion shorter than if/else
-                    $linked = @get_object_vars($this->user_model->get_tokens($user_id, $service));
+                    $test = $this->user_model->get_tokens($user_id, $service);
+                    $linked = @get_object_vars($test[0]);
                     if ($linked['service_type'] != null) {
                         array_push($service_have, $linked['service_type']);
                     }
