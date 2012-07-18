@@ -60,6 +60,13 @@ class Api extends API_Controller {
         unset($get_params['oauth_token']);
         $this->service->{$service_name}->set_authentication($tokens);
         
+        if( !$get_params ){
+            $get_params = array();
+        }
+        if( !$post_params ){
+            $post_params = array();
+        }
+        
         $output = $this->service->{$service_name}->api($endpoint_uri.'?'.http_build_query($get_params), $post_params, $method);
         if (json_decode($output)) {
             $this->output->set_content_type('application/json');
