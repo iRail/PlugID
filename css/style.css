@@ -13,3 +13,8 @@ a.menu:after,.dropdown-toggle:after {
 #user {
 	float: right;
 }
+
+body {
+	padding-bottom: 40px;
+	padding-top: 20px;
+}
