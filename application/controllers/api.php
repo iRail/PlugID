@@ -18,7 +18,7 @@ class Api extends Api_Controller {
         // at least 3
         $num_segments = $this->uri->total_segments();
         if ($num_segments < $service_name_index + 1) {
-            show_json_error('Not enough parameters. Need "api/SERVICE_NAME/ENDPOINT_URI"' );
+            show_json_error('Not enough parameters. Need "api/SERVICE_NAME/ENDPOINT_URI"', '400');
         }
         
         // Get segments
@@ -63,7 +63,7 @@ class Api extends Api_Controller {
         
         $this->load->driver('service', array('adapter' => $service_name));
         if (!$this->service->is_valid($service_name)) {
-            show_json_error($service_name . ' does not exist');
+            show_json_error($service_name . ' does not exist', '400');
         }
         unset( $params['oauth_token'] );
         $this->service->{$service_name}->set_authentication($tokens);
