@@ -2,7 +2,7 @@
     <div class="hero-unit">
         <h1>Connected Apps</h1>
         <p>
-            <form method="post">
+            <?php echo form_open(); ?>
                 <ul>
                     <?php foreach( $clients as $client ){?>
                         <li><?php echo $client->name ; ?>
