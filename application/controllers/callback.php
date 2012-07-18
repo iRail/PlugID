@@ -20,14 +20,14 @@ class Callback extends CI_Controller {
         $this->load->model('user_model');
         $this->load->driver('service', array('adapter' => $service_name));
         if (!$this->service->is_valid($service_name)) {
-            show_error($service_name . ' is not a valid service name.');
+            show_error('Error : ' . $service_name . ' is not a valid service name.');
         }
         
         // get user id and tokens from service
         $data = $this->service->$service_name->callback($this->input->get());
         
         if (!$data) {
-            show_error('Authentication of ' . $service_name .   ' failed');
+            show_error('Error : Authentication of ' . $service_name .   ' failed');
         }
         
         // check if service is linked to existing user

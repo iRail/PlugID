@@ -26,7 +26,8 @@ class Authorize extends CI_Controller {
         
         // invalid_request
         if (!($client_id && $response_type)) {
-            show_error('invalid_request');
+            show_error('Error: this request is invalid. The client_id and the response_type parameters have to be included.  
+            			Please go back to the site or application that sent you here and try again.');
         }
         
         // check on client
@@ -35,14 +36,14 @@ class Authorize extends CI_Controller {
         
         // client does not exist
         if (!isset($client->client_id)) {
-            show_error('unauthorized_client');
+            show_error('Error: the site or application that sent you here is not recognized.');
         }
         
         // optional callback
         if ($redirect_uri !== FALSE) {
             if (strtok($redirect_uri,'?') != $client->redirect_uri) { // allow state param set, etc...
                 // Wrong redirect_uri
-                show_error('invalid_redirect_uri');
+                show_error('Error: the redirect URI provided is not associated with the site or applicatioin that sent you here. Please try again.');
             }
         } else {
             $redirect_uri = $client->redirect_uri;
@@ -50,7 +51,8 @@ class Authorize extends CI_Controller {
         
         // unsupported_response_type
         if ($response_type != 'code') {
-            show_error('unsupported_response_type');
+            show_error('Error: this request is invalid. The response_type parameter has to be code.  
+            			Please go back to the site or application that sent you here and try again.');
         }
         
         // check if user is actually signed in
