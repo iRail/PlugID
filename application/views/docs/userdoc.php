@@ -58,7 +58,7 @@
                 <h1>Services you can connect to</h1>
                 <p>The PlugID platform offers connection with various social media. Allowing you to post about the things you're doing, look up places to eat or drink and find deals by local businesses. By connecting, you let PlugID post on the accounts you've connected.</p>
                 <p><a href="#vs" class="btn btn-primary btn-large">Start reading &raquo;</a></p>
-                <p><a href="<?php echo site_url('authenticate'); ?>" class="btn btn-primary btn-large">Get connected &raquo;</a></p>
+                <p><a href="<?php echo site_url('profile/plugs'); ?>" class="btn btn-primary btn-large">Get connected &raquo;</a></p>
             </div>
             <div id="vs" class="span8">
                 <figure>
