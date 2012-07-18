@@ -10,31 +10,16 @@
         exit('No direct script access allowed');
 
     class Authenticate extends CI_Controller {
+        
+        private $services = array('facebook','twitter','google','viking','foursquare');
 
         function index() {
-            if ($user_id = $this->session->user_id) {
-                //Load user model
-                $this->load->model('user_model');
-                //Retrieve all services this user has tokens for. ie, is using.
-                $services_types = array("foursquare", "facebook", "twitter", "viking");
-                $service_have = array();
-                foreach ($services_types as $service) {
-                    //get_object_vars expects array. If not present, will not return array. Error suppresion shorter than if/else
-                    $test = $this->user_model->get_tokens($user_id, $service);
-                    $linked = @get_object_vars($test[0]);
-                    if ($linked['service_type'] != null) {
-                        array_push($service_have, $linked['service_type']);
-                    }
-                }
-                
-                $data['services'] = $service_have;
-                $this->load->view('header.tpl');
-                $this->load->view('authenticate', $data);
-                $this->load->view('footer.tpl');
-            } else {
-                $this->load->view('header.tpl');
-                $this->load->view('authenticate');
-                $this->load->view('footer.tpl');
+            $plugs = new stdClass();
+            foreach( $this->services as $service ){
+                $plugs->$service = FALSE ;
             }
+            $data = new stdClass();
+            $data->plugs = $plugs ;
+            $this->load->view('plugs',$data);
         }
     }
