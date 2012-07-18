@@ -18,7 +18,7 @@ if ( ! function_exists('show_json_error'))
         
 		$error = new stdClass();
 		$error->code = $status_code;
-		$error->message = $message;
+		$error->error = $message;
 		
 		foreach($information as $key=>$val) {
 			$error->$key = $val;

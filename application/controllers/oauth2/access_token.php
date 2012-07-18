@@ -33,24 +33,24 @@ class Access_token extends CI_Controller {
         
         // Client_secret must be given either way
         if (!$client_secret || !$grant_type || !$code || !$client_id || !$redirect_uri) {
-            $data['error'] = 'invalid_request';
+            show_json_error('invalid_request', '400');
         
         // Hard-coded: 'grant-type' must be 'authorization_code'
         } else if ($grant_type != 'authorization_code') {
-            $data['error'] = 'unsupported_grant_type'; //'invalid_grant' ;
+            show_json_error('unsupported_grant_type', '400'); //'invalid_grant' ;
         
 
         // Authenticate client
         } else if (!$this->client_model->validate_secret($client_id, $client_secret)) {
-            $data['error'] = 'invalid_client';
+           show_json_error('invalid_client', '400');
         
         // Validate code
         } else if (!$this->client_model->validate_redirect_uri($client_id, $redirect_uri)) {
-            $data['error'] = '';
+            show_json_error('invalid redirect uri', '400');
         
         // Validate code
         } else if (! $code = $this->code_model->is_valid($code, $client_id)) {
-            $data['error'] = 'unauthorized_client';
+            show_json_error('unauthorized_client', '400');
         
         } else {
             // Hooray! Give the lad a token!

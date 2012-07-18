@@ -34,7 +34,7 @@ class Api extends Api_Controller {
         
         // authenticate
         if (!$this->is_authenticated()) {
-            return FALSE;
+            show_json_error("Not authenticated", 401);
         }
         
         // load tokens for service
@@ -58,7 +58,7 @@ class Api extends Api_Controller {
             $method = 'post';
             $params = $post_params;
         } else if ($postbody = file_get_contents('php://input')) {
-            show_json_error('plain text postbody not yet supported');
+            show_json_error('Plain text postbody not yet supported');
         }
         
         $this->load->driver('service', array('adapter' => $service_name));
