@@ -6,7 +6,7 @@
  * @author Hannes Van De Vreken <hannes at iRail.be>
  */
 
-include APPPATH . 'core/API_controller.php';
+include APPPATH . 'core/API_Controller.php';
 
 class Test extends API_Controller {
     

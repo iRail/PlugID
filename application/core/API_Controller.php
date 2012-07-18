@@ -27,7 +27,10 @@ class API_Controller extends CI_Controller{
         }
         
         if (!$token) {
-            $token = $this->input->post('oauth_token');
+            $post_params = array();
+            parse_str(file_get_contents('php://input'),$post_params);
+            $_POST = $post_params ;
+            $token = $post_params['oauth_token'];
         }
         
         if ($token) {
