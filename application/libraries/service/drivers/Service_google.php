@@ -81,7 +81,6 @@ class Service_google extends Service_driver {
         $user = $this->api('tokeninfo');
         // valid json response?
         $user = json_decode($user);
-        print_r($user);
         if ( is_null($user) || !isset($user->user_id) ){
             show_error($error_message . "Could not retrieve userid from Google. Note: scope must contain 'https://www.googleapis.com/auth/userinfo.profile'");
         }
