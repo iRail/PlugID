@@ -32,7 +32,7 @@ class Plugs extends CI_Controller {
         }
         
         $this->load->view('header.tpl');
-        $this->load->view('plugs', array('plugs' => $plugs));
+        $this->load->view('profile/plugs', array('plugs' => $plugs));
         $this->load->view('footer.tpl');
     }
 }
