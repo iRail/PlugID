@@ -19,7 +19,7 @@ class Register extends CI_Controller {
         $this->load->library('form_validation');
         
         // check if signed in
-        if (!$user = $this->session->user_id) {
+        if (!$this->session->user_id) {
         	$this->session->redirect = 'developer/register';
             redirect('authenticate');
         }
