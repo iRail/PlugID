@@ -39,7 +39,7 @@ class Api extends API_Controller {
         
         $this->load->driver('service');
         if (!$this->service->is_valid($service_name)) {
-            show_json_error($service_name . ' does not exist', '400');
+            show_json_error('Service ' .$service_name . ' does not exist', '400');
         }
         
         // load tokens for service
@@ -55,22 +55,12 @@ class Api extends API_Controller {
         $get_params = $this->input->get();
         $post_params = $this->input->post();
         
-        $method = 'get'; // default
-        $params = array();
-        if ($get_params !== FALSE) {
-            //$method = 'get'; // is default anyway
-            $params = $get_params;
-        } else if ($post_params !== FALSE) {
-            $method = 'post';
-            $params = $post_params;
-        } else if ($postbody = file_get_contents('php://input')) {
-            show_json_error('Plain text postbody not yet supported');
-        }
-        
-        unset($params['oauth_token']);
+        $method = $this->input->server('REQUEST_METHOD');
+        unset($post_params['oauth_token']);
+        unset($get_params['oauth_token']);
         $this->service->{$service_name}->set_authentication($tokens);
         
-        $output = $this->service->{$service_name}->api($endpoint_uri, $params, $method);
+        $output = $this->service->{$service_name}->api($endpoint_uri.'?'.http_build_query($get_params), $post_params, $method);
         if (json_decode($output)) {
             $this->output->set_content_type('application/json');
         }
