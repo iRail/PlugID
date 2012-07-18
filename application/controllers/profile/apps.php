@@ -29,7 +29,7 @@ class Apps extends CI_Controller {
         $this->load->model('client_model');
         
     	if(!$client = $this->client_model->get($client_id)) {
-        	show_error('Client does not exist');
+        	show_error('We could not find this client in our database. Detail: client ID not found');
         }
         
         if ($this->input->post('client_id') && $this->input->post('client_id') == $client_id) {
