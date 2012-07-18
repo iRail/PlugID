@@ -39,7 +39,7 @@ class Api extends API_Controller {
         
         $this->load->driver('service');
         if (!$this->service->is_valid($service_name)) {
-            show_json_error($service_name . ' does not exist', '400');
+            show_json_error('Service ' .$service_name . ' does not exist', '400');
         }
         
         // load tokens for service
