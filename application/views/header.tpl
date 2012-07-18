@@ -12,18 +12,6 @@
         <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css'); ?>">
         <link rel="stylesheet" href="<?php echo base_url('css/bootstrap-responsive.min.css'); ?>">
         <link rel="stylesheet" href="<?php echo base_url('css/style.css'); ?>">
-        <style type="text/css">
-            ul.nav li.dropdown:hover ul.dropdown-menu{
-                display: block;
-            }
-
-            a.menu:after, .dropdown-toggle:after {
-                content: none;
-            }
-            #user {
-                float:right;
-            }
-        </style>
 
     </head>
     <body>
