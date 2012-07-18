@@ -67,12 +67,13 @@ class Service_twitter extends Service_driver {
      * object->oauth_token_secret
      */
     function callback($data) {
+    	$error_message = 'Error authenticating with Twitter. Please try again later. Technical detail for our monkeys: ';
         if (!isset($data['oauth_token'])) {
             show_error('Invalid request: no oauth token returned');
         }
         
         if (!isset($data['oauth_verifier'])) {
-            show_error('Invalid request: no oauth verifier returned');
+            show_error($error_message . 'Invalid request: no oauth verifier returned');
         }
         
         $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
@@ -81,7 +82,7 @@ class Service_twitter extends Service_driver {
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
         if (!$access_token) {
-            show_error('Access token request failed');
+            show_error($error_message . 'Access token request failed');
         }
         
         unset($this->ci->session->twitter_token);
@@ -91,7 +92,7 @@ class Service_twitter extends Service_driver {
         
         $user = $this->api('account/verify_credentials');
         if (!$user) {
-            show_error('Failed to get external user id');
+            show_error($error_message . 'Failed to get external user id');
         }
         
         $auth = new stdClass();
