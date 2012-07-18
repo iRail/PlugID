@@ -42,7 +42,7 @@ $route['default_controller'] = 'main';
 $route['404_override'] = '';
 $route['connect/(:any)'] = 'connect/index/$1';
 $route['callback/(:any)'] = 'callback/index/$1';
-$route['clients/(:any)'] = 'clients/index/$1';
+
 // change PlugID to your own needs
 // very important to be in front of api/(:any)
 $route['api/plugid/(:any)'] = 'plugid/$1';
