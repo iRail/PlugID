@@ -50,18 +50,19 @@ class Service_facebook extends Service_driver {
      *          object
      */
     function callback($data) {
+    	$error_message = 'Error authenticating with Facebook. Please try again later. Technical detail for our monkeys: ';
     	if (!isset($data['code'])) {
-            show_error('Invalid request: no code returned');
+            show_error($error_message . 'No code returned');
         }
-        $code = $data['code']
+        $code = $data['code'];
         
         if (!isset($data['state'])) {
-            show_error('Invalid request: no state returned');
+            show_error($error_message . 'Invalid request: no state returned');
         }
-        $state = $data['state']
+        $state = $data['state'];
         
         if ($state != $this->ci->session->state) {
-            show_error('Invalid state returned');
+            show_error($error_message . 'Invalid state returned');
         }
         
         // remove session state
@@ -79,7 +80,7 @@ class Service_facebook extends Service_driver {
         }
         
         if( !isset($response->access_token)){
-            show_error('Access token request failed');
+            show_error($error_message . 'Access token request failed');
         }
         
         // save some stuff, we'll need it to sign our first api call
@@ -91,7 +92,7 @@ class Service_facebook extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if( is_null($user) || !isset($user->id) ){
-            show_error('Failed to get external user id');
+            show_error( $error_message . 'Failed to get external user id');
         }
         
         $auth = new stdClass();

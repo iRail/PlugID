@@ -27,7 +27,7 @@ class Callback extends CI_Controller {
         $data = $this->service->$service_name->callback($this->input->get());
         
         if (!$data) {
-            show_error('Service authentication failed');
+            show_error('Authentication of ' . $service_name .   ' failed');
         }
         
         // check if service is linked to existing user
