@@ -11,7 +11,7 @@
                             <?php if( $token ){ ?>
                                 <?php echo $service_name; ?> is plugged in →
                             <?php }else{ ?>
-                                <a href="connect/<?php echo $service_name; ?>">Plug-in <?php echo $service_name; ?> →</a>
+                                <a href="<?php echo site_url('connect/' .$service_name); ?>">Plug-in <?php echo site_url($service_name); ?> →</a>
                             <?php } ?>
                         </li>
                     <?php } ?>
