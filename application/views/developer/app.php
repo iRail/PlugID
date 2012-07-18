@@ -13,7 +13,9 @@
                 <?php echo form_input('redirect_uri', isset($item->redirect_uri) ? $item->redirect_uri : '', 'class="input-xlarge"'); ?>
                 <br />
                 <input type="hidden" name="clientid" value="<?php echo $item->client_id ?>">
-                <button class="btn btn-primary" type="submit" value="update" name="updateUri">Update client</button>
+                <button class="btn btn-primary" type="submit" value="update" name="updateUri">Update client</button><br />
+                <span style="display:block">&nbsp;</span>
+                <button class="btn btn-primary" type="submit" value="delete" name="deleteClient">Delete client</button>
             </form>
     </div>
 </div>
