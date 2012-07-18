@@ -12,7 +12,7 @@ if (!defined('BASEPATH'))
 class Main extends CI_Controller {
 	
 	function index() {
-		redirect('register');
+		redirect('developer/register');
 	}
 	
 }

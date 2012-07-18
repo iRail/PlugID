@@ -14,6 +14,12 @@ class Authenticate extends CI_Controller {
     private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
     
     function index() {
+        if ($user_id = $this->session->user_id) {
+            //If coming from register, can't overwrite the session redirect.
+            //$this->session->redirect = 'authenticate';
+            redirect('profile/plugs');
+        }
+        
         $plugs = new stdClass();
         foreach ($this->services as $service) {
             $plugs->$service = FALSE;
@@ -23,7 +29,7 @@ class Authenticate extends CI_Controller {
         $data->plugs = $plugs;
         
         $this->load->view('header.tpl');
-        $this->load->view('plugs', $data);
+        $this->load->view('profile/plugs', $data);
         $this->load->view('footer.tpl');
     }
 }

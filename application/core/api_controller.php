@@ -1,6 +1,6 @@
 <?php
 
-class Api_Controller extends CI_Controller{
+class API_Controller extends CI_Controller{
     
     protected $auth = NULL ;
     
