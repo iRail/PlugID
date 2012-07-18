@@ -19,10 +19,8 @@ class Register extends CI_Controller {
         $this->load->library('form_validation');
         
         // check if signed in
-        $user = $this->session->user_id;
-        
-        // it's a no go
-        if ($user === FALSE) {
+        if (!$user = $this->session->user_id) {
+        	$this->session->redirect = 'developer/register';
             redirect('authenticate');
         }
         
@@ -30,18 +28,17 @@ class Register extends CI_Controller {
         $this->form_validation->set_rules('redirect_uri', 'Redirect url', 'required|prep_url');
         
         if ($this->form_validation->run()) {
-            
             $data = new stdClass();
             $data->name = $this->input->post('name');
             $data->redirect_uri = $this->input->post('redirect_uri');
             
             $this->load->model('client_model');
             $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->user_id);
-            redirect('clients/' . $client->client_id);
+            redirect('developer/apps/edit/' . $client->client_id);
         
         } else {
             $this->load->view('header.tpl');
-            $this->load->view('register');
+            $this->load->view('developer/register');
             $this->load->view('footer.tpl');
         }
     

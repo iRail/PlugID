@@ -5,13 +5,13 @@
  * @author Koen De Groote <koen at iRail.be>
  */
 
-class Clients extends CI_Controller {
+class Apps extends CI_Controller {
     
     function __construct() {
         parent::__construct();
         
         if (!$this->session->user_id) {
-            $this->session->redirect = 'clients';
+            $this->session->redirect = 'developer/apps';
             redirect('authenticate');
         }
     }
@@ -21,13 +21,18 @@ class Clients extends CI_Controller {
         $results = $this->user_model->authorized_clients($this->session->user_id);
         
         $this->load->view('header.tpl');
-        $this->load->view('clients', array('results' => $results));
+        $this->load->view('developer/apps', array('results' => $results));
         $this->load->view('footer.tpl');
     }
     
     function edit($client) {
         $this->load->model('client_model');
         $item = $this->client_model->get($client);
+        
+        // only edit own clients
+        if ($item->user_id != $this->session->user_id) {
+            redirect('logout');
+        }
         
         $this->load->helper('url');
         $this->load->helper('form');
@@ -37,16 +42,11 @@ class Clients extends CI_Controller {
         $this->form_validation->set_rules('redirect_uri', 'Redirect url', 'required|prep_url');
         
         if ($this->form_validation->run()) {
-            if ($this->input->post('clientid') !== $client) {
-                //There is a hidden field which must be received. If not, trouble.
-                redirect('logout');
-            }
-            
             //We're resetting the secret
             if ($this->input->post('resetSecret') !== false) {
                 //Nothing is actually done with $data
                 $this->client_model->reset_secret($client);
-                redirect('clients/edit/' . $client);
+                redirect('developer/apps/edit/' . $client);
             }
             
             //We're updating the user
@@ -54,12 +54,12 @@ class Clients extends CI_Controller {
                 $name = $this->input->post('name');
                 $redirect_uri = $this->input->post('redirect_uri');
                 $this->client_model->update($client, $name, $redirect_uri);
-                redirect('clients/');
+                redirect('developer/apps');
             }
         }
         
         $this->load->view('header.tpl');
-        $this->load->view('client', array('item' => $item));
+        $this->load->view('developer/app', array('item' => $item));
         $this->load->view('footer.tpl');
     }
 

@@ -44,8 +44,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="<?php echo site_url('docs/documentation'); ?>">Developers</a></li>
-                            <li><a href="<?php echo site_url('clients'); ?>">My apps</a></li>
-                            <li><a href="<?php echo site_url('register'); ?>">Register new app</a></li>
+                            <li><a href="<?php echo site_url('developer/apps'); ?>">My apps</a></li>
+                            <li><a href="<?php echo site_url('developer/register'); ?>">Register new app</a></li>
                         </ul>
                     </li>
 					<li class="dropdown">
