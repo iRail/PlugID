@@ -18,7 +18,7 @@ class Apps extends CI_Controller {
     
     function index() {
         $this->load->model('user_model');
-        $results = $this->user_model->authorized_clients($this->session->user_id);
+        $results = $this->user_model->get_clients($this->session->user_id);
         
         $this->load->view('header.tpl');
         $this->load->view('developer/apps', array('results' => $results));
