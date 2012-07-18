@@ -47,11 +47,11 @@ class Service_viking extends Service_driver {
      */
     function callback($data) {
         $error = new stdClass();
-        $code = $data->code;
+        $code = $data['code'];
         if (!$code) {
             $error->error = 'Invalid request: no code returned';
         }
-        $state = $data->state;
+        $state = $data['state'];
         if (!$state) {
             $error->error = 'Invalid request: no state returned';
         }
@@ -66,6 +66,7 @@ class Service_viking extends Service_driver {
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
         // response valid?
+        var_dump( $response ); exit ;
         $response = json_decode($response);
         if(is_null($response)){
             return FALSE ;

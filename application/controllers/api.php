@@ -41,8 +41,8 @@ class Api extends API_Controller {
         $tokens = $this->user_model->get_tokens($this->auth->user_id, $service_name);
         
         //Check if we have tokens for this service and user
-        if (!isset($tokens)) {
-            show_json_error("Unable to find credentials for " . $service_name, '403');
+        if (!$tokens) {
+            show_json_error("Unable to find credentials for " . $service_name, 401, array('redirect_uri' => site_url('profile/plugs')));
         }
         $tokens = reset($tokens); // gives first row from array of access_tokens, should be unique
         
