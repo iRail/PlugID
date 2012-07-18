@@ -14,29 +14,23 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Callback extends CI_Controller {
-
-    function index( $service_name ){ 
+    
+    function index($service_name) {
         // for checking & merging users
         $this->load->model('user_model');
         $this->load->driver('service', array('adapter' => $service_name));
-        if( !$this->service->is_valid($service_name)) {
-            show_error( $service_name .' is not a valid service name.');
+        if (!$this->service->is_valid($service_name)) {
+            show_error($service_name . ' is not a valid service name.');
         }
-        
-        // check state
-        /*
-        if ($this->input->get('state') != $this->session->state) {
-            show_error('invalid_state');
-        }
-        unset($this->session->state);*/
         
         // collect callback data
         $data = new stdClass();
-        $data->code           = $this->input->get('code'); // OAuth2
-        $data->state          = $this->input->get('state'); // OAuth2
-        $data->oauth_token    = $this->input->get('oauth_token'); // OAuth1
+        $data->code = $this->input->get('code'); // OAuth2
+        $data->state = $this->input->get('state'); // OAuth2
+        $data->oauth_token = $this->input->get('oauth_token'); // OAuth1
         $data->oauth_verifier = $this->input->get('oauth_verifier'); // OAuth1.0a
         
+
         // one of them has to be filled in, at least
         if (!$data->code && !$data->oauth_token) {
             show_error('invalid_response');
@@ -44,6 +38,7 @@ class Callback extends CI_Controller {
         
         // call is valid!
         
+
         // get user id and tokens from service
         $data = $this->service->$service_name->callback($data);
         if (isset($data->error)) {
@@ -52,25 +47,26 @@ class Callback extends CI_Controller {
         
         // check if service is linked to existing user
         $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
-        $user_id = NULL ;
+        $user_id = NULL;
         // do some if else checks
         if (!$user && !$this->session->user_id) {
             // no user exists
             $user_id = $this->user_model->create()->user_id;
-        } else if ( $user && $this->session->user_id && $user->user_id != $this->session->user_id ) {
+        } else if ($user && $this->session->user_id && $user->user_id != $this->session->user_id) {
             // merge 2 users
             $this->user_model->merge($user->user_id, $this->session->user_id);
-            $user_id = $user->user_id ;
-        } else if ( $user && !$this->session->user_id ) {
+            $user_id = $user->user_id;
+        } else if ($user && !$this->session->user_id) {
             // connect to previous registered logged in user
             $user_id = $user->user_id;
-        } else if ( !$user && $this->session->user_id ) {
+        } else if (!$user && $this->session->user_id) {
             // connect to logged in user
             $user_id = $this->session->user_id;
-        }else{
+        } else {
             // logged in and registered before
-            $user_id = $this->session->user_id; 
-            // OR: $user_id = $user->user_id;
+            $user_id = $this->session->user_id;
+        
+     // OR: $user_id = $user->user_id;
         }
         
         // log in user
@@ -82,27 +78,27 @@ class Callback extends CI_Controller {
         $this->user_model->set_token((array) $data);
         
         // if $this->session->auth_request is set, handle auth_request (redirect)
-        if( $this->session->auth_request ){
+        if ($this->session->auth_request) {
             $this->repeat_authorize();
         }
         
-        redirect('');
+        if ($this->session->redirect) {
+            redirect($this->session->redirect)
+        } else {
+            redirect();
+        }
     }
     
     /**
      * This function redirects to the page where the user authorizes a client
      */
-    private function repeat_authorize(){
+    private function repeat_authorize() {
         $auth_request = $this->session->auth_request;
         // we don't want this anymore in the future
         unset($this->session->auth_request);
         
-        $url  = 'oauth2/authorize' ;
-        $params = array(
-                    'client_id'     => $auth_request->client_id,
-                    'response_type' => $auth_request->response_type,
-                    'redirect_uri'  => $auth_request->redirect_uri
-                  );
+        $url = 'oauth2/authorize';
+        $params = array('client_id' => $auth_request->client_id, 'response_type' => $auth_request->response_type, 'redirect_uri' => $auth_request->redirect_uri);
         
         if ($auth_request->state) {
             $params['state'] = $auth_request->state;
