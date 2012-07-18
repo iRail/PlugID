@@ -70,9 +70,10 @@ class Api extends Api_Controller {
         
         $output = $this->service->{$service_name}->api($endpoint_uri, $params, $method);
         if(json_decode($output)){
-        	header('Content-type: application/json');
+        	$this->output->set_content_type('application/json');
         }        	
-        echo $output;
+
+        $this->output->set_output($output);
         
     }
 }
