@@ -37,6 +37,11 @@ class Api extends API_Controller {
             show_json_error("Not authenticated", 401);
         }
         
+        $this->load->driver('service');
+        if (!$this->service->is_valid($service_name)) {
+            show_json_error($service_name . ' does not exist', '400');
+        }
+        
         // load tokens for service
         $tokens = $this->user_model->get_tokens($this->auth->user_id, $service_name);
         
@@ -62,10 +67,6 @@ class Api extends API_Controller {
             show_json_error('Plain text postbody not yet supported');
         }
         
-        $this->load->driver('service', array('adapter' => $service_name));
-        if (!$this->service->is_valid($service_name)) {
-            show_json_error($service_name . ' does not exist', '400');
-        }
         unset($params['oauth_token']);
         $this->service->{$service_name}->set_authentication($tokens);
         
