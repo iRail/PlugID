@@ -54,7 +54,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="<?php echo site_url('profile/plugs'); ?>">Plugs</a></li>
-                            <li><a href="<?php echo site_url('clients'); ?>">Connected apps</a></li>
+                            <li><a href="<?php echo site_url('profile/apps'); ?>">Connected apps</a></li>
                         </ul>
                     </li>
 					<li><a href="<?php echo site_url('docs/userdoc'); ?>">About</a></li>
