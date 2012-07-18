@@ -109,6 +109,6 @@ class Service_foursquare extends Service_driver {
     public function api($endpoint, $params = array(), $method = 'get') {
         $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
     	$params['oauth_token'] = $this->access_token;
-    	return $this->oauth->fetch($endpoint, $params);
+    	return $this->oauth->fetch($endpoint, $params, $method);
     }
 }

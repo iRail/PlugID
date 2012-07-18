@@ -124,6 +124,6 @@ class Service_facebook extends Service_driver {
         $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
         $params['oauth_token'] = $this->access_token;
         
-        return $this->oauth->fetch($endpoint, $params);
+        return $this->oauth->fetch($endpoint, $params, $method);
     }
 }
