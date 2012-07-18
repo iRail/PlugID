@@ -65,7 +65,7 @@
                             Profile<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?php echo site_url('plugs'); ?>">Plugs</a></li>
+                            <li><a href="<?php echo site_url('profile/plugs'); ?>">Plugs</a></li>
                             <li><a href="<?php echo site_url('clients'); ?>">Connected apps</a></li>
                         </ul>
                     </li>
