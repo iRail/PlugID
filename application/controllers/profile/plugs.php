@@ -16,7 +16,8 @@ class Plugs extends CI_Controller {
     function index() {
         $this->load->model('user_model');
         if (!$user_id = $this->session->user_id) {
-            redirect('');
+            $this->session->redirect = 'profile/plugs';
+            redirect('authenticate');
         }
         $tokens = $this->user_model->get_tokens($user_id);
         
