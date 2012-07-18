@@ -33,18 +33,6 @@ class Api_Controller extends CI_Controller{
                 return TRUE ;
             }
         }
-        
-        $this->return_error( array('error'=>'authentication failure'));
         return FALSE ;
-    }
-    
-    /**
-     * @param give error object which will be outputted in json format
-     * NEEDS RETURN STATEMENT IN CONTROLLER AFTER CALLING THIS
-     * Replace with show_json_error
-     */
-    protected function return_error($error) {
-        $this->output->set_content_type('application/json');
-        $this->output->set_output( json_encode($error));
     }
 }
