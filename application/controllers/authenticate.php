@@ -20,6 +20,9 @@
             }
             $data = new stdClass();
             $data->plugs = $plugs ;
+            
+            $this->load->view('header.tpl');
             $this->load->view('plugs',$data);
+            $this->load->view('footer.tpl');
         }
     }
