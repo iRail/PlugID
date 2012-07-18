@@ -51,7 +51,6 @@ class Api extends API_Controller {
         }
         $tokens = reset($tokens); // gives first row from array of access_tokens, should be unique
         
-
         $get_params = $this->input->get();
         $post_params = $this->input->post();
         
