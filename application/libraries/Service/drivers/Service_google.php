@@ -52,22 +52,18 @@ class Service_google extends Service_driver {
      *          object
      */
     function callback($data) {
-        $error = new stdClass();
-        $code = $data->code;
+        $code = $data['code'];
         if (!$code) {
-            $error->error = 'Invalid request: no code returned';
+            show_error('Invalid request: no code returned');
         }
-        $state = $data->state;
+        $state = $data['state'];
         if (!$state) {
-            $error->error = 'Invalid request: no state returned';
+            show_error('Invalid request: no state returned');
         }
         if ($state != $this->ci->session->state) {
-            $error->error = 'Invalid state returned';
+            show_error('Invalid state returned');
         }
         unset($this->ci->session->state);
-        if (isset($error->error)) {
-            return $error;
-        }
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code) );
@@ -85,7 +81,7 @@ class Service_google extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if ( is_null($user) || !isset($user->user_id) ){
-            return FALSE;
+            show_error("Could not retrieve userid from Google");
         }
         
         $auth = new stdClass();
