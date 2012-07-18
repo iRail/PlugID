@@ -62,14 +62,17 @@ class OAuth2 {
      * @return boolean
      */
     public function fetch($url, $params = array(), $method = 'get', $token_type = FALSE) {
-        
-    	if(!isset($params['oauth_token'])){
+        // test on dialects
+    	if(!isset($params['oauth_token']) && !isset($params['access_token'])){
     		return FALSE;
     	}
-        if ($token_type && preg_match('/bearer/i', $token_type)) {
-            $auth_header = 'Bearer ' . $params['oauth_token'];
+    	
+    	$token = isset($params['oauth_token']) ? $params['oauth_token'] : $params['access_token'];
+        
+    	if ($token_type && stristr($token_type, 'bearer')) {
+            $auth_header = 'Bearer ' . $token;
         } else {
-            $auth_header = 'OAuth ' . $params['oauth_token'];
+            $auth_header = 'OAuth ' . $token;
         }
         
         $this->last_response = $this->makeRequest($url, $method, $params, $auth_header);
