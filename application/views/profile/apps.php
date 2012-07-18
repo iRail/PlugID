@@ -9,6 +9,9 @@
                 <span><?php echo $result->client_secret ?></span><br />
                 <h3>Callback</h3>
                 <span><?php echo $result->redirect_uri ?></span><br />
+                
+                <a class="btn" href="<?php echo site_url('profile/apps/revoke/'.$result->client_id) ?>">Revoke</a>
+                
                 <hr />
             <?php } ?>
     </div>
