@@ -46,22 +46,20 @@ class Service_viking extends Service_driver {
      *          object
      */
     function callback($data) {
-        $error = new stdClass();
+    	$error_message = 'Error authenticating with VikingSpots. Please try again later. Technical detail for our monkeys: ';
+        
         $code = $data['code'];
         if (!$code) {
-            $error->error = 'Invalid request: no code returned';
+			show_error($error_message . 'Invalid request: no code returned');
         }
         $state = $data['state'];
         if (!$state) {
-            $error->error = 'Invalid request: no state returned';
+            show_error($error_message . 'Invalid request: no state returned');
         }
         if ($state != $this->ci->session->state) {
-            $error->error = 'Invalid state returned';
+           show_error($error_message . 'Invalid state returned');
         }
         unset($this->ci->session->state);
-        if (isset($error->error)) {
-            return $error;
-        }
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
@@ -69,7 +67,7 @@ class Service_viking extends Service_driver {
         var_dump( $response ); exit ;
         $response = json_decode($response);
         if(is_null($response)){
-            return FALSE ;
+            show_error($error_message . 'Access token request failed');
         }
         
         // save some stuff, we'll need it to sign our first api call
@@ -81,7 +79,7 @@ class Service_viking extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if( is_null($user) || !isset($user->response->user->id) ){
-            return FALSE ;
+            show_error($error_message . "Error while retrieving UserID from VikingSpots");
         }
         
         $auth = new stdClass();

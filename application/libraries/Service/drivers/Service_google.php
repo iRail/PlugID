@@ -52,16 +52,17 @@ class Service_google extends Service_driver {
      *          object
      */
     function callback($data) {
+    	$error_message = 'Error authenticating with Google. Please try again later. Technical detail for our monkeys: ';
         $code = $data['code'];
         if (!$code) {
-            show_error('Invalid request: no code returned');
+            show_error($error_message . 'Invalid request: no code returned');
         }
         $state = $data['state'];
         if (!$state) {
-            show_error('Invalid request: no state returned');
+            show_error($error_message . 'Invalid request: no state returned');
         }
         if ($state != $this->ci->session->state) {
-            show_error('Invalid state returned');
+            show_error($error_message . 'Invalid state returned');
         }
         unset($this->ci->session->state);
         
@@ -70,7 +71,7 @@ class Service_google extends Service_driver {
         // response valid?
         $response = json_decode($response);
         if (is_null($response)) {
-            return FALSE;
+            show_error($error_message . 'Access token request failed');
         }
         // save some stuff, we'll need it to sign our first api call
         $this->access_token = $response->access_token;
@@ -81,7 +82,7 @@ class Service_google extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if ( is_null($user) || !isset($user->user_id) ){
-            show_error("Could not retrieve userid from Google");
+            show_error($error_message . "Could not retrieve userid from Google");
         }
         
         $auth = new stdClass();

@@ -54,6 +54,12 @@ class Apps extends CI_Controller {
                 $this->client_model->update($client, $name, $redirect_uri);
                 redirect('developer/apps');
             }
+            
+            //We're deleting the user
+            if ($this->input->post('deleteClient') !== false) {
+                $this->client_model->delete($client);
+                redirect('developer/apps');
+            }
         }
         
         $this->load->view('header.tpl');

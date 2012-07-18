@@ -48,16 +48,17 @@ class Service_foursquare extends Service_driver {
      *          object->refresh_token (if given)
      */
     function callback($data) {
+    	$error_message = 'Error authenticating with Foursquare. Please try again later. Technical detail for our monkeys: ';
         $code = $data['code'];
         if (!$code) {
-           show_error('Invalid request: no code returned');
+           show_error($error_message . 'Invalid request: no code returned');
         }
         $state = $data['state'];
         if (!$state) {
-           show_error('Invalid request: no state returned');
+           show_error($error_message . 'Invalid request: no state returned');
         }
         if ($state != $this->ci->session->state) {
-            show_error('Invalid state returned');
+            show_error($error_message . 'Invalid state returned');
         }
         unset($this->ci->session->state);
 
@@ -67,7 +68,7 @@ class Service_foursquare extends Service_driver {
         // response valid?
         $response = json_decode($response);
         if(is_null($response) || !isset($response->access_token)){
-            show_error('Access token request failed');
+            show_error($error_message . 'Access token request failed');
         }
         
         // save some stuff, we'll need it to sign our first api call
@@ -78,7 +79,7 @@ class Service_foursquare extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if( is_null($user) || !isset($user->response->user->id) ){
-			show_error("Error while retrieving UserID from Foursquare");
+			show_error($error_message . "Error while retrieving UserID from Foursquare");
         }
         
         $auth = new stdClass();
