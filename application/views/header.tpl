@@ -28,7 +28,7 @@
     </head>
     <body>
 
-<div data-dropdown="dropdown" class="navbar navbar-wrapper">
+<div data-dropdown="dropdown" class="navbar navbar-fixed-top navbar-wrapper">
 	<!-- Source: http://stackoverflow.com/a/9351158/939349 -->
     <!-- More inspiration: http://jsfiddle.net/ekjxu/ -->
 	<div class="navbar-inner">
@@ -43,7 +43,7 @@
 					<ul class="dropdown-menu">
 						<li><a href="#">Profile</a></li>
 						<li class="divider"></li>
-						<li><a href="#">Sign Out</a></li>
+						<li><a href="<?php echo site_url('logout'); ?>">Sign Out</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -65,7 +65,7 @@
                             Profile<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?php echo site_url('authenticate'); ?>">Plugs</a></li>
+                            <li><a href="<?php echo site_url('plugs'); ?>">Plugs</a></li>
                             <li><a href="<?php echo site_url('clients'); ?>">Connected apps</a></li>
                         </ul>
                     </li>

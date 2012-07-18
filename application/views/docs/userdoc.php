@@ -12,11 +12,6 @@
         clear:both;
     }
 
-    body {
-        padding-bottom: 40px;
-        padding-top: 60px;
-    }
-
     .sidebar-nav {
         padding: 9px 0;
     }
