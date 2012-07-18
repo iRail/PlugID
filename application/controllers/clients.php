@@ -5,7 +5,7 @@
      * @license AGPLv3
      * @author Koen De Groote <koen at iRail.be>
      */
-    class Consumer extends CI_Controller {
+    class Clients extends CI_Controller {
 
         // Declaring false prevents warning
         function index($clientId = false) {
@@ -41,8 +41,9 @@
                         //We're resetting the secret
                         if($this->input->post('resetSecret') !== false) {
                             $client_id = $this->input->post('clientid');
+                            //Nothing is actually done with $data
                             $data = $this->client_model->reset_secret($client_id);
-                            redirect('consumer/');
+                            redirect('clients/'.$client_id);
                         }
                         //We're updating the user
                         if($this->input->post('updateUri') !== false) {
@@ -50,7 +51,7 @@
                             $name = $this->input->post('name');
                             $redirect_uri = $this->input->post('redirect_uri');
                             $this->client_model->update($client_id,$name,$redirect_uri);
-                            redirect('consumer');
+                            redirect('clients/');
                         }
                     }
                     $results['item'] = $item;
@@ -59,7 +60,7 @@
 
                 //Get all the clients this user has.
                 $this->load->view('header.tpl');
-                $this->load->view('consumer', $results);
+                $this->load->view('clients', $results);
                 $this->load->view('footer.tpl');
             } else {
                 redirect('');

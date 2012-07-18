@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <div class="container">
     <div class="hero-unit">
         <h1>Your profile is plugged into</h1>
@@ -20,7 +18,3 @@
         </p>
     </div>
 </div>
-
-<?php
-    include ('footer.tpl');
-?>

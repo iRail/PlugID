@@ -1,5 +1,3 @@
-<?php include('header.tpl'); ?>
-
 <div class="container">
     <div class="hero-unit">
         <h1>Connected Apps</h1>
@@ -16,7 +14,3 @@
         </p>
     </div>
 </div>
-
-<?php
-    include ('footer.tpl');
-?>

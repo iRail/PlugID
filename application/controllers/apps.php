@@ -24,7 +24,10 @@ class Apps extends CI_Controller {
         
         $clients = $this->user_model->authorized_clients($user_id);
         $data->clients = $clients;
+        
+        $this->load->view('header.tpl');
         $this->load->view('apps',$data);
+        $this->load->view('footer.tpl');
     }
     
 }

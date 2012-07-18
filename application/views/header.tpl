@@ -50,10 +50,26 @@
 			<div class="nav-collapse">
 				<ul class="nav">
 					<li><a href="<?php echo site_url(''); ?>">Home</a></li>
-					<li><a href="<?php echo site_url('authenticate'); ?>">Authenticate</a></li>
-					<li><a href="<?php echo site_url('register'); ?>">Register</a></li>
-					<li><a href="<?php echo site_url('docs/userdoc'); ?>">Users</a></li>
-					<li><a href="<?php echo site_url('docs/documentation'); ?>">Developers</a></li>
+					<li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Developer<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?php echo site_url('docs/documentation'); ?>">Developers</a></li>
+                            <li><a href="<?php echo site_url('clients'); ?>">My apps</a></li>
+                            <li><a href="<?php echo site_url('register'); ?>">Register new app</a></li>
+                        </ul>
+                    </li>
+					<li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Profile<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="<?php echo site_url('authenticate'); ?>">Plugs</a></li>
+                            <li><a href="<?php echo site_url('clients'); ?>">Connected apps</a></li>
+                        </ul>
+                    </li>
+					<li><a href="<?php echo site_url('docs/userdoc'); ?>">About</a></li>
 				</ul>
 			</div>
 		</div>

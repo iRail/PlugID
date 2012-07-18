@@ -37,7 +37,7 @@ class Register extends CI_Controller {
             
             $this->load->model('client_model');
             $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->user_id);
-            redirect('consumer/' . $client->client_id);
+            redirect('clients/' . $client->client_id);
         
         } else {
             $this->load->view('header.tpl');
