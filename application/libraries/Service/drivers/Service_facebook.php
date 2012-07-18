@@ -38,6 +38,7 @@ class Service_facebook extends Service_driver {
                         'state' => $this->get_state(),
                         'scope' => $this->scope
                         );
+                        
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -49,22 +50,22 @@ class Service_facebook extends Service_driver {
      *          object
      */
     function callback($data) {
-        $error = new stdClass();
-        $code = $data->code;
-        if (!$code) {
-            $error->error = 'Invalid request: no code returned';
+    	if (!isset($data['code'])) {
+            show_error('Invalid request: no code returned');
         }
-        $state = $data->state;
-        if (!$state) {
-            $error->error = 'Invalid request: no state returned';
+        $code = $data['code']
+        
+        if (!isset($data['state'])) {
+            show_error('Invalid request: no state returned');
         }
+        $state = $data['state']
+        
         if ($state != $this->ci->session->state) {
-            $error->error = 'Invalid state returned';
+            show_error('Invalid state returned');
         }
+        
+        // remove session state
         unset($this->ci->session->state);
-        if (isset($error->error)) {
-            return $error;
-        }
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
@@ -76,9 +77,9 @@ class Service_facebook extends Service_driver {
             list($one,$two) = explode('=',$var);
             $response->$one = $two ;
         }
+        
         if( !isset($response->access_token)){
-            $error->error = 'Access token request failed';
-            return $error;
+            show_error('Access token request failed');
         }
         
         // save some stuff, we'll need it to sign our first api call
@@ -90,8 +91,7 @@ class Service_facebook extends Service_driver {
         // valid json response?
         $user = json_decode($user);
         if( is_null($user) || !isset($user->id) ){
-            $error->error = 'Failed to get external user id';
-            return $error;
+            show_error('Failed to get external user id');
         }
         
         $auth = new stdClass();

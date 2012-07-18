@@ -43,14 +43,13 @@ class Service_twitter extends Service_driver {
         $request_token = $this->oauth->getRequestToken($this->url_request_token, array('oauth_callback' => $this->config['redirect_uri']));
         
         if (!$request_token) {
-            return FALSE;
+            show_error('Invalid request: no request token returned');
         }
         
         $this->ci->session->twitter_token = $request_token;
         
         $params = array();
         $params['oauth_token'] = $request_token['oauth_token'];
-        //$params['state'] = $this->get_state(); there's no point in this
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -68,14 +67,12 @@ class Service_twitter extends Service_driver {
      * object->oauth_token_secret
      */
     function callback($data) {
-        $error = new stdClass();
-        if (!isset($data->oauth_token)) {
-            $error->error = 'Invalid request: no oauth token returned';
-            return $error;
+        if (!isset($data['oauth_token'])) {
+            show_error('Invalid request: no oauth token returned');
         }
+        
         if (!isset($data->oauth_verifier)) {
-            $error->error = 'Invalid request: no oauth verifier returned';
-            return $error;
+            show_error('Invalid request: no oauth verifier returned');
         }
         
         $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
@@ -84,8 +81,7 @@ class Service_twitter extends Service_driver {
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
         if (!$access_token) {
-            $error->error = 'Access token request failed';
-            return $error;
+            show_error('Access token request failed');
         }
         
         unset($this->ci->session->twitter_token);
@@ -95,8 +91,7 @@ class Service_twitter extends Service_driver {
         
         $user = $this->api('account/verify_credentials');
         if (!$user) {
-            $error->error = 'Failed to get external user id';
-            return $error;
+            show_error('Failed to get external user id');
         }
         
         $auth = new stdClass();

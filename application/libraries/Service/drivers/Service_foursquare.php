@@ -34,6 +34,7 @@ class Service_foursquare extends Service_driver {
                         'response_type' => 'code',
                         'state' => $this->get_state()
                         );
+                        
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
