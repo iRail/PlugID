@@ -84,7 +84,7 @@ abstract class Service_driver extends CI_Driver {
     abstract function authorize();
     
     /**
-     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * This function is used to give the tokens to the driver. With this, the driver can sign its request
      * 
      * @param object $tokens(->access_token)
      */

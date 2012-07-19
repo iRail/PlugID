@@ -145,7 +145,7 @@ class tmhOAuth {
   }
 
   /**
-   * Decodes the string or array from it's URL encoded form
+   * Decodes the string or array from its URL encoded form
    * If an array is passed each array value will will be decoded.
    *
    * @param mixed $data the scalar or array to decode

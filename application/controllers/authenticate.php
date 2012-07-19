@@ -14,12 +14,13 @@ class Authenticate extends MY_Controller {
     private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
     
     function index() {
+        //Check user login
         if ($user_id = $this->session->user_id) {
-            //If coming from register, can't overwrite the session redirect.
-            //$this->session->redirect = 'authenticate';
+            //Logged in, go to plugs file that actually determines which services you're logged in to.
             redirect('profile/plugs');
         }
         
+        //Not logged in
         $plugs = new stdClass();
         foreach ($this->services as $service) {
             $plugs->$service = FALSE;

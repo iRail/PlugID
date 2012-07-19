@@ -5,7 +5,7 @@
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
  *
- * Distributes the clients requests to authorize this application to it's network, given in $service
+ * Distributes the clients requests to authorize this application to its network, given in $service
  */
 
 if (!defined('BASEPATH'))

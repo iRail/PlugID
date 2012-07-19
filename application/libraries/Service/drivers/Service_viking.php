@@ -43,7 +43,7 @@ class Service_viking extends Service_driver {
      * 
      * @param array $data
      * @return  FALSE on failure
-     *          object
+     *          object\stdClass
      */
     function callback($data) {
         $error_message = 'Error authenticating with Vikingspots. Please try again later. Technical detail for our monkeys: ';
@@ -66,9 +66,8 @@ class Service_viking extends Service_driver {
         }
         
         // get access token
-        $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
+        $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code), false, 'GET');
         // response valid?
-        var_dump( $response ); exit ;
         $response = json_decode($response);
         if(is_null($response)){
             show_error($error_message . 'Access token request failed');
@@ -82,19 +81,19 @@ class Service_viking extends Service_driver {
         
         // valid json response?
         $user = json_decode($user);
-        if( is_null($user) || !isset($user->response->user->id) ){
+        if( is_null($user) || !isset($user->response->id) ){
             show_error($error_message . "Error while retrieving UserID from VikingSpots");
         }
         
         $auth = new stdClass();
-        $auth->ext_user_id = (int) $user->response->user->id;
+        $auth->ext_user_id = (int) $user->response->id;
         $auth->access_token = $this->access_token;
         
         return $auth;
     }
     
     /**
-     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * This function is used to give the tokens to the driver. With this, the driver can sign its request
      * 
      * @param object $tokens(->access_token)
      */
@@ -111,9 +110,10 @@ class Service_viking extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
-        $params['oauth_token'] = $this->access_token;
+        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint);
+        //Vikingspots calls it bearer_token
+        $params['bearer_token'] = $this->access_token;
         
-        return $this->oauth->fetch($endpoint, $params, $method);
+        return $this->oauth->fetch($endpoint, $params, $method, 'bearer');
     }
 }

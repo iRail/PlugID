@@ -106,7 +106,7 @@ class Service_twitter extends Service_driver {
     }
     
     /**
-     * This function is used to give the tokens to the driver. With this, the driver can sign it's request
+     * This function is used to give the tokens to the driver. With this, the driver can sign its request
      * 
      * @param object $tokens(->access_token)
      */

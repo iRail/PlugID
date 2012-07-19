@@ -15,9 +15,14 @@ if (!defined('BASEPATH'))
 
 class Callback extends CI_Controller {
     
+    /**
+     * Main function which is automatically called when a callback is executed.
+     * @param string $service_name The name of the service being called
+     */
     function index($service_name) {
         // for checking & merging users
         $this->load->model('user_model');
+        //Basically an include() for the service, found in application/libraries/Service/drivers/Service_{$service_name}.php
         $this->load->driver('service', array('adapter' => $service_name));
         if (!$this->service->is_valid($service_name)) {
             show_error('Error : ' . $service_name . ' is not a valid service name.');
