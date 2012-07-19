@@ -21,7 +21,6 @@ class Service_twitter extends Service_driver {
     
     function __construct() {
         $this->ci = &get_instance();
-        $this->ci->load->library('Session');
     }
     
     /**
@@ -75,7 +74,10 @@ class Service_twitter extends Service_driver {
         if (!isset($data['oauth_verifier'])) {
             show_error($error_message . 'Invalid request: no oauth verifier returned');
         }
-        
+
+        if(!isset($this->ci->session->twitter_token['oauth_token']) || !isset($this->ci->session->twitter_token['oauth_token_secret'])){
+            show_error("Error while authenticating. Please try again later. Error detail: The session variables are not set!");
+        }
         $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
         $params['oauth_token_secret'] = $this->ci->session->twitter_token['oauth_token_secret'];
         $params['oauth_verifier'] = $data['oauth_verifier'];
