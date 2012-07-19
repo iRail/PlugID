@@ -9,6 +9,12 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
+/**
+ * Handles the authorize page
+ * The user will be redirected to /authorize, and must click on allow to give the permission to the client.
+ * Minimal parameters: Client_id and response_type
+ * Optional parameters: Redirect_uri and state
+ */
 class Authorize extends CI_Controller {
 
     function index() {

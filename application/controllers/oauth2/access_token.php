@@ -9,12 +9,15 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
+/**
+ * Handles the access token request.
+ */
 class Access_token extends CI_Controller {
     
     function index() {
         $data = array();
         
-        // Required
+        // Required fields for an access_token request
         $grant_type = $this->input->post('grant_type');
         $code = $this->input->post('code');
         $redirect_uri = $this->input->post('redirect_uri');
@@ -23,7 +26,7 @@ class Access_token extends CI_Controller {
         // Client secret from basic auth header OR post param
         $client_secret = $this->input->get_request_header('Authorization');
         if ($client_secret !== FALSE && preg_match('/^Basic\ (\w+)$/', $client_secret, $matches)) {
-            $client_secret = $matches[1];
+                $client_secret = $matches[1];
         } else {
             $client_secret = $this->input->post('client_secret');
         }
@@ -39,7 +42,7 @@ class Access_token extends CI_Controller {
         } else if ($grant_type != 'authorization_code') {
             show_json_error('Unsupported grant_type', '400');
         
-        // Validate client
+        // Validate client secret
         } else if (!$this->client_model->validate_secret($client_id, $client_secret)) {
            show_json_error('Invalid_client', '401');
         

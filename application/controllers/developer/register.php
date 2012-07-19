@@ -5,7 +5,7 @@
  * @author Jens Segers <jens at iRail.be>
  * @author Hannes Van De Vreken <hannes at iRail.be>
  * 
- * Register a new client for this application's Oauth2.0 server
+ * Register a new client for this application's OAuth2.0 server
  */
 
 if (!defined('BASEPATH'))

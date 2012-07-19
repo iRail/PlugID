@@ -6,17 +6,26 @@
  * @author Jens Segers <jens at iRail.be>
  */
 
+/**
+ * Controller for the apps of a developer
+ * Overview and editing of clients
+ */
 class Apps extends MY_Controller {
     
     function __construct() {
         parent::__construct();
-        
+
+        //If user isn't logged in => redirect to authenticate page
+        //Store the redirect URL in the session
         if (!$this->session->user_id) {
             $this->session->redirect = 'developer/apps';
             redirect('authenticate');
         }
     }
-    
+
+    /**
+     * Show overview of all the registered apps of the user
+     */
     function index() {
         $this->load->model('user_model');
         $results = $this->user_model->get_clients($this->session->user_id);
@@ -25,7 +34,10 @@ class Apps extends MY_Controller {
         $this->load->view('developer/apps', array('results' => $results));
         $this->load->view('footer.tpl');
     }
-    
+
+    /** Editing one client
+     * @param $client Selected client
+     */
     function edit($client) {
         $this->load->model('client_model');
         $item = $this->client_model->get($client);

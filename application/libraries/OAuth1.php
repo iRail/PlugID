@@ -106,7 +106,7 @@ class OAuth1 {
         
         $this->tmhOAuth->config['user_token'] = $params['oauth_token'];
         $this->tmhOAuth->config['user_secret'] = $params['oauth_token_secret'];
-        unset($params['oauth_tokens']);
+        unset($params['oauth_token']);
         unset($params['oauth_token_secret']);
         
         $code = $this->tmhOAuth->request('POST', $url, $params);
