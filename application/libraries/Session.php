@@ -17,7 +17,6 @@ class CI_Session {
         $this->ci = &get_instance();
         
         // start up session
-        //ini_set('session.cookie_domain', base_url());
         session_name('plugid');
         session_start();
     }
