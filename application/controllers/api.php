@@ -7,7 +7,11 @@
  */
 
 include APPPATH . 'core/API_Controller.php';
-
+/**
+ * This controller handles all the API requests
+ * Loads the right service and give it the request.
+ * All errors in this class are formatted in JSON
+ */
 class Api extends API_Controller {
     
     function index() {
@@ -15,7 +19,7 @@ class Api extends API_Controller {
         
         $service_name_index = 2;
 
-        // at least 3
+        // At least 3 segments in this Call
         $num_segments = $this->uri->total_segments();
         if ($num_segments < $service_name_index + 1) {
             show_json_error('Not enough parameters. Need "api/SERVICE_NAME/ENDPOINT_URI"', '400');
@@ -36,7 +40,8 @@ class Api extends API_Controller {
         if (!$this->is_authenticated()) {
             show_json_error("Not authenticated", 401);
         }
-        
+
+        //Load the correct service and check if it's valid.
         $this->load->driver('service');
         if (!$this->service->is_valid($service_name)) {
             show_json_error('Service ' .$service_name . ' does not exist', '400');
@@ -51,9 +56,9 @@ class Api extends API_Controller {
         }
         $tokens = reset($tokens); // gives first row from array of access_tokens, should be unique
         
-        // get get parameters
+        // Get GET parameters
         $get_params = $this->input->get();
-        // get post parameters
+        // Get POST parameters
         $post_params = $_POST;
         
         $method = $this->input->server('REQUEST_METHOD');
@@ -67,7 +72,7 @@ class Api extends API_Controller {
         if( !$post_params ){
             $post_params = array();
         }
-        
+        //Pass the call to the right service and catch the output
         $output = $this->service->{$service_name}->api($endpoint_uri.'?'.http_build_query($get_params), $post_params, $method);
         if (json_decode($output)) {
             $this->output->set_content_type('application/json');
