@@ -74,9 +74,10 @@ class OAuth1 {
         unset($params['oauth_token_secret']);
         
         $code = $this->tmhOAuth->request(strtoupper($method), $url, $params);
+        $this->last_response = $this->tmhOAuth->response['response'];
         
         if ($code == 200) {
-            return $this->last_response = $this->tmhOAuth->response['response'];
+            return $this->last_response;
         } else {
             return FALSE;
         }
