@@ -29,12 +29,8 @@ class Service_foursquare extends Service_driver {
      * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
     function authorize() {
-        $params = array('client_id' => $this->config['client_id'], 
-                        'redirect_uri' => $this->config['redirect_uri'], 
-                        'response_type' => 'code',
-                        'state' => $this->get_state()
-                        );
-                        
+        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['redirect_uri'], 'response_type' => 'code', 'state' => $this->get_state());
+        
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -43,31 +39,34 @@ class Service_foursquare extends Service_driver {
      * 
      * @param oject $callback_data contains ->code to finish authentication
      * @return  FALSE on failure
-     *          object->ext_user_id
-     *          object->access_token
-     *          object->refresh_token (if given)
+     * object->ext_user_id
+     * object->access_token
+     * object->refresh_token (if given)
      */
     function callback($data) {
-    	$error_message = 'Error authenticating with Foursquare. Please try again later. Technical detail for our monkeys: ';
+        $error_message = 'Error authenticating with Foursquare. Please try again later. Technical detail for our monkeys: ';
+        
+        if (!isset($data['code'])) {
+            show_error($error_message . 'Invalid request: no code returned');
+        }
         $code = $data['code'];
-        if (!$code) {
-           show_error($error_message . 'Invalid request: no code returned');
+        
+        if (!isset($data['state']) {
+            show_error($error_message . 'Invalid request: no state returned');
         }
         $state = $data['state'];
-        if (!$state) {
-           show_error($error_message . 'Invalid request: no state returned');
-        }
+        
         if ($state != $this->ci->session->state) {
             show_error($error_message . 'Invalid state returned');
         }
         unset($this->ci->session->state);
-
+        
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
         
         // response valid?
         $response = json_decode($response);
-        if(is_null($response) || !isset($response->access_token)){
+        if (is_null($response) || !isset($response->access_token)) {
             show_error($error_message . 'Access token request failed');
         }
         
@@ -78,8 +77,8 @@ class Service_foursquare extends Service_driver {
         
         // valid json response?
         $user = json_decode($user);
-        if( is_null($user) || !isset($user->response->user->id) ){
-			show_error($error_message . "Error while retrieving UserID from Foursquare");
+        if (is_null($user) || !isset($user->response->user->id)) {
+            show_error($error_message . "Error while retrieving UserID from Foursquare");
         }
         
         $auth = new stdClass();
@@ -107,8 +106,8 @@ class Service_foursquare extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
-    	$params['oauth_token'] = $this->access_token;
-    	return $this->oauth->fetch($endpoint, $params, $method);
+        $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/');
+        $params['oauth_token'] = $this->access_token;
+        return $this->oauth->fetch($endpoint, $params, $method);
     }
 }
