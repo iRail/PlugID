@@ -20,7 +20,7 @@ class Register extends MY_Controller {
         
         // check if signed in
         if (!$this->session->user_id) {
-        	$this->session->redirect = 'developer/register';
+            $this->session->redirect = 'developer/register';
             redirect('authenticate');
         }
         
@@ -43,6 +43,4 @@ class Register extends MY_Controller {
         }
     
     }
-
 }
-    

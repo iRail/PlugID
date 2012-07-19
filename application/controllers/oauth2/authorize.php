@@ -10,7 +10,7 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Authorize extends CI_Controller {
-	
+
     function index() {
         $this->ci = &get_instance();
         $this->ci->load->model('user_model');
@@ -27,7 +27,7 @@ class Authorize extends CI_Controller {
         // invalid_request
         if (!($client_id && $response_type)) {
             show_error('Error: this request is invalid. The client_id and the response_type parameters have to be included.  
-            			Please go back to the site or application that sent you here and try again.');
+                        Please go back to the site or application that sent you here and try again.');
         }
         
         // check on client
@@ -52,7 +52,7 @@ class Authorize extends CI_Controller {
         // unsupported_response_type
         if ($response_type != 'code') {
             show_error('Error: this request is invalid. The response_type parameter has to be code.  
-            			Please go back to the site or application that sent you here and try again.');
+                        Please go back to the site or application that sent you here and try again.');
         }
         
         // check if user is actually signed in

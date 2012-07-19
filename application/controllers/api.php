@@ -14,13 +14,13 @@ class Api extends API_Controller {
         $this->load->model('user_model');
         
         $service_name_index = 2;
-        
+
         // at least 3
         $num_segments = $this->uri->total_segments();
         if ($num_segments < $service_name_index + 1) {
             show_json_error('Not enough parameters. Need "api/SERVICE_NAME/ENDPOINT_URI"', '400');
         }
-        
+
         // Get segments
         $segments = $this->uri->segment_array();
         $service_name = $segments[$service_name_index];

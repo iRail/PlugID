@@ -7,7 +7,7 @@
  */
 
 class Apps extends MY_Controller {
-    
+
     function __construct() {
         parent::__construct();
         
@@ -16,7 +16,7 @@ class Apps extends MY_Controller {
             redirect('authenticate');
         }
     }
-    
+
     function index() {
         $this->load->model('user_model');
         $results = $this->user_model->authorized_clients($this->session->user_id);
@@ -29,19 +29,19 @@ class Apps extends MY_Controller {
     function revoke($client_id) {
         $this->load->model('client_model');
         
-    	if(!$client = $this->client_model->get($client_id)) {
-        	show_error('We could not find this client in our database. Detail: client ID not found');
+        if(!$client = $this->client_model->get($client_id)) {
+            show_error('We could not find this client in our database. Detail: client ID not found');
         }
         
         if ($this->input->post('client_id') && $this->input->post('client_id') == $client_id) {
-        	$this->load->model('user_model');
-        	$this->user_model->revoke($this->session->user_id, $client_id);
-        	
-        	redirect('profile/apps');
+            $this->load->model('user_model');
+            $this->user_model->revoke($this->session->user_id, $client_id);
+            
+            redirect('profile/apps');
         } else {
-        	$this->load->view('header.tpl');
-        	$this->load->view('profile/revoke', $client);
-        	$this->load->view('footer.tpl');
+            $this->load->view('header.tpl');
+            $this->load->view('profile/revoke', $client);
+            $this->load->view('footer.tpl');
         }
     }
 }

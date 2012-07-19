@@ -19,10 +19,10 @@ class Plugs extends MY_Controller {
             $this->session->redirect = 'profile/plugs';
             redirect('authenticate');
         }
+        
         $tokens = $this->user_model->get_tokens($user_id);
         
         $plugs = new stdClass();
-        
         foreach ($this->services as $service) {
             $plugs->$service = FALSE;
             foreach ($tokens as $token) {

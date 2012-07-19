@@ -43,7 +43,6 @@ class Apps extends MY_Controller {
         if ($this->form_validation->run()) {
             //We're resetting the secret
             if ($this->input->post('resetSecret') !== false) {
-                //Nothing is actually done with $data
                 $this->client_model->reset_secret($client);
                 redirect('developer/apps/edit/' . $client);
             }
