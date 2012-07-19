@@ -50,7 +50,7 @@ class Service_facebook extends Service_driver {
      *          object
      */
     function callback($data) {
-    	$error_message = 'Error authenticating with Google. Please try again later. Technical detail for our monkeys: ';
+    	$error_message = 'Error authenticating with Facebook. Please try again later. Technical detail for our monkeys: ';
         // check code
         if (!isset($data['code'])) {
             show_error($error_message . 'Invalid request: no code returned');
