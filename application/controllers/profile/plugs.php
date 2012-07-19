@@ -9,7 +9,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Plugs extends CI_Controller {
+class Plugs extends MY_Controller {
     
     private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
     

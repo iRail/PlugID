@@ -3,9 +3,10 @@
  * @copyright (C) 2012 by iRail vzw/asbl
  * @license AGPLv3
  * @author Koen De Groote <koen at iRail.be>
+ * @author Jens Segers <jens at iRail.be>
  */
 
-class Apps extends CI_Controller {
+class Apps extends MY_Controller {
     
     function __construct() {
         parent::__construct();

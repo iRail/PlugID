@@ -13,10 +13,10 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Logout extends CI_Controller {
-
-    function index(){
-        unset( $this->session->user_id );
+class Logout extends MY_Controller {
+    
+    function index() {
+        unset($this->session->user_id);
         redirect('authenticate');
     }
 }
