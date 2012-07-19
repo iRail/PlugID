@@ -39,27 +39,25 @@ class Service_foursquare extends Service_driver {
      * 
      * @param oject $callback_data contains ->code to finish authentication
      * @return  FALSE on failure
-     * object->ext_user_id
-     * object->access_token
-     * object->refresh_token (if given)
+     *          object
      */
     function callback($data) {
-        $error_message = 'Error authenticating with Foursquare. Please try again later. Technical detail for our monkeys: ';
-        
+        $error_message = 'Error authenticating with Google. Please try again later. Technical detail for our monkeys: ';
+        // check code
         if (!isset($data['code'])) {
             show_error($error_message . 'Invalid request: no code returned');
         }
         $code = $data['code'];
         
+        // check state
         if (!isset($data['state'])) {
             show_error($error_message . 'Invalid request: no state returned');
         }
-        $state = $data['state'];
         
-        if ($state != $this->ci->session->state) {
+        if ($state != $this->session->state) {
             show_error($error_message . 'Invalid state returned');
         }
-        unset($this->ci->session->state);
+        unset($this->session->state);
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));

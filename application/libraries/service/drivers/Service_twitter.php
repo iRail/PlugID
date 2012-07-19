@@ -60,7 +60,7 @@ class Service_twitter extends Service_driver {
      * Response: oauth_token and oauth_token_secret
      * Step 3: Verify the credentials with oauth_token and oauth_token_secret an extract the user id.
      * 
-     * @param object data contains oauth_token and oauth_verifier to request access token.
+     * @param array data contains oauth_token and oauth_verifier to request access token.
      * @return  FALSE on failure
      * object->ext_user_id
      * object->oauth_token
@@ -128,6 +128,6 @@ class Service_twitter extends Service_driver {
         $params['oauth_token'] = $this->oauth_token;
         $params['oauth_token_secret'] = $this->oauth_token_secret;
         
-        return $this->oauth->fetch($endpoint, $params, $method);
+        return json_decode($this->oauth->fetch($endpoint, $params, $method));
     }
 }
