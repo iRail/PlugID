@@ -82,8 +82,7 @@ class Service_twitter extends Service_driver {
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
         if (!$access_token) {
-        	echo $this->oauth->getLastResponse();
-            show_error($error_message . 'Access token request failed');
+        	show_error($error_message . 'Access token request failed');
         }
         
         unset($this->ci->session->twitter_token);
