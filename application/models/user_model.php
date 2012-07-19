@@ -72,16 +72,17 @@ class User_model extends CI_Model {
      * @return same array
      */
     function set_token( $data ){
-        
+        if( $this->db->get_where('users',array('user_id' => $data['user_id']))->num_rows() == 0 ){
+            return FALSE ;
+        }
         $where = array( 'user_id' => $data['user_id'], 'service_type' => $data['service_type'] );
         if( $this->db->get_where('user_tokens', $where )->num_rows() == 0 ){
             // insert
-            $this->db->insert( 'user_tokens',$data );
+            return $this->db->insert( 'user_tokens',$data );
         }else{
             // update
-            $this->db->update( 'user_tokens',$data, $where );
+            return $this->db->update( 'user_tokens',$data, $where );
         }
-        return $data ;
     }
     
     /**
@@ -90,6 +91,9 @@ class User_model extends CI_Model {
      * @return TRUE of FALSE, it may be, she's still out to get meeee ♬ (boolean)
      */
     function authorize_client( $user_id, $client_id ){
+        if( $this->db->get_where('users',array('user_id' => $data['user_id']))->num_rows() == 0 ){
+            return FALSE ;
+        }
         if( !$this->is_client_authorized($user_id, $client_id) ){
             $data = array( 'user_id' => $user_id,
                            'client_id' => $client_id );

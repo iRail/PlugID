@@ -50,23 +50,24 @@ class Service_facebook extends Service_driver {
      *          object
      */
     function callback($data) {
-    	$error_message = 'Error authenticating with Facebook. Please try again later. Technical detail for our monkeys: ';
-    	if (!isset($data['code'])) {
-            show_error($error_message . 'No code returned');
+    	$error_message = 'Error authenticating with Google. Please try again later. Technical detail for our monkeys: ';
+        // check code
+        if (!isset($data['code'])) {
+            show_error($error_message . 'Invalid request: no code returned');
         }
         $code = $data['code'];
         
+        // check state
         if (!isset($data['state'])) {
             show_error($error_message . 'Invalid request: no state returned');
         }
         $state = $data['state'];
+        $session_state = $this->ci->session->state ;
         
-        if ($state != $this->ci->session->state) {
+        unset($this->ci->session->state);
+        if ($state != $session_state) {
             show_error($error_message . 'Invalid state returned');
         }
-        
-        // remove session state
-        unset($this->ci->session->state);
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));

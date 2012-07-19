@@ -41,25 +41,29 @@ class Service_viking extends Service_driver {
     /**
      * Get access_token & ext_user_id
      * 
-     * @param oject $callback_data contains ->code to finish authentication
+     * @param array $data
      * @return  FALSE on failure
      *          object
      */
     function callback($data) {
-    	$error_message = 'Error authenticating with VikingSpots. Please try again later. Technical detail for our monkeys: ';
-        
-        $code = $data['code'];
-        if (!$code) {
-			show_error($error_message . 'Invalid request: no code returned');
+        $error_message = 'Error authenticating with Google. Please try again later. Technical detail for our monkeys: ';
+        // check code
+        if (!isset($data['code'])) {
+            show_error($error_message . 'Invalid request: no code returned');
         }
-        $state = $data['state'];
-        if (!$state) {
+        $code = $data['code'];
+        
+        // check state
+        if (!isset($data['state'])) {
             show_error($error_message . 'Invalid request: no state returned');
         }
-        if ($state != $this->ci->session->state) {
-           show_error($error_message . 'Invalid state returned');
-        }
+        $state = $data['state'];
+        $session_state = $this->ci->session->state ;
+        
         unset($this->ci->session->state);
+        if ($state != $session_state) {
+            show_error($error_message . 'Invalid state returned');
+        }
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
