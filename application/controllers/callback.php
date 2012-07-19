@@ -70,7 +70,7 @@ class Callback extends CI_Controller {
         if ($this->session->redirect) {
             redirect($this->session->redirect);
         } else {
-            redirect('authenticate');
+            redirect('profile/plugs');
         }
     }
     
