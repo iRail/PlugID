@@ -51,7 +51,7 @@ class Service_foursquare extends Service_driver {
         }
         $code = $data['code'];
         
-        if (!isset($data['state']) {
+        if (!isset($data['state'])) {
             show_error($error_message . 'Invalid request: no state returned');
         }
         $state = $data['state'];
