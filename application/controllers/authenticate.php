@@ -9,7 +9,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Authenticate extends CI_Controller {
+class Authenticate extends MY_Controller {
     
     private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
     

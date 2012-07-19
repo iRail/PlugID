@@ -5,7 +5,7 @@
      * @license AGPLv3
      * @author Koen De Groote <koen at iRail.be>
      */
-    class Documentation extends CI_Controller {
+    class Documentation extends MY_Controller {
 
         private $data = array();
 

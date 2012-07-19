@@ -5,7 +5,7 @@
      * @license AGPLv3
      * @author Koen De Groote <koen at iRail.be>
      */
-    class Userdoc extends CI_Controller {
+    class Userdoc extends MY_Controller {
 
         private $data = array();
 

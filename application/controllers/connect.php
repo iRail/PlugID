@@ -11,7 +11,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Connect extends CI_Controller {
+class Connect extends MY_Controller {
     
     function index($service) {
         // load plugin

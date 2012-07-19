@@ -29,19 +29,15 @@ class Service_foursquare extends Service_driver {
      * Redirect user to start authentication proces to authorize application to remote oauth provider
      */
     function authorize() {
-        $params = array('client_id' => $this->config['client_id'], 
-                        'redirect_uri' => $this->config['redirect_uri'], 
-                        'response_type' => 'code',
-                        'state' => $this->get_state()
-                        );
-                        
+        $params = array('client_id' => $this->config['client_id'], 'redirect_uri' => $this->config['redirect_uri'], 'response_type' => 'code', 'state' => $this->get_state());
+        
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     /**
      * Get access_token & ext_user_id
      * 
-     * @param array $data
+     * @param oject $callback_data contains ->code to finish authentication
      * @return  FALSE on failure
      *          object
      */
@@ -64,13 +60,13 @@ class Service_foursquare extends Service_driver {
         if ($state != $session_state) {
             show_error($error_message . 'Invalid state returned');
         }
-
+        
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));
         
         // response valid?
         $response = json_decode($response);
-        if(is_null($response) || !isset($response->access_token)){
+        if (is_null($response) || !isset($response->access_token)) {
             show_error($error_message . 'Access token request failed');
         }
         
@@ -81,8 +77,8 @@ class Service_foursquare extends Service_driver {
         
         // valid json response?
         $user = json_decode($user);
-        if( is_null($user) || !isset($user->response->user->id) ){
-			show_error($error_message . "Error while retrieving UserID from Foursquare");
+        if (is_null($user) || !isset($user->response->user->id)) {
+            show_error($error_message . "Error while retrieving UserID from Foursquare");
         }
         
         $auth = new stdClass();
@@ -110,8 +106,8 @@ class Service_foursquare extends Service_driver {
      * @return string: returns all content of the http body returned on the request
      */
     public function api($endpoint, $params = array(), $method = 'get') {
-        $endpoint = rtrim($this->url_base,'/') . '/' . trim($endpoint,'/');
-    	$params['oauth_token'] = $this->access_token;
-    	return $this->oauth->fetch($endpoint, $params, $method);
+        $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/');
+        $params['oauth_token'] = $this->access_token;
+        return $this->oauth->fetch($endpoint, $params, $method);
     }
 }
