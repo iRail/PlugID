@@ -21,7 +21,6 @@ class Service_twitter extends Service_driver {
     
     function __construct() {
         $this->ci = &get_instance();
-        $this->ci->load->library('Session');
     }
     
     /**
@@ -46,11 +45,11 @@ class Service_twitter extends Service_driver {
             show_error('Invalid request: no request token returned');
         }
         
-        $this->ci->session->twitter_token = $request_token;
+        $this->session->twitter_token = $request_token;
         
         $params = array();
         $params['oauth_token'] = $request_token['oauth_token'];
-        redirect($this->url_authorize . '?' . http_build_query($params));
+        redirect($this->url_authorize . '?' . http_build_query($params), 'refresh');
     }
     
     /**
@@ -76,8 +75,8 @@ class Service_twitter extends Service_driver {
             show_error($error_message . 'Invalid request: no oauth verifier returned');
         }
         
-        $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
-        $params['oauth_token_secret'] = $this->ci->session->twitter_token['oauth_token_secret'];
+        $params['oauth_token'] = $this->session->twitter_token['oauth_token'];
+        $params['oauth_token_secret'] = $this->session->twitter_token['oauth_token_secret'];
         $params['oauth_verifier'] = $data['oauth_verifier'];
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
