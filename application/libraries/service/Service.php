@@ -20,16 +20,16 @@ class Service extends CI_Driver_Library {
      * @return object $child
      */
     function __get($child) {
-    	parent::__get($child);
-    	
-    	$ci = &get_instance();
-    	$ci->load->config('services/'.$child, TRUE);
-    	$config = $ci->config->item('services/'.$child);
-    	
-    	$this->$child->config = $config;
-    	$this->$child->initialize($config);
-    	
-    	return $this->$child;
+        parent::__get($child);
+        
+        $ci = &get_instance();
+        $ci->load->config('services/' . $child, TRUE);
+        $config = $ci->config->item('services/' . $child);
+        
+        $this->$child->config = $config;
+        $this->$child->initialize($config);
+        
+        return $this->$child;
     }
     
     /**
@@ -37,7 +37,7 @@ class Service extends CI_Driver_Library {
      * @param string $driver drivername
      */
     function is_valid($driver) {
-        return in_array('Service_'.strtolower($driver), $this->valid_drivers);
+        return in_array('Service_' . strtolower($driver), $this->valid_drivers);
     }
 }
 
@@ -45,7 +45,7 @@ class Service extends CI_Driver_Library {
  * Class to abstract functions from drivers
  */
 abstract class Service_driver extends CI_Driver {
-	
+    
     protected $ci;
     private $hash_algo = 'md5';
     
@@ -62,7 +62,7 @@ abstract class Service_driver extends CI_Driver {
      * CodeIgniter proxy
      */
     function __get($attr) {
-    	return $this->ci->$attr;
+        return $this->ci->$attr;
     }
     
     /**
@@ -70,11 +70,11 @@ abstract class Service_driver extends CI_Driver {
      * 
      * @param oject $callback_data contains
      * @return  FALSE on failure
-     *          object->ext_user_id
-     *          object->access_token
-     *          object->refresh_token (if given)
-     *          object->expires (if given)
-     *          object->token_type (if given)
+     * object->ext_user_id
+     * object->access_token
+     * object->refresh_token (if given)
+     * object->expires (if given)
+     * object->token_type (if given)
      */
     abstract function callback($data);
     
@@ -111,7 +111,7 @@ abstract class Service_driver extends CI_Driver {
      * @return string $state, as it is saved in the session
      */
     protected function get_state() {
-        unset( $this->ci->session->state );
+        unset($this->ci->session->state);
         $this->ci->session->state = hash($this->hash_algo, time() . uniqid());
         return $this->ci->session->state;
     }
