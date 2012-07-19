@@ -49,7 +49,7 @@ class Service_twitter extends Service_driver {
         
         $params = array();
         $params['oauth_token'] = $request_token['oauth_token'];
-        redirect($this->url_authorize . '?' . http_build_query($params), 'refresh');
+        redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
     /**
