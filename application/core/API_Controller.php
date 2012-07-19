@@ -23,7 +23,7 @@ class API_Controller extends CI_Controller{
         }
         
         if (!$token) {
-        	$token = $this->input->get('oauth_token');
+            $token = $this->input->get('oauth_token');
         }
         
         if (!$token) {
