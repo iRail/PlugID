@@ -19,6 +19,7 @@ require (APPPATH . '/libraries/oauth1/tmhOAuth.php');
 class OAuth1 {
     
     private $tmhOAuth;///< Holds an object of the class tmhOAuth, a OAuth 1.0a library
+    private $last_response;
     
     /** 
      * Constructs a new OAuth1 object. 
