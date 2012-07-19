@@ -11,7 +11,7 @@
  */
 
 if (!defined('BASEPATH'))
-	exit('No direct script access allowed');
+    exit('No direct script access allowed');
 class tmhUtilities {
   /**
    * Entifies the tweet using the given entities element.

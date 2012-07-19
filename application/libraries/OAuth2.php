@@ -6,8 +6,8 @@
  * 
  */
 if (!defined('BASEPATH'))
-	exit('No direct script access allowed');
-	
+    exit('No direct script access allowed');
+
 class OAuth2 {
     
     // private members

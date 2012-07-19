@@ -67,7 +67,7 @@ class Service_twitter extends Service_driver {
      * object->oauth_token_secret
      */
     function callback($data) {
-    	$error_message = 'Error authenticating with Twitter. Please try again later. Technical detail for our monkeys: ';
+        $error_message = 'Error authenticating with Twitter. Please try again later. Technical detail for our monkeys: ';
         if (!isset($data['oauth_token'])) {
             show_error('Invalid request: no oauth token returned');
         }
@@ -119,8 +119,7 @@ class Service_twitter extends Service_driver {
      * @param string $endpoint: the endpoint of the API.
      * @param array $params for passing all post/get parameters
      * @param enum(get,post) $method
-     * @return string: returns all content of the http body returned on the request
-     * 					or FALSE
+     * @return string: returns all content of the http body returned on the request or FALSE
      */
     public function api($endpoint, $params = array(), $method = 'get') {
         $endpoint = rtrim($this->url_base, '/') . '/' . trim($endpoint, '/') . '.json';
