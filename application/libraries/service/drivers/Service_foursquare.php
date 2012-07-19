@@ -54,7 +54,7 @@ class Service_foursquare extends Service_driver {
             show_error($error_message . 'Invalid request: no state returned');
         }
         
-        if ($state != $this->session->state) {
+        if (!$state = $this->session->state) {
             show_error($error_message . 'Invalid state returned');
         }
         unset($this->session->state);
