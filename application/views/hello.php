@@ -2,7 +2,7 @@
     <div class="hero-unit">
         <h1>PlugID - Alpha version</h1>
         <br/>
-        <p>PlugID is an <a href="http://oauth.net/2/">OAuth2</a>(Draft 28 at time of writing) server written in PHP, based on <a href="http://codeigniter.com/">CodeIgniter 2.1.2.</a>
+        <p>PlugID is an <a href="http://oauth.net/2/">OAuth2</a> (Draft 28 at time of writing) server written in PHP, based on <a href="http://codeigniter.com/">CodeIgniter 2.1.2.</a>
         Writing started on the 2nd of July, 2012, during the <a href="http://hello.irail.be/irail-summer-of-code/">iRail summer of code</a><a href="https://twitter.com/search/realtime/iSoc12">(#iSoc12)</a>.
         </p>
         <p>
@@ -19,7 +19,7 @@
         Once the user gives permission, your webservice can work with the connected account(s).
         </p>
         <p>
-            PlugID is still in Alpha version. You can check out our progress (and contribute) on <a href="https://github.com/iRail/PlugID">GitHub</a></p>.
+            PlugID is still in Alpha version. You can check out our progress (and contribute) on <a href="https://github.com/iRail/PlugID">GitHub</a>.</p>
         </p>
     </div>
 </div>
