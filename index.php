@@ -18,7 +18,14 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-	define('ENVIRONMENT', 'development');
+	switch ($_SERVER['SERVER_NAME']) {
+        case 'plugid.irail.be':
+            define('ENVIRONMENT', 'production');
+            break;
+        default :
+            define('ENVIRONMENT', 'development');
+            break;
+    }
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
