@@ -39,11 +39,10 @@
                         <ul class="nav">
                             <li><a href="<?php echo site_url(''); ?>">Home</a></li>
                             <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Developer<b class="caret"></b>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo site_url('docs/documentation'); ?>">
+                                    Developers<b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="<?php echo site_url('docs/documentation'); ?>">Developers</a></li>
                                     <li><a href="<?php echo site_url('developer/apps'); ?>">My apps</a></li>
                                     <li><a href="<?php echo site_url('developer/register'); ?>">Register new app</a></li>
                                 </ul>
