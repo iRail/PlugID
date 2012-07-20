@@ -69,7 +69,7 @@
             <div id="fs" class="span8">
                 <figure>
                     <img class="logo" width="116" height="116" alt="Foursquare logo" src="<?php echo base_url('img/foursquare-logo.jpg'); ?>" />
-                    <figcaption>Don't know what to write here</figcaption>
+                    <figcaption>PlugID will be able to use Foursquare to determine your location and show things near you.</figcaption>
                 </figure>
             </div><!--/span-->
             <div id="tw" class="span8">

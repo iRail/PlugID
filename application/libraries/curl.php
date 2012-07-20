@@ -5,6 +5,14 @@ class curl{
     public $error_code;
     public $error;
     
+    /**
+     * Basic curl GET wrapper with extra options set
+     * @param string $url The URL to send to
+     * @param array $params The URL parameters
+     * @param string $auth_header Optional Authorization header.
+     * @return function 
+     * @see execute($curl) 
+     */
     public function get($url, $params = array(), $auth_header = NULL) {
         // build query string
         if (is_array($params)) {
@@ -26,6 +34,13 @@ class curl{
         return $this->execute($curl);
     }
     
+    /**
+     * Basic curl POST wrapper with extra options set
+     * @param string $url The URL to send to
+     * @param array $params The URL parameters
+     * @param string $auth_header Optional Authorization header.
+     * @return type 
+     */
     public function post($url, $params = array(), $auth_header = NULL) {
         // build query string
         if (is_array($params)) {
@@ -45,6 +60,13 @@ class curl{
         return $this->execute($curl);
     }
     
+    /**
+     * Execute the curl which was built in the get/post function
+     * @see get($url,$params,$auth_header)
+     * @see post($url,$params,$auth_header)
+     * @param object $curl The curl object which must be executed.
+     * @return string Empty string is failed, JSON if succes 
+     */
     private function execute($curl) {
         // execute
         $data = curl_exec($curl);
