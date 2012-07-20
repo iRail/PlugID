@@ -17,6 +17,7 @@ class Logout extends MY_Controller {
     
     function index() {
         unset($this->session->user_id);
+        session_destroy();
         redirect('authenticate');
     }
 }
