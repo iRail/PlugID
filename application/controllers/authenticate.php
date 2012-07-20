@@ -11,7 +11,7 @@ if (!defined('BASEPATH'))
 
 class Authenticate extends MY_Controller {
     
-    private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
+    private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare', 'wordpress');
     
     function index() {
         //Check user login

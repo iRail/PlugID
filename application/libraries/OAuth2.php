@@ -161,7 +161,6 @@
             }
 
             $data = curl_exec($curl);
-
             // error
             if ($data === FALSE) {
                 $errno = curl_errno($curl);
