@@ -34,6 +34,7 @@ class Access_token_model extends CI_Model {
         $where = array( 'access_token' => $access_token,
                         'expires >'    => time() );
         $row = $this->db->get_where('auth_tokens',$where)->row();
+        
         if( !isset( $row->user_id ) ){
             return FALSE;
         }

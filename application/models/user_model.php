@@ -91,9 +91,6 @@ class User_model extends CI_Model {
      * @return TRUE of FALSE, it may be, she's still out to get meeee ♬ (boolean)
      */
     function authorize_client( $user_id, $client_id ){
-        if( $this->db->get_where('users',array('user_id' => $data['user_id']))->num_rows() == 0 ){
-            return FALSE ;
-        }
         if( !$this->is_client_authorized($user_id, $client_id) ){
             $data = array( 'user_id' => $user_id,
                            'client_id' => $client_id );
