@@ -41,5 +41,9 @@ class CI_Session {
         unset($_SESSION[$name]);
         return $this;
     }
+    
+    function destroy() {
+    	session_destroy();
+    }
 }
     
