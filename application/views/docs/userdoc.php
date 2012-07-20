@@ -88,8 +88,6 @@
     </div><!--/row-->
 
     <hr>
-    <footer>
-        <p>&copy; iRail 2012</p>
-    </footer>
+
 
 </div><!--/.fluid-container-->

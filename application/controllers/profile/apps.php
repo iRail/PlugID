@@ -6,17 +6,22 @@
  * @author Jens Segers <jens at iRail.be>
  */
 
+/** Gives an overview of all the connected apps of an user
+ * Here, an user can see all the connected apps and revoke access
+ */
 class Apps extends MY_Controller {
 
     function __construct() {
         parent::__construct();
-        
         if (!$this->session->user_id) {
             $this->session->redirect = 'profile/apps';
             redirect('authenticate');
         }
     }
 
+    /** Show all the connected apps
+     *
+     */
     function index() {
         $this->load->model('user_model');
         $results = $this->user_model->authorized_clients($this->session->user_id);
@@ -25,7 +30,10 @@ class Apps extends MY_Controller {
         $this->load->view('profile/apps', array('results' => $results));
         $this->load->view('footer.tpl');
     }
-    
+
+    /** Revoke access of a client
+     * @param $client_id The access of this client will be revoked
+     */
     function revoke($client_id) {
         $this->load->model('client_model');
         
