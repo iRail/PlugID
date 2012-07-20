@@ -22,6 +22,9 @@
         case 'plugid.irail.be':
             define('ENVIRONMENT', 'production');
             break;
+        case 'id.irail.be':
+            define('ENVIRONMENT', 'production');
+            break;
         default :
             define('ENVIRONMENT', 'development');
             break;
