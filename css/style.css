@@ -10,6 +10,21 @@ a.menu:after,.dropdown-toggle:after {
     content: none;
 }
 
+.modal-footer{
+    position:fixed;
+    height:40px;
+    width:100%;
+    margin:0px;
+    padding:0px;
+    bottom:0;
+    box-pack:center;
+}
+
+.modal-footer p{
+    margin-right:20px;
+    padding-top:10px;
+}
+
 #user {
     float: right;
 }
