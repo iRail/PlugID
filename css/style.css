@@ -18,3 +18,8 @@ body {
 	padding-bottom: 40px;
 	padding-top: 60px;
 }
+
+/* Kinda dirty(so the internet says). Prevents headers from disappearing behind fixed top bar. */
+:target {
+	padding-top: 35px;
+}
