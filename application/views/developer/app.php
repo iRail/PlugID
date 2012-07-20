@@ -25,4 +25,5 @@
             <b>Authorize URL</b><br />
             <span><?php echo site_url() ?>oauth2/authorize</span>
         </div>
+    </div>
 </div>
