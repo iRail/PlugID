@@ -35,7 +35,6 @@
                             </ul>
                         </li>
                     </ul>
-                    <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="<?php echo site_url(''); ?>">Home</a></li>
                             <li class="dropdown">
@@ -58,7 +57,6 @@
                             </li>
                             <li><a href="<?php echo site_url('docs/userdoc'); ?>">About</a></li>
                         </ul>
-                    </div>
                 </div>
             </div>
         </div>

@@ -72,8 +72,9 @@ class Callback extends CI_Controller {
             $this->repeat_authorize();
         }
         
-        if ($this->session->redirect) {
-            redirect($this->session->redirect);
+        if ($redirect = $this->session->redirect) {
+        	unset($this->session->redirect);
+            redirect($redirect);
         } else {
             redirect('profile/plugs');
         }
