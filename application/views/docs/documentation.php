@@ -1,33 +1,3 @@
-<style type="text/css">
-    .sidebar-nav {
-        padding: 9px 0;
-    }
-
-    .sidebar-nav-fixed {
-        position:fixed;
-        top:60px;
-        width:21.97%;
-    }
-
-    h1 {
-        word-wrap: break-word;
-    }
-
-    @media (max-width: 767px) {
-        .sidebar-nav-fixed {
-            position:static;
-            width:auto;
-        }
-    }
-
-    @media (max-width: 979px) {
-        .sidebar-nav-fixed {
-            top:70px;
-        }
-    }
-</style>
-
-
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span3">
@@ -77,11 +47,5 @@
             </div><!--/span-->
         </div><!--/span-->
     </div><!--/row-->
-
-    <hr>
-
-    <footer>
-        <p>&copy; iRail 2012</p>
-    </footer>
 
 </div><!--/.fluid-container-->
