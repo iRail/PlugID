@@ -1,4 +1,4 @@
-<div class="container" xmlns="http://www.w3.org/1999/html">
+<div class="container">
     <div class="hero-unit">
         <h1>PlugID - Alpha version</h1>
         <br/>
@@ -10,9 +10,8 @@
         <ul>
         <li><a href="https://twitter.com/hannesvdvreken">Hannes Van De Vreken</a>(project manager)</li>
         <li><a href="https://twitter.com/jenssegers">Jens Segers</a></li>
-	<li><a href="https://twitter.com/lennartmart">Lennart Martens</a></li>
+        <li><a href="https://twitter.com/lennartmart">Lennart Martens</a></li>
         <li><a href="https://twitter.com/koen027">Koen De Groote</a></li>
-	<li><a href="https://twitter.com/SjimiTweet">Sjimi</a> (but nog really)</li>
         </ul>
         </p>
         <p>
