@@ -33,7 +33,7 @@ class Service extends CI_Driver_Library {
     }
     
     /**
-     * Try and see if a driver is availabel before loading and using it
+     * Try and see if a driver is available before loading and using it
      * @param string $driver drivername
      */
     function is_valid($driver) {
