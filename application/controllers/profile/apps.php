@@ -13,8 +13,8 @@ class Apps extends MY_Controller {
 
     function __construct() {
         parent::__construct();
-        if (!$this->session->user_id) {
-            $this->session->redirect = 'profile/apps';
+        if (!$this->session->userdata('user_id')) {
+            $this->session->set_userdata('redirect','profile/apps');
             redirect('authenticate');
         }
     }
@@ -24,7 +24,7 @@ class Apps extends MY_Controller {
      */
     function index() {
         $this->load->model('user_model');
-        $results = $this->user_model->authorized_clients($this->session->user_id);
+        $results = $this->user_model->authorized_clients($this->session->userdata('user_id'));
         
         $this->load->view('header.tpl');
         $this->load->view('profile/apps', array('results' => $results));
@@ -43,7 +43,7 @@ class Apps extends MY_Controller {
         
         if ($this->input->post('client_id') && $this->input->post('client_id') == $client_id) {
             $this->load->model('user_model');
-            $this->user_model->revoke($this->session->user_id, $client_id);
+            $this->user_model->revoke($this->session->userdata('user_id'), $client_id);
             
             redirect('profile/apps');
         } else {

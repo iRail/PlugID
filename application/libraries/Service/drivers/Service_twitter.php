@@ -45,7 +45,7 @@ class Service_twitter extends Service_driver {
             show_error('Invalid request: no request token returned');
         }
         
-        $this->session->twitter_token = $request_token;
+        $this->session->set_userdata('twitter_token', $request_token);
         
         $params = array();
         $params['oauth_token'] = $request_token['oauth_token'];
@@ -75,11 +75,13 @@ class Service_twitter extends Service_driver {
             show_error($error_message . 'Invalid request: no oauth verifier returned');
         }
         
-        if(!isset($this->ci->session->twitter_token['oauth_token']) || !isset($this->ci->session->twitter_token['oauth_token_secret'])){
+        if(!$this->ci->session->userdata('twitter_token') ){
             show_error("Error while authenticating. Please try again later. Error detail: The session variables are not set!");
         }
-        $params['oauth_token'] = $this->ci->session->twitter_token['oauth_token'];
-        $params['oauth_token_secret'] = $this->ci->session->twitter_token['oauth_token_secret'];
+        
+        $request_token = $this->ci->session->userdata('twitter_token') ;
+        $params['oauth_token'] = $request_token['oauth_token'];
+        $params['oauth_token_secret'] = $request_token['oauth_token_secret'];
         $params['oauth_verifier'] = $data['oauth_verifier'];
         
         $access_token = $this->oauth->getAccessToken($this->url_access_token, $params);
@@ -87,7 +89,7 @@ class Service_twitter extends Service_driver {
         	show_error($error_message . 'Access token request failed');
         }
         
-        unset($this->ci->session->twitter_token);
+        $this->ci->session->unset_userdata('twitter_token');
         
         $this->oauth_token = $access_token['oauth_token'];
         $this->oauth_token_secret = $access_token['oauth_token_secret'];

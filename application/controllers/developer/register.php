@@ -19,8 +19,8 @@ class Register extends MY_Controller {
         $this->load->library('form_validation');
         
         // check if signed in
-        if (!$this->session->user_id) {
-            $this->session->redirect = 'developer/register';
+        if (!$this->session->userdata('user_id')) {
+            $this->session->set_userdata('redirect','developer/register');
             redirect('authenticate');
         }
         
@@ -33,7 +33,7 @@ class Register extends MY_Controller {
             $data->redirect_uri = $this->input->post('redirect_uri');
             
             $this->load->model('client_model');
-            $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->user_id);
+            $client = $this->client_model->create($data->name, $data->redirect_uri, $this->session->userdata('user_id'));
             redirect('developer/apps/edit/' . $client->client_id);
         
         } else {

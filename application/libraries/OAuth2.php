@@ -159,7 +159,7 @@
             if ($auth_header !== FALSE) {
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: ' . $auth_header));
             }
-
+            #echo "$path : $method : $params : $auth_header \n\n"; exit ;
             $data = curl_exec($curl);
 
             // error

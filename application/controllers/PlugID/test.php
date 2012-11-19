@@ -12,7 +12,7 @@ class Test extends API_Controller {
     
     function index() {
         if (!$this->is_authenticated()) {
-            return false;
+            $this->output->set_output('you are not authenticated');
         } else {
             $this->output->set_output(json_encode('Yay, your first own api function!'));
         }

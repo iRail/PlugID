@@ -62,7 +62,7 @@ class Authorize extends CI_Controller {
         }
         
         // check if user is actually signed in
-        $user_id = $this->session->user_id;
+        $user_id = $this->session->userdata('user_id');
         
         // so, by now, all invalid request should be caught
         

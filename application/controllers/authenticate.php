@@ -15,7 +15,7 @@ class Authenticate extends MY_Controller {
     
     function index() {
         //Check user login
-        if ($user_id = $this->session->user_id) {
+        if ($user_id = $this->session->userdata('user_id')) {
             //Logged in, go to plugs file that actually determines which services you're logged in to.
             redirect('profile/plugs');
         }

@@ -64,7 +64,7 @@ class Service_google extends Service_driver {
             show_error($error_message . 'Invalid request: no state returned');
         }
         $state = $data['state'];
-        $session_state = $this->ci->session->state ;
+        $session_state = $this->ci->session->flashdata('state') ;
         
         unset($this->ci->session->state);
         if ($state != $session_state) {

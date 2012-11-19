@@ -39,26 +39,26 @@ class Callback extends CI_Controller {
         $user = $this->user_model->get_token_by_ext_id($service_name, $data->ext_user_id);
         
         // do some if else checks
-        if (!$user && !$this->session->user_id) {
+        if (!$user && !$this->session->userdata('user_id')) {
             // no user exists
             $user_id = $this->user_model->create()->user_id;
-        } else if ($user && $this->session->user_id && $user->user_id != $this->session->user_id) {
+        } else if ($user && $this->session->userdata('user_id') && $user->user_id != $this->session->userdata('user_id')) {
             // merge 2 users
-            $this->user_model->merge($user->user_id, $this->session->user_id);
+            $this->user_model->merge($user->user_id, $this->session->userdata('user_id'));
             $user_id = $user->user_id;
-        } else if ($user && !$this->session->user_id) {
+        } else if ($user && !$this->session->userdata('user_id')) {
             // connect to previous registered logged in user
             $user_id = $user->user_id;
-        } else if (!$user && $this->session->user_id) {
+        } else if (!$user && $this->session->userdata('user_id')) {
             // connect to logged in user
-            $user_id = $this->session->user_id;
+            $user_id = $this->session->userdata('user_id');
         } else {
             // logged in and registered before
-            $user_id = $this->session->user_id;
+            $user_id = $this->session->userdata('user_id');
         }
         
         // log in user
-        $this->session->user_id = (int) $user_id;
+        $this->session->set_userdata('user_id', (int) $user_id );
         
         // prep data
         $data->user_id = (int) $user_id;
@@ -67,13 +67,13 @@ class Callback extends CI_Controller {
         // save tokens
         $this->user_model->set_token((array) $data);
         
-        // if $this->session->auth_request is set, handle auth_request (redirect)
-        if ($this->session->auth_request) {
+        // if session auth_request is set, handle auth_request (redirect)
+        if ($this->session->userdata('auth_request')) {
             $this->repeat_authorize();
         }
         
-        if ($redirect = $this->session->redirect) {
-        	unset($this->session->redirect);
+        if ($redirect = $this->session->userdata('redirect')) {
+        	$this->session->unset_userdata('redirect');
             redirect($redirect);
         } else {
             redirect('profile/plugs');
@@ -84,9 +84,9 @@ class Callback extends CI_Controller {
      * This function redirects to the page where the user authorizes a client
      */
     private function repeat_authorize() {
-        $auth_request = $this->session->auth_request;
+        $auth_request = $this->session->userdata('auth_request');
         // we don't want this anymore in the future
-        unset($this->session->auth_request);
+        $this->session->unset_userdata('auth_request');
         
         $url = 'oauth2/authorize';
         $params = array('client_id' => $auth_request->client_id, 'response_type' => $auth_request->response_type, 'redirect_uri' => $auth_request->redirect_uri);

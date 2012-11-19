@@ -54,10 +54,11 @@ class Service_foursquare extends Service_driver {
             show_error($error_message . 'Invalid request: no state returned');
         }
         
-        if (!$state = $this->session->state) {
+        $session_state = $this->ci->session->flashdata('state') ;
+        
+        if ($data['state'] != $session_state) {
             show_error($error_message . 'Invalid state returned');
         }
-        unset($this->session->state);
         
         // get access token
         $response = $this->oauth->getAccessToken($this->url_access_token, array('code' => $code));

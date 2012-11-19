@@ -16,7 +16,7 @@ if (!defined('BASEPATH'))
 class Logout extends MY_Controller {
     
     function index() {
-        $this->session->destroy();
+        $this->session->sess_destroy();
         redirect('authenticate');
         
     }

@@ -111,8 +111,8 @@ abstract class Service_driver extends CI_Driver {
      * @return string $state, as it is saved in the session
      */
     protected function get_state() {
-        unset($this->ci->session->state);
-        $this->ci->session->state = hash($this->hash_algo, time() . uniqid());
-        return $this->ci->session->state;
+        $state = hash($this->hash_algo, time() . uniqid()) ;
+        $this->ci->session->set_flashdata('state', $state );
+        return $state;
     }
 }

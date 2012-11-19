@@ -38,7 +38,7 @@ class Service_facebook extends Service_driver {
                         'state' => $this->get_state(),
                         'scope' => $this->scope
                         );
-                        
+        //echo $this->url_authorize . '?' . http_build_query($params); exit ;
         redirect($this->url_authorize . '?' . http_build_query($params));
     }
     
@@ -62,9 +62,8 @@ class Service_facebook extends Service_driver {
             show_error($error_message . 'Invalid request: no state returned');
         }
         $state = $data['state'];
-        $session_state = $this->ci->session->state ;
+        $session_state = $this->ci->session->flashdata('state') ;
         
-        unset($this->ci->session->state);
         if ($state != $session_state) {
             show_error($error_message . 'Invalid state returned');
         }

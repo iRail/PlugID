@@ -17,8 +17,8 @@ class Apps extends MY_Controller {
 
         //If user isn't logged in => redirect to authenticate page
         //Store the redirect URL in the session
-        if (!$this->session->user_id) {
-            $this->session->redirect = 'developer/apps';
+        if (!$this->session->userdata('user_id')) {
+            $this->session->set_userdata('redirect','developer/apps');
             redirect('authenticate');
         }
     }
@@ -28,7 +28,7 @@ class Apps extends MY_Controller {
      */
     function index() {
         $this->load->model('user_model');
-        $results = $this->user_model->get_clients($this->session->user_id);
+        $results = $this->user_model->get_clients($this->session->userdata('user_id'));
         
         $this->load->view('header.tpl');
         $this->load->view('developer/apps', array('results' => $results));
@@ -43,7 +43,7 @@ class Apps extends MY_Controller {
         $item = $this->client_model->get($client);
         
         // only edit own clients
-        if ($item->user_id != $this->session->user_id) {
+        if ($item->user_id != $this->session->userdata('user_id')) {
             redirect('logout');
         }
         

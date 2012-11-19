@@ -15,8 +15,8 @@ class Plugs extends MY_Controller {
     
     function index() {
         $this->load->model('user_model');
-        if (!$user_id = $this->session->user_id) {
-            $this->session->redirect = 'profile/plugs';
+        if (!$user_id = $this->session->userdata('user_id')) {
+            $this->session->set_userdata('redirect','profile/plugs');
             redirect('authenticate');
         }
         
