@@ -11,7 +11,7 @@ if (!defined('BASEPATH'))
 
 class Plugs extends MY_Controller {
     
-    private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare');
+    private $services = array('facebook', 'twitter', 'google', 'viking', 'foursquare', 'instagram');
     
     function index() {
         $this->load->model('user_model');
