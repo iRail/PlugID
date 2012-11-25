@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `user_tokens` (
   `user_id` int(11) NOT NULL,
-  `service_type` enum('foursquare','facebook','twitter','google','viking') NOT NULL,
+  `service_type` varchar(32) NOT NULL,
   `ext_user_id` varchar(32) NOT NULL,
   `access_token` varchar(128) DEFAULT NULL,
   `refresh_token` varchar(128) DEFAULT NULL,

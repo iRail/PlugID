@@ -129,20 +129,46 @@ class User_model extends CI_Model {
     
     /*
      * Merge user_id_2 to user_id_1
+     * 
+     * This is bad for all OAuth2.0 clients who have connected to plugid before. 
+     * They can still use their Authentication tokens, but if they have saved the client's id
+     * it can be different from what we have, hence we have replaced one with another.
      */
     function merge( $user_id_1, $user_id_2 ){
         // user2 attributes user1
         $data  = array( 'user_id' => $user_id_1 );
         $where = array( 'user_id' => $user_id_2 );
         
-        // updating tables
-        $this->db->update( 'user_tokens', $data, $where );
-        $this->db->update( 'clients',     $data, $where );
-        $this->db->update( 'auth_tokens', $data, $where );
-        $this->db->update( 'auth_codes',  $data, $where );
+        // merging tokens (do this for db key contraints)
+        $tokens1 = $this->db->get_where('user_tokens', $data  )->result();
+        $tokens2 = $this->db->get_where('user_tokens', $where )->result();
+        
+        foreach( $tokens2 as $t2 ){
+            $pre_exists = FALSE ;
+            foreach( $tokens1 as $t1 ){
+                if( $t2->service_type == $t1->service_type ){
+                    $pre_exists = TRUE ;
+                    break;
+                }
+            }
+            if( !$pre_exists ){
+                $where['service_type'] = $t2->service_type ;
+                $this->db->update( 'user_tokens', $data, $where );
+                // give it to the pre_existing user
+            }
+        }
+        
+        unset($where['service_type']);
+        $this->db->delete( 'user_tokens', $where ); // delete all remaining, because the pre_existing user already had them
+        $this->db->delete( 'auth_tokens', $where );
+        $this->db->delete( 'auth_codes',  $where );
         
         //delete user from users table
-        $this->db->delete('users', $where);
+        $this->db->delete( 'users',       $where );
+        
+        // updating tables
+        $this->db->update( 'clients', $data, $where );
+        
     }
     
     /**
