@@ -33,8 +33,9 @@ class Access_token_model extends CI_Model {
     function is_valid( $access_token ){
         $where = array( 'access_token' => $access_token,
                         'expires >'    => time() );
-        $row = $this->db->get_where('auth_tokens',$where)->row();
-        
+
+        $row = $this->db->get_where('auth_tokens', $where)->row();
+
         if( !isset( $row->user_id ) ){
             return FALSE;
         }
@@ -42,5 +43,14 @@ class Access_token_model extends CI_Model {
         $where = array( 'client_id' => $row->client_id,
                         'user_id'   => $row->user_id);
         return $this->db->get_where('auth_clients',$where)->row();
+    }
+
+    function get_user( $access_token ) {
+        $where = array( 'access_token' => $access_token,
+                        'expires >'    => time() );
+        $result = $this->db->get_where('auth_tokens',$where)->row();
+
+        $where = array('user_id' => $result->user_id);
+        return $this->db->get_where('users', $where)->row();
     }
 }

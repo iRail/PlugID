@@ -35,14 +35,13 @@ class API_Controller extends CI_Controller{
             } else {
                 return FALSE;
             }
-            
         }
         
         if ($token) {
             $row = $this->access_token_model->is_valid($token);
             if (isset($row->user_id)) {
                 $this->auth = $row ;
-                return TRUE ;
+                return $token ;
             }
         }
         return FALSE;
