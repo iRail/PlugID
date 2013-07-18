@@ -36,8 +36,21 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `client_secret` varchar(32) NOT NULL,
   `redirect_uri` varchar(250) NOT NULL,
   `status` enum('rejected','approved') NOT NULL DEFAULT 'approved',
+  `notify_url` varchar(255) NOT NULL,
+  `notify_secret` varchar(255) NOT NULL,
   PRIMARY KEY (`client_id`),
   KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `checkins` (
+  `id` int(11) NOT NULL,
+  `client_id` varchar(32) NOT NULL,
+  `user_id` varchar(32) NOT NULL,
+  `dep` int(11) NOT NULL,
+  `arr` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `date` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
