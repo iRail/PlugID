@@ -51,23 +51,33 @@ class Apps extends MY_Controller {
         
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('redirect_uri', 'Redirect url', 'required|prep_url');
+        $this->form_validation->set_rules('notify_uri', 'Notify URL', 'prep_url');
         
         if ($this->form_validation->run()) {
             //We're resetting the secret
             if ($this->input->post('resetSecret') !== false) {
-                $this->client_model->reset_secret($client);
+                $this->client_model->reset_secret($client, 'client_secret');
+                redirect('developer/apps/edit/' . $client);
+            }
+
+            if ($this->input->post('resetPushSecret') !== false)
+            {
+                $this->client_model->reset_secret($client, 'notify_secret');
                 redirect('developer/apps/edit/' . $client);
             }
             
-            //We're updating the user
-            if ($this->input->post('updateUri') !== false) {
+            //We're updating the client
+            if ($this->input->post('update') !== false) {
+
                 $name = $this->input->post('name');
                 $redirect_uri = $this->input->post('redirect_uri');
-                $this->client_model->update($client, $name, $redirect_uri);
+                $notify_uri = $this->input->post('notify_uri');
+
+                $this->client_model->update($client, $name, $redirect_uri, $notify_uri);
                 redirect('developer/apps');
             }
             
-            //We're deleting the user
+            //We're deleting the client
             if ($this->input->post('deleteClient') !== false) {
                 $this->client_model->delete($client);
                 redirect('developer/apps');

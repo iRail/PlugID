@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `client_secret` varchar(32) NOT NULL,
   `redirect_uri` varchar(250) NOT NULL,
   `status` enum('rejected','approved') NOT NULL DEFAULT 'approved',
-  `notify_url` varchar(255) NOT NULL,
+  `notify_uri` varchar(255) NOT NULL,
   `notify_secret` varchar(255) NOT NULL,
   PRIMARY KEY (`client_id`),
   KEY `user_id` (`user_id`)

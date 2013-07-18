@@ -44,7 +44,7 @@ $route['connect/(:any)'] = 'connect/index/$1';
 $route['callback/(:any)'] = 'callback/index/$1';
 
 // RESTful controller
-$route['PlugID/checkin/(:any)'] = 'PlugID/checkin/index/$1';
+$route['PlugID/checkins/(:any)'] = 'PlugID/checkins/index/$1';
 
 // change PlugID to your own needs
 // very important to be in front of api/(:any)

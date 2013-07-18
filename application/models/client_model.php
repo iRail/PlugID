@@ -58,32 +58,35 @@ class Client_model extends CI_Model {
     /*
      * Reset client's secret
      */
-    function reset_secret( $client_id ){
+    function reset_secret($client_id, $type)
+    {
         // create new secret
-        $data = new stdClass();
-        $data->client_secret = hash($this->hash_algo, time() . uniqid());
+        $data = array(
+            $type => hash($this->hash_algo, time() . uniqid()),
+        );
         
         // update db
-        $this->db->update( 'clients', (array)$data, array('client_id' => $client_id ) );
+        $this->db->update( 'clients', $data, array('client_id' => $client_id ) );
         
         // return result
-        $data->client_id = $client_id ;
+        $data->client_id = $client_id;
         return $data ;
     }
     
     /*
      * set some data
      */
-    function update( $client_id, $name = NULL , $redirect_uri = NULL ){
-        if( is_null($name) && is_null($redirect_uri) ){
-            return FALSE ;
-        }
+    function update( $client_id, $name, $redirect_uri, $notify_uri = NULL){
+
+        if (is_null($name) || is_null($redirect_uri)) return false;
         
-        $data = new stdClass();
-        if( ! is_null( $name         ) ) $data->name = $name ;
-        if( ! is_null( $redirect_uri ) ) $data->redirect_uri = $redirect_uri ;
+        $data = array(
+            'name' => $name,
+            'redirect_uri' => $redirect_uri,
+            'notify_uri' => $notify_uri,
+        );
         
-        return $this->db->update( 'clients', (array)$data, array('client_id' => $client_id ));
+        return $this->db->update( 'clients', $data, array('client_id' => $client_id ));
     }
     
     /*
