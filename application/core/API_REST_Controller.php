@@ -26,7 +26,7 @@ include APPPATH . 'core/API_Controller.php';
 
 class API_REST_Controller extends API_Controller{
     
-    public  function index($id = false) 
+    public function index($id = false) 
     {
         if ( ! $this->is_authenticated()) 
         {
@@ -56,7 +56,14 @@ class API_REST_Controller extends API_Controller{
                     return false;
                 }
 
-                $this->json($this->create($data));
+                if ( ! $data)
+                {
+                    $this->json(array('success' => false, 'message' => 'invalid json input'));
+                }
+                else
+                {
+                    $this->json($this->create($data));
+                }
             }
             elseif (in_array($this->input->server('REQUEST_METHOD'), array('PUT', 'PATCH')) )
             {
@@ -66,7 +73,14 @@ class API_REST_Controller extends API_Controller{
                     return false;
                 }
 
-                $this->json($this->update($id, $data));
+                if ( ! $data)
+                {
+                    $this->json(array('success' => false, 'message' => 'invalid json input'));
+                }
+                else
+                {
+                    $this->json($this->update($id, $data));
+                }
             }
             elseif ($this->input->server('REQUEST_METHOD') == 'DELETE')
             {

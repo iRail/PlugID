@@ -4,6 +4,7 @@
  * @license AGPLv3
  * @author Koen De Groote <koen at iRail.be>
  * @author Jens Segers <jens at iRail.be>
+ * @author Hannes Van De Vreken <hannes at iRail.be>
  */
 
 /**
