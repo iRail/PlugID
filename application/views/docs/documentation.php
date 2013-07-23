@@ -17,7 +17,7 @@
             </div>
             <div id="reg" class="span8">
                 <h2>Registration</h2>
-                <p>Make sure you have an account on PlugID. Once you have one, start by <a target="_blank" href="<?php echo site_url('register'); ?>">registering your app</a> to obtain its PlugID API credentials. Be sure to use an account with a secure password to own these credentials. If you're creating an app on the behalf of a full-fledged company, consider creating the key in association with the page account for your company. Since each set of credentials is tied to a particular URL, you may want to create different credentials for your development server and production server. For the purposes of OAuth, your “key” from that registration process is your “client id” here, and your secret from registering is your secret here.</p>
+                <p>Make sure you have an account on PlugID. Once you have one, start by <a target="_blank" href="<?php echo site_url('developer/register'); ?>">registering your app</a> to obtain its PlugID API credentials. Be sure to use an account with a secure password to own these credentials. If you're creating an app on the behalf of a full-fledged company, consider creating the key in association with the page account for your company. Since each set of credentials is tied to a particular URL, you may want to create different credentials for your development server and production server. For the purposes of OAuth, your “key” from that registration process is your “client id” here, and your secret from registering is your secret here.</p>
             </div><!--/span-->
             <div id="access" class="span8">
                 <h2>Access token</h2>
