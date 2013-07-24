@@ -17,7 +17,7 @@ class Service_twitter extends Service_driver {
     private $url_authorize = 'https://api.twitter.com/oauth/authorize';
     private $url_request_token = 'https://api.twitter.com/oauth/request_token';
     private $url_access_token = 'https://api.twitter.com/oauth/access_token';
-    private $url_base = 'https://api.twitter.com/1/';
+    private $url_base = 'https://api.twitter.com/1.1/';
     
     function __construct() {
         $this->ci = &get_instance();
