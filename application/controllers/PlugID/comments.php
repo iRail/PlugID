@@ -37,6 +37,11 @@ class Comments extends API_REST_Controller {
      */
     protected function create($data) 
     {
+        if ( ! isset($data['date'], $data['tid'], $data['sid'], $data['message']))
+        {
+            return array('success' => false, 'message' => 'required fields: date, tid, sid and message');
+        }
+
     	// add data
     	$data['client_id'] = $this->auth->client_id;
     	$data['user_id']   = $this->auth->user_id;
