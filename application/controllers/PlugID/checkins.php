@@ -49,8 +49,6 @@ class Checkins extends API_REST_Controller {
         // add timestamp
         $data['created_at'] = date('c');
 
-        return $data;
-
     	// perform insert
     	return $this->checkin_model->create($data);
     }
