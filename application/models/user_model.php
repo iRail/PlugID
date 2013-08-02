@@ -15,9 +15,8 @@ class User_model extends CI_Model {
      * Create new user and return user_id
      * @return object->user_id
      */
-    function create(){
+    function create($data){
         // generate data
-        $data = new stdClass();
         $data->user_id = rand(1000000000, getrandmax());
         
         // check if client_exists
@@ -71,17 +70,18 @@ class User_model extends CI_Model {
      *                   access_token, refresh_token, expires, oauth_token, oauth_token_secret ) // ← optional
      * @return same array
      */
-    function set_token( $data ){
+    function set_token( $data )
+    {
         if( $this->db->get_where('users',array('user_id' => $data['user_id']))->num_rows() == 0 ){
             return FALSE ;
         }
         $where = array( 'user_id' => $data['user_id'], 'service_type' => $data['service_type'] );
         if( $this->db->get_where('user_tokens', $where )->num_rows() == 0 ){
             // insert
-            return $this->db->insert( 'user_tokens',$data );
+            return $this->db->insert('user_tokens', $data);
         }else{
             // update
-            return $this->db->update( 'user_tokens',$data, $where );
+            return $this->db->update('user_tokens', $data, $where);
         }
     }
     

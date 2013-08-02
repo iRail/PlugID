@@ -41,7 +41,9 @@ class Callback extends CI_Controller {
         // do some if else checks
         if (!$user && !$this->session->userdata('user_id')) {
             // no user exists
-            $user_id = $this->user_model->create()->user_id;
+            $user = $this->user_model->create(isset($data->user) ? $data->user : new stdClass());
+            $user_id = $user->user_id;
+        
         } else if ($user && $this->session->userdata('user_id') && $user->user_id != $this->session->userdata('user_id')) {
             // merge 2 users
             $this->user_model->merge($user->user_id, $this->session->userdata('user_id'));
@@ -61,11 +63,13 @@ class Callback extends CI_Controller {
         $this->session->set_userdata('user_id', (int) $user_id );
         
         // prep data
-        $data->user_id = (int) $user_id;
-        $data->service_type = $service_name;
+        $data = array(
+            'user_id' => (int) $user_id,
+            'service_type' => $service_name,
+        );
         
         // save tokens
-        $this->user_model->set_token((array) $data);
+        $this->user_model->set_token($data);
         
         // if session auth_request is set, handle auth_request (redirect)
         if ($this->session->userdata('auth_request')) {

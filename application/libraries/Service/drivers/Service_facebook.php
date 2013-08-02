@@ -96,6 +96,9 @@ class Service_facebook extends Service_driver {
         }
         
         $auth = new stdClass();
+        $auth->user = new stdClass();
+        $auth->user->first_name = $user->first_name;
+        $auth->user->last_name = $user->last_name;
         $auth->ext_user_id = (int) $user->id;
         $auth->access_token = $this->access_token;
         $auth->expires = time() + (int)$response->expires ;

@@ -25,6 +25,9 @@
         case 'id.irail.be':
             define('ENVIRONMENT', 'production');
             break;
+        case 'plugid.hannesv.be':
+            define('ENVIRONMENT', 'staging');
+            break;
         default :
             define('ENVIRONMENT', 'development');
             break;
@@ -45,7 +48,7 @@ if (defined('ENVIRONMENT'))
 		case 'development':
 			error_reporting(E_ALL | E_NOTICE);
 		break;
-	
+		case 'staging':
 		case 'testing':
 		case 'production':
 			error_reporting(E_ALL | E_NOTICE);
@@ -54,6 +57,21 @@ if (defined('ENVIRONMENT'))
 		default:
 			exit('The application environment is not set correctly.');
 	}
+}
+
+/*
+|---------------------------------------------------------------
+| DEFAULT TIMEZONE
+|---------------------------------------------------------------
+|
+| Set the default timezone for date/time functions to use if
+| none is set on the server.
+|
+*/
+
+if( ! ini_get('date.timezone') )
+{
+   date_default_timezone_set('CET');
 }
 
 /*

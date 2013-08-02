@@ -102,6 +102,7 @@ class API_REST_Controller extends API_Controller{
 
     private function json($data)
     {
+        $this->output->set_status_header(empty($data) ? 404: 200);
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode($data));
     }

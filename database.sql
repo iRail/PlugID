@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS `checkins` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(11) NOT NULL,
+  `first_name` varchar(255),
+  `last_name` varchar(255),
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -81,6 +81,9 @@ class Service_foursquare extends Service_driver {
         }
         
         $auth = new stdClass();
+        $auth->user = new stdClass();
+        $auth->user->first_name = $user->response->user->firstName;
+        $auth->user->last_name = $user->response->user->lastName;
         $auth->ext_user_id = (int) $user->response->user->id;
         $auth->access_token = $this->access_token;
         

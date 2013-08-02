@@ -54,7 +54,7 @@ class Comments extends API_REST_Controller {
     protected function update($id, $data) 
     {
     	$data['user_id'] = $this->auth->user_id;
-    	$data['id'] = $id;
+        $data['id'] = $id;
     	return $this->comment_model->update($data);
     }
 
