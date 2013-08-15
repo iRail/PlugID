@@ -37,9 +37,19 @@ class Comments extends API_REST_Controller {
      */
     protected function create($data) 
     {
+        // input check
         if ( ! isset($data['date'], $data['tid'], $data['sid'], $data['message']))
         {
             return array('success' => false, 'message' => 'required fields: date, tid, sid and message');
+        }
+
+        // filter unwanted keywords
+        $valid = array('date', 'tid', 'sid', 'message');
+        foreach ($data as $key => $value) {
+            if ( ! in_array($key, $valid))
+            {
+                unset($data[$key]);
+            }
         }
 
     	// add data

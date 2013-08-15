@@ -21,11 +21,20 @@ class Mongo_model extends CI_Model {
 
             // build moniker
             $hosts = implode(',',$this->mongo_config->item('db_hosts'));
-            $credentials = $this->mongo_config->item('db_username') . ':' . $this->mongo_config->item('db_passwd');
             $db = $this->mongo_config->item('db_name');
 
-            // moniker
-            $moniker = "mongodb://$credentials@$hosts/$db";
+            if ($this->mongo_config->item('db_username'))
+            {
+                // credentials
+                $credentials = $this->mongo_config->item('db_username') . ':' . $this->mongo_config->item('db_passwd');
+                // moniker
+                $moniker = "mongodb://$credentials@$hosts/$db";
+            }
+            else
+            {
+                // moniker
+                $moniker = "mongodb://$hosts/$db";
+            }
      		
             // start connection
             $this->mongo = new \MongoClient($moniker, array( 'connect' => false ));

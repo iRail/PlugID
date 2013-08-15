@@ -11,13 +11,24 @@ class Checkin_model extends Mongo_Model {
 
     public function create($data)
     {
+        // create ID
+        $data['id'] = uniqid();
+
         // insert into System Of Record
+        $result = $this->mongo_store($data);
+
+        // check if input was valid
+        if (! $result)
+        {
+            return array(
+                'success' => $result
+            );
+        }
+
+        // insert into indexing system
         $this->db->insert('checkins', $data);
-        $data['id'] = $this->db->insert_id();
 
-        // insert into Mongo
-        $this->mongo_store($data);
-
+        // return in the end
         return $data;
     }
 
@@ -42,13 +53,13 @@ class Checkin_model extends Mongo_Model {
 
         // perform
         $this->db->where('user_id', (integer)$data['user_id']);
-        $this->db->where('id', (integer)$data['id']);
+        $this->db->where('id', $data['id']);
         $this->db->update('checkins', $data);
 
         // build where
         $where = array(
             'user_id' => (integer)$data['user_id'],
-            'id' => (integer)$data['id'],
+            'id' => $data['id'],
         );
 
         // return useful data
@@ -59,7 +70,7 @@ class Checkin_model extends Mongo_Model {
     {
         $where = array(
             'user_id' => (integer)$user_id,
-            'id' => (integer)$id
+            'id' => $id
         );
 
         $old = $this->db->get_where('checkins', $where)->row_array();
@@ -94,13 +105,19 @@ class Checkin_model extends Mongo_Model {
 
         $checkin = array(
             'user_id' => (integer)$data['user_id'],
-            'checkin_id' => (integer)$data['id'],
+            'checkin_id' => $data['id'],
         );
+
+        $save_later = array();
 
         // loop
         foreach ($cursor as $row)
         {
-            if ($row['sid'] == $data['arr']) 
+            // shortcut
+            if ($departed && $arrived) break;
+
+            if ($departed && ! $arrived &&
+                $row['sid'] == $data['arr']) 
             {
                 if (isset($row['arrive']) && is_array($row['arrive'])) 
                 {
@@ -113,7 +130,7 @@ class Checkin_model extends Mongo_Model {
                 $arrived = true;
             }
 
-            if ($departed && !$arrived)
+            if ($departed && ! $arrived)
             {
                 if (isset($row['on_vehicle']) && is_array($row['on_vehicle']))
                 {
@@ -137,8 +154,24 @@ class Checkin_model extends Mongo_Model {
                 }
                 $departed = true;
             }
-            $db->trips->save($row);
+
+            $save_later[] = $row;
         }
+
+        // check outcome
+        if ($departed && $arrived)
+        {
+            // it's ok to save them
+            foreach ($save_later as $row) 
+            {
+                $db->trips->save($row);
+            }
+            // it's a okay
+            return true;
+        }
+
+        // not the rights 'arr' and 'dep' fields after all.
+        return false;
     }
 
     private function mongo_destroy($data)
@@ -148,17 +181,24 @@ class Checkin_model extends Mongo_Model {
 
         $checkin = array(
             'user_id' => (integer)$data['user_id'],
-            'checkin_id' => (integer)$data['id'],
+            'checkin_id' => $data['id'],
         );
 
-        // unset
+        $or = array();
+        $update = array();
+
+        // all fields
         foreach (array('depart', 'arrive', 'on_vehicle') as $key) 
         {
-            $db->trips->update(
-                array("$key.checkin_id" => (integer)$data['id']),
-                array('$pull' => array($key => $checkin)),
-                array('multiple' => true)
-            );
+            $or[] = array("$key.checkin_id" => $data['id']);
+            $update[$key] = $checkin;
         }
+
+        // update
+        $db->trips->update(
+            array('$or' => $or),
+            array('$pull' => $update),
+            array('multiple' => true)
+        );
     }
 }

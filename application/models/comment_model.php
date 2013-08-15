@@ -36,98 +36,67 @@ class Comment_model extends Mongo_Model {
             ),
         );
 
+        // in trip data
         $db->trips->update($where, $push);
 
-        return array_merge($where, $data);
+        // duplicate
+        $copy = $data;
+        $data = array_merge($where, $data);
+        $data['_id'] = $data['message_id'];
+        unset($data['message_id']);
+        $db->comments->insert($data);
+
+        // return
+        return array_merge($where, $copy);
     }
 
     public function get($user_id, $id = null)
     {
         $db = $this->mongo();
 
-        if ( ! is_null($id))
+        $where = array(
+            'user_id' => $user_id
+        );
+
+        if ($id)
         {
-            $match = array(
-                'messages.message_id' => $id,
-                'messages.user_id' => $user_id,
-            );
-
-            $project = array(
-                '_id' => 0,
-                'client_id' => '$messages.client_id',
-                'created_at' => '$messages.created_at',
-                'message' => '$messages.message',
-                'message_id' => '$messages.message_id',
-                'user_id' => '$messages.user_id',
-                'tid' => '$tid',
-                'tid' => '$tid',
-                'sid' => '$sid',
-                'date' => '$date',
-            );
-
-            $pipe = array(
-                array('$unwind' => '$messages'),
-                array('$match' => $match),
-                array('$project' => $project),
-            );
-
-            $result = $db->trips->aggregate($pipe);
-            return $result['result'];
+            $where['_id'] = $id;
         }
-        else
-        {
-            // using mapreduce (js functions)
-            $map = new MongoCode("
-                function() 
-                {
-                    if (this.messages) 
-                    {
-                        for (i in this.messages)
-                        {
-                            if (this.messages[i].user_id == '". $user_id ."')
-                            {
-                                o = this.messages[i];
-                                
-                                // add fields
-                                o.tid = this.tid; o.sid = this.sid; o.date = this.date;
 
-                                // emit
-                                emit(this.messages[i].message_id, o);
-                            }
-                        }
-                    }
-                }"
-            );
-            
-            // simple
-            $reduce = new MongoCode("
-                function(k, val) 
-                {
-                    // in case of non-unique message_ids
-                    return val instanceof Array ? val[0] : val;
-                }"
-            );
+        // db action
+        $result = iterator_to_array($db->comments->find($where));
 
-            $r = $db->command(array(
-                "mapreduce" => "trips", 
-                "map" => $map,
-                "reduce" => $reduce,
-                "out" => array("inline" => 1),
-            ));
-
-            // only the values, not the keys
-            foreach ($r['results'] as &$message) 
-            {
-                $message = $message['value'];
-            }
-
-            return $r['results'];
+        // clean
+        foreach ($result as $key => &$value) {
+            $value['message_id'] = $value['_id'];
+            unset($value['_id']);
         }
+
+        // return
+        return array_values($result);
     }
 
     public function update($data)
     {
         $db = $this->mongo();
+
+        $where = array(
+            '_id' => $data['id'],
+            'user_id'    => $data['user_id'],
+        );
+
+        $set = array(
+            '$set' => array(
+                'message' => $data['message'],
+            ),
+        );
+
+        $result = $db->comments->update($where, $set);
+
+        if ($result['n'] == 0)
+        {
+            return array();
+        }
 
         $where = array(
             'messages.message_id' => $data['id'],
@@ -141,15 +110,8 @@ class Comment_model extends Mongo_Model {
         );
 
         $result = $db->trips->update($where, $set);
-
-        if ($result['n'] == 0)
-        {
-            return array();
-        }
-        else
-        {
-            return $this->get($data['user_id'], $data['id']);
-        }
+        
+        return $this->get($data['user_id'], $data['id']);
     }
 
     public function destroy($user_id, $id)
@@ -157,14 +119,26 @@ class Comment_model extends Mongo_Model {
         $db = $this->mongo();
 
         $old = $this->get($user_id, $id);
-        if (empty($old))
+
+        // remove from indexed table
+        $where = array(
+            '_id'     => $id,
+            'user_id' => $user_id,
+        );
+
+        // remove from indexed
+        $result = $db->comments->remove($where);
+
+        // check
+        if ($result['n'] != 1)
         {
-            return array('success' => false);
+            return array(
+                'success' => false,
+            );
         }
-        else
-        {
-            $old = reset($old);
-        }
+
+        // take first
+        $old = reset($old);
 
         // make copy
         $comment = array();
@@ -180,20 +154,15 @@ class Comment_model extends Mongo_Model {
             }
         }
 
-        $result = $db->trips->update(
+        // pull
+        $db->trips->update(
             $where,
             array('$pull' => array('messages' => $comment))
         );
 
-        if ($result['n'] == 1 && $old)
-        {
-            return array(
-                'success' => true,
-                'deleted' => $old,
-            );
-        }
         return array(
-            'success' => false,
+            'success' => true,
+            'deleted' => $old,
         );
     }
 }

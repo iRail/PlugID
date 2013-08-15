@@ -44,13 +44,15 @@ CREATE TABLE IF NOT EXISTS `clients` (
 
 
 CREATE TABLE IF NOT EXISTS `checkins` (
-  `id` int(11) NOT NULL,
+  `id` varchar(255) NOT NULL,
+  `created_at` varchar(255) NOT NULL,
   `client_id` varchar(32) NOT NULL,
   `user_id` varchar(32) NOT NULL,
   `dep` int(11) NOT NULL,
   `arr` int(11) NOT NULL,
   `tid` int(11) NOT NULL,
-  `date` int(11) NOT NULL
+  `date` int(11) NOT NULL,
+  `message` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

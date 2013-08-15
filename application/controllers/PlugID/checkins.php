@@ -39,7 +39,16 @@ class Checkins extends API_REST_Controller {
         // input check
         if ( ! isset($data['dep'], $data['arr'], $data['tid'], $data['date']))
         {
-            return array('success' => false, 'message' => 'required fields: dep, arr, tid, date');
+            return array('success' => false, 'message' => 'Required fields: dep, arr, tid, date. Optional: message');
+        }
+
+        // filter unwanted keywords
+        $valid = array('tid', 'date', 'dep', 'arr', 'message');
+        foreach ($data as $key => $value) {
+            if ( ! in_array($key, $valid))
+            {
+                unset($data[$key]);
+            }
         }
 
     	// add data
